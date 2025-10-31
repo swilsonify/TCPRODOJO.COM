@@ -14,7 +14,9 @@ const AdminTestimonials = () => {
   const [formData, setFormData] = useState({
     name: '',
     role: '',
-    text: ''
+    text: '',
+    photoUrl: '',
+    videoUrl: ''
   });
   const navigate = useNavigate();
 
