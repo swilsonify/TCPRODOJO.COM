@@ -2,6 +2,12 @@
   base = "/"
   command = "cd frontend && rm -rf node_modules package-lock.json && npm install --force && npm run build"
   publish = "frontend/build"
+  functions = "frontend/netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"
