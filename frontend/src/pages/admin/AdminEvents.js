@@ -17,7 +17,9 @@ const AdminEvents = () => {
     time: '',
     location: '',
     description: '',
-    attendees: ''
+    attendees: '',
+    imageUrl: '',
+    videoUrl: ''
   });
   const navigate = useNavigate();
 
