@@ -134,7 +134,9 @@ const AdminTrainers = () => {
       specialty: '',
       experience: '',
       bio: '',
-      achievements: []
+      achievements: [],
+      photoUrl: '',
+      videoUrl: ''
     });
     setAchievementInput('');
     setEditingTrainer(null);
