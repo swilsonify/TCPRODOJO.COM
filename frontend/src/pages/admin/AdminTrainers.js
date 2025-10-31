@@ -18,7 +18,9 @@ const AdminTrainers = () => {
     specialty: '',
     experience: '',
     bio: '',
-    achievements: []
+    achievements: [],
+    photoUrl: '',
+    videoUrl: ''
   });
   const [achievementInput, setAchievementInput] = useState('');
   const navigate = useNavigate();
