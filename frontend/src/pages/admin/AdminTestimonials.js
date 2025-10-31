@@ -76,7 +76,9 @@ const AdminTestimonials = () => {
     setFormData({
       name: testimonial.name,
       role: testimonial.role,
-      text: testimonial.text
+      text: testimonial.text,
+      photoUrl: testimonial.photoUrl || '',
+      videoUrl: testimonial.videoUrl || ''
     });
     setShowForm(true);
   };
@@ -102,7 +104,9 @@ const AdminTestimonials = () => {
     setFormData({
       name: '',
       role: '',
-      text: ''
+      text: '',
+      photoUrl: '',
+      videoUrl: ''
     });
     setEditingTestimonial(null);
     setShowForm(false);
