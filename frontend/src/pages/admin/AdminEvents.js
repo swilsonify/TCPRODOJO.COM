@@ -82,7 +82,9 @@ const AdminEvents = () => {
       time: event.time,
       location: event.location,
       description: event.description,
-      attendees: event.attendees
+      attendees: event.attendees,
+      imageUrl: event.imageUrl || '',
+      videoUrl: event.videoUrl || ''
     });
     setShowForm(true);
   };
