@@ -1,0 +1,137 @@
+═══════════════════════════════════════════════════════════════════
+  NETLIFY + RAILWAY DEPLOYMENT CHECKLIST
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: MONGODB ATLAS (Database) - 5 minutes
+───────────────────────────────────────────────────────────────────
+□ Go to https://www.mongodb.com/cloud/atlas/register
+□ Sign up for free account
+□ Create new cluster (M0 Free Tier)
+□ Create database user with password
+□ Add Network Access: 0.0.0.0/0 (allow all)
+□ Get connection string (looks like: mongodb+srv://...)
+□ Save this connection string - you'll need it!
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 2: RAILWAY (Backend) - 5 minutes
+───────────────────────────────────────────────────────────────────
+□ Go to https://railway.app and sign in
+□ Click "New Project" → "Deploy from GitHub repo"
+□ Select your repository: tcprodojo-site
+□ Click on the service → Settings
+□ Set Root Directory: backend
+□ Set Start Command: uvicorn server:app --host 0.0.0.0 --port $PORT
+□ Go to Variables tab
+□ Add these environment variables:
+   □ MONGO_URL = (paste your MongoDB connection string)
+   □ DB_NAME = tcprodojo
+   □ JWT_SECRET = (generate random 32 characters)
+   □ CORS_ORIGINS = * (we'll update this later)
+   □ PORT = 8001
+□ Save and let Railway deploy
+□ Copy your Railway URL (e.g., https://xxx.up.railway.app)
+□ Run init_admins.py (see NETLIFY_RAILWAY_SETUP.md)
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 3: NETLIFY (Frontend) - 5 minutes
+───────────────────────────────────────────────────────────────────
+□ Go to https://app.netlify.com
+□ Click "Add new site" → "Import an existing project"
+□ Choose "Deploy with GitHub"
+□ Select your repository: tcprodojo-site
+□ Configure build settings:
+   □ Base directory: frontend
+   □ Build command: npm run build
+   □ Publish directory: frontend/build
+□ Click "Show advanced" → "New variable"
+□ Add environment variable:
+   □ Key: REACT_APP_BACKEND_URL
+   □ Value: (paste your Railway URL from Step 2)
+□ Click "Deploy site"
+□ Wait 3-5 minutes for build to complete
+□ Copy your Netlify URL (e.g., https://xxx.netlify.app)
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 4: UPDATE CORS (Backend) - 1 minute
+───────────────────────────────────────────────────────────────────
+□ Go back to Railway
+□ Click on Variables tab
+□ Update CORS_ORIGINS with your Netlify URL:
+   Example: https://tcprodojo.netlify.app
+□ Save (Railway will auto-redeploy)
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 5: CUSTOM DOMAIN (Optional) - 10 minutes
+───────────────────────────────────────────────────────────────────
+□ In Netlify: Site settings → Domain management
+□ Click "Add custom domain"
+□ Enter: tcprodojo.com
+□ Follow Netlify's DNS instructions
+□ Update your domain registrar with Netlify's nameservers
+□ Wait for DNS propagation (up to 24 hours)
+□ Update Railway CORS_ORIGINS to include: https://tcprodojo.com
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 6: TEST EVERYTHING - 5 minutes
+───────────────────────────────────────────────────────────────────
+□ Visit your Netlify URL
+□ Homepage loads correctly
+□ Navigate to Training page
+□ Navigate to Events page
+□ Try admin login: /admin/login
+   Username: admin
+   Password: tcprodojo2025
+□ Dashboard shows stats
+□ Try creating a test event
+□ Verify it saves and appears in list
+□ Delete the test event
+
+═══════════════════════════════════════════════════════════════════
+
+✅ DONE! YOUR SITE IS LIVE!
+───────────────────────────────────────────────────────────────────
+
+Frontend: https://your-site.netlify.app
+Backend: https://your-backend.up.railway.app
+Admin: https://your-site.netlify.app/admin/login
+
+═══════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING
+───────────────────────────────────────────────────────────────────
+
+❌ Frontend shows blank page
+   → Check browser console for errors
+   → Verify REACT_APP_BACKEND_URL is set in Netlify
+   → Redeploy frontend after adding env var
+
+❌ Can't login to admin
+   → Check if Railway backend is running
+   → Verify you ran init_admins.py
+   → Check Railway logs for errors
+
+❌ Frontend can't connect to backend
+   → Verify REACT_APP_BACKEND_URL matches Railway URL
+   → Check CORS_ORIGINS in Railway includes Netlify URL
+   → Check Railway logs for CORS errors
+
+❌ 500 errors on backend
+   → Check Railway logs
+   → Verify MONGO_URL is correct
+   → Test MongoDB connection string
+
+═══════════════════════════════════════════════════════════════════
+
+COSTS
+───────────────────────────────────────────────────────────────────
+MongoDB Atlas:  FREE (M0 tier, 512MB)
+Railway:        FREE (500 hours/month, $5 credit)
+Netlify:        FREE (100GB bandwidth)
+───────────────────────────────────────────────────────────────────
+TOTAL:          $0/month
+═══════════════════════════════════════════════════════════════════
