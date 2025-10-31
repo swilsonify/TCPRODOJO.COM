@@ -113,7 +113,9 @@ const AdminEvents = () => {
       time: '',
       location: '',
       description: '',
-      attendees: ''
+      attendees: '',
+      imageUrl: '',
+      videoUrl: ''
     });
     setEditingEvent(null);
     setShowForm(false);
