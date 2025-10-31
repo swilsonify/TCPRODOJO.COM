@@ -39,8 +39,8 @@ async def init_admins():
     
     # Admin 1
     print("\n=== Creating Admin Account 1 ===")
-    username1 = input("Enter username for Admin 1 (default: admin): ") or "admin"
-    password1 = input("Enter password for Admin 1 (default: tcprodojo2025): ") or "tcprodojo2025"
+    username1 = input("Enter username for Admin 1 (default: elizabeth): ") or "elizabeth"
+    password1 = input("Enter password for Admin 1 (default: Kitch3n3r22): ") or "Kitch3n3r22"
     
     admin1 = {
         "username": username1,
