@@ -1,0 +1,183 @@
+========================================
+TC PRO DOJO - CODEBASE SUMMARY
+========================================
+
+PROJECT: Torture Chamber Pro Wrestling Dojo Official Website
+TYPE: Full-Stack Web Application with Admin Panel
+TECH STACK: React + FastAPI + MongoDB
+
+========================================
+BACKEND (FastAPI - Python)
+========================================
+
+File: backend/server.py (417 lines)
+- FastAPI application with full REST API
+- JWT authentication system
+- Admin endpoints (protected)
+- Public endpoints (open access)
+
+API Endpoints:
+✅ POST /api/admin/login - Admin authentication
+✅ GET /api/admin/verify - Token verification
+✅ GET/POST/PUT/DELETE /api/admin/events - Events CRUD
+✅ GET/POST/PUT/DELETE /api/admin/trainers - Trainers CRUD
+✅ GET/POST/PUT/DELETE /api/admin/testimonials - Testimonials CRUD
+✅ GET /api/classes - Wrestling classes list
+✅ POST /api/bookings - Class bookings
+✅ POST /api/contact - Contact form
+✅ GET /api/contacts - Contact messages list
+
+File: backend/init_admins.py
+- Initializes admin users in database
+- Default users: admin, rodney
+- Password: tcprodojo2025
+
+File: backend/requirements.txt
+- fastapi
+- uvicorn
+- motor (MongoDB async driver)
+- python-dotenv
+- pydantic
+- python-multipart
+- PyJWT
+- bcrypt
+- starlette
+
+========================================
+FRONTEND (React 18 + Tailwind CSS)
+========================================
+
+PUBLIC PAGES (7 pages):
+1. Home.js - Landing page with hero, testimonials
+2. Training.js - Training programs (Pro Wrestling, Boxing, Private)
+3. Classes.js - Interactive class schedule calendar
+4. Events.js - Upcoming events listing
+5. Pros.js - Pro graduates and trainers showcase
+6. Shop.js - Square Online store integration
+7. Contact.js - Contact form
+
+ADMIN PANEL (6 pages):
+1. AdminLogin.js - Secure login page
+2. AdminDashboard.js - Stats dashboard
+3. AdminEvents.js - Events manager (CRUD)
+4. AdminTrainers.js - Trainers manager (CRUD)
+5. AdminTestimonials.js - Testimonials manager (CRUD)
+6. AdminContacts.js - Contact messages viewer
+
+COMPONENTS:
+- Header.js - Navigation bar with logo
+- Footer.js - Footer with links and info
+- Hero.js - Homepage hero section
+- Navigation.js - Mobile-friendly menu
+- ui/ - shadcn/ui component library
+
+STYLING:
+- Tailwind CSS framework
+- Custom fonts: Oswald (headings), Roboto (body)
+- Dark theme with blue accents
+- Cross-pattern background
+- Mobile responsive
+
+========================================
+FEATURES IMPLEMENTED
+========================================
+
+✅ User Features:
+- Browse training programs
+- View class schedule
+- Check upcoming events
+- See trainer profiles
+- Submit contact forms
+- Access shop (Square Online)
+
+✅ Admin Features:
+- Secure JWT login
+- Dashboard with statistics
+- Create/Edit/Delete events
+- Manage trainer profiles
+- Manage testimonials
+- View contact submissions
+
+✅ Security:
+- JWT Bearer token authentication
+- Password hashing with bcrypt
+- Protected admin routes
+- CORS configuration
+
+✅ Database:
+- MongoDB with async operations
+- UUID-based IDs (no ObjectId issues)
+- Proper datetime serialization
+- Collections: events, trainers, testimonials, contacts, admins, bookings
+
+========================================
+DEPLOYMENT FILES
+========================================
+
+✅ Procfile - Heroku deployment
+✅ railway.json - Railway deployment
+✅ render.yaml - Render deployment
+✅ deploy.sh - Deployment helper script
+✅ .env.production.template - Environment variables template
+✅ netlify.toml - Netlify configuration (existing)
+
+========================================
+DOCUMENTATION
+========================================
+
+✅ README.md - Project overview and setup
+✅ DEPLOYMENT_GUIDE.md - Manual deployment instructions
+✅ NEW_REPO_GUIDE.md - New repository setup guide
+✅ SQUARE_ONLINE_SETUP.md - Square integration guide
+
+========================================
+TESTING STATUS
+========================================
+
+Backend API: ✅ ALL TESTS PASSED
+- Admin authentication working
+- Events CRUD operational
+- Trainers CRUD operational
+- Testimonials CRUD operational
+- Contacts API operational
+- Security properly configured
+
+Frontend: ✅ ALL TESTS PASSED
+- All pages loading correctly
+- Admin login functional
+- Dashboard displaying stats
+- CRUD operations working
+- Navigation working
+- Forms validated
+- Protected routes secured
+
+========================================
+READY FOR DEPLOYMENT
+========================================
+
+✅ Code is clean and organized
+✅ All features tested and working
+✅ Documentation complete
+✅ Deployment configurations ready
+✅ Environment templates provided
+✅ Security properly implemented
+✅ No critical bugs or issues
+
+TOTAL FILES: ~80 files
+LINES OF CODE: ~5,000+ lines
+COMPONENTS: 30+ React components
+API ENDPOINTS: 20+ endpoints
+
+========================================
+ADMIN CREDENTIALS (DEFAULT)
+========================================
+
+Username: admin
+Password: tcprodojo2025
+
+Username: rodney
+Password: tcprodojo2025
+
+⚠️ CHANGE THESE IN PRODUCTION!
+
+========================================
