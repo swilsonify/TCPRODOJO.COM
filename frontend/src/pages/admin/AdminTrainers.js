@@ -85,7 +85,9 @@ const AdminTrainers = () => {
       specialty: trainer.specialty,
       experience: trainer.experience,
       bio: trainer.bio,
-      achievements: trainer.achievements || []
+      achievements: trainer.achievements || [],
+      photoUrl: trainer.photoUrl || '',
+      videoUrl: trainer.videoUrl || ''
     });
     setShowForm(true);
   };
