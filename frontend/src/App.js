@@ -14,6 +14,7 @@ import AdminEvents from '@/pages/admin/AdminEvents';
 import AdminTrainers from '@/pages/admin/AdminTrainers';
 import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
+import AdminGallery from '@/pages/admin/AdminGallery';
 
 function App() {
   return (
