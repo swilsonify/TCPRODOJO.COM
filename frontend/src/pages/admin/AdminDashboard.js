@@ -101,6 +101,13 @@ const AdminDashboard = () => {
       count: stats.contacts,
       link: '/admin/contacts',
       description: 'View contact form submissions'
+    },
+    {
+      title: 'Media Gallery',
+      icon: Image,
+      count: stats.gallery || 0,
+      link: '/admin/gallery',
+      description: 'Manage site photos & videos'
     }
   ];
 
