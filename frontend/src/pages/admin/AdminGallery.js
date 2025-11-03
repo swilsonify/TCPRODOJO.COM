@@ -110,7 +110,7 @@ const AdminGallery = () => {
       await axios.delete(`${API}/admin/gallery/${itemId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      loadMedia();
+      await loadMedia();
     } catch (error) {
       console.error('Error deleting media:', error);
       alert('Error deleting media. Please try again.');
