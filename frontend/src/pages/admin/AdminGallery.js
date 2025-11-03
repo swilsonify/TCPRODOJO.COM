@@ -79,8 +79,8 @@ const AdminGallery = () => {
         });
       }
       
+      await loadMedia();
       resetForm();
-      loadMedia();
     } catch (error) {
       console.error('Error saving media:', error);
       alert('Error saving media. Please try again.');
