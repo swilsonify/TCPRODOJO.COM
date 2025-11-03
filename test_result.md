@@ -44,12 +44,19 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 
 ### Testing Required
 1. **Backend Testing** (Priority 1):
-   - Login with admin credentials (elizabeth/Kitch3n3r22 or druonyx/IloveHaro7dUser)
-   - Create gallery item
-   - List gallery items
-   - Update gallery item
-   - Delete gallery item
-   - Verify displayOrder sorting
+   - Login with admin credentials (elizabeth/Kitch3n3r22)
+   - Get auth token from login
+   - Test POST /api/admin/gallery - Create gallery item with:
+     * title: "Test Hero Image"
+     * section: "home-hero"
+     * type: "image"
+     * url: "https://i.imgur.com/test.jpg"
+     * description: "Test description"
+     * displayOrder: 1
+   - Test GET /api/admin/gallery - List all items (should return array with created item)
+   - Test PUT /api/admin/gallery/{id} - Update the created item (change title to "Updated Hero Image")
+   - Test DELETE /api/admin/gallery/{id} - Delete the created item
+   - Verify all responses return proper status codes and data
 
 2. **Frontend Testing** (Priority 2):
    - Admin login flow
