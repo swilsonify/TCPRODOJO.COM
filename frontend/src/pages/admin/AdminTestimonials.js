@@ -14,7 +14,9 @@ const AdminTestimonials = () => {
   const [formData, setFormData] = useState({
     name: '',
     role: '',
-    text: ''
+    text: '',
+    photoUrl: '',
+    videoUrl: ''
   });
   const navigate = useNavigate();
 
@@ -74,7 +76,9 @@ const AdminTestimonials = () => {
     setFormData({
       name: testimonial.name,
       role: testimonial.role,
-      text: testimonial.text
+      text: testimonial.text,
+      photoUrl: testimonial.photoUrl || '',
+      videoUrl: testimonial.videoUrl || ''
     });
     setShowForm(true);
   };
@@ -100,7 +104,9 @@ const AdminTestimonials = () => {
     setFormData({
       name: '',
       role: '',
-      text: ''
+      text: '',
+      photoUrl: '',
+      videoUrl: ''
     });
     setEditingTestimonial(null);
     setShowForm(false);
@@ -171,6 +177,31 @@ const AdminTestimonials = () => {
                   placeholder="Share their experience at TC Pro Dojo..."
                   className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500 resize-none"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-white font-semibold mb-2">Person Photo URL</label>
+                  <input
+                    type="url"
+                    value={formData.photoUrl}
+                    onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })}
+                    placeholder="https://i.imgur.com/example.jpg"
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">Upload to Imgur and paste URL here</p>
+                </div>
+                <div>
+                  <label className="block text-white font-semibold mb-2">Video Testimonial URL</label>
+                  <input
+                    type="url"
+                    value={formData.videoUrl}
+                    onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">YouTube or Vimeo URL</p>
+                </div>
               </div>
 
               <div className="flex space-x-4">

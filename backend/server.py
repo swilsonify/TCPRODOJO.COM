@@ -146,6 +146,18 @@ class TestimonialModel(BaseModel):
     text: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class GalleryModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    section: str
+    type: str  # 'image' or 'video'
+    url: str
+    description: str = ""
+    displayOrder: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Helper functions for admin auth
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -164,7 +176,7 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
         return username
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.JWTError:
+    except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 def hash_password(password: str) -> str:
@@ -392,6 +404,37 @@ async def delete_testimonial(testimonial_id: str, username: str = Depends(verify
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Testimonial not found")
     return {"message": "Testimonial deleted successfully"}
+
+# Admin Gallery Management
+@api_router.get("/admin/gallery", response_model=List[GalleryModel])
+async def get_admin_gallery(username: str = Depends(verify_token)):
+    gallery_items = await db.gallery.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for item in gallery_items:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+    return gallery_items
+
+@api_router.post("/admin/gallery", response_model=GalleryModel)
+async def create_gallery_item(gallery_item: GalleryModel, username: str = Depends(verify_token)):
+    doc = gallery_item.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.gallery.insert_one(doc)
+    return gallery_item
+
+@api_router.put("/admin/gallery/{item_id}", response_model=GalleryModel)
+async def update_gallery_item(item_id: str, gallery_item: GalleryModel, username: str = Depends(verify_token)):
+    doc = gallery_item.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    await db.gallery.update_one({"id": item_id}, {"$set": doc})
+    return gallery_item
+
+@api_router.delete("/admin/gallery/{item_id}")
+async def delete_gallery_item(item_id: str, username: str = Depends(verify_token)):
+    result = await db.gallery.delete_one({"id": item_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Gallery item not found")
+    return {"message": "Gallery item deleted successfully"}
 
 
 # Include the router in the main app

@@ -14,6 +14,7 @@ import AdminEvents from '@/pages/admin/AdminEvents';
 import AdminTrainers from '@/pages/admin/AdminTrainers';
 import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
+import AdminGallery from '@/pages/admin/AdminGallery';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/admin/trainers" element={<AdminTrainers />} />
         <Route path="/admin/testimonials" element={<AdminTestimonials />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
+        <Route path="/admin/gallery" element={<AdminGallery />} />
       </Routes>
     </BrowserRouter>
   );

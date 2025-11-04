@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard } from 'lucide-react';
+import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -101,6 +101,13 @@ const AdminDashboard = () => {
       count: stats.contacts,
       link: '/admin/contacts',
       description: 'View contact form submissions'
+    },
+    {
+      title: 'Media Gallery',
+      icon: Image,
+      count: stats.gallery || 0,
+      link: '/admin/gallery',
+      description: 'Manage site photos & videos'
     }
   ];
 
@@ -164,7 +171,7 @@ const AdminDashboard = () => {
 
         <div className="mt-12">
           <h3 className="text-2xl font-bold text-white mb-6">Quick Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Link
               to="/admin/events"
               className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
@@ -185,6 +192,13 @@ const AdminDashboard = () => {
             >
               <MessageSquare className="text-blue-400 mx-auto mb-3" size={32} />
               <div className="text-white font-semibold">Add Testimonial</div>
+            </Link>
+            <Link
+              to="/admin/gallery"
+              className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
+            >
+              <Image className="text-blue-400 mx-auto mb-3" size={32} />
+              <div className="text-white font-semibold">Add Media</div>
             </Link>
           </div>
         </div>
