@@ -80,7 +80,7 @@ const Home = () => {
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
                   className="absolute top-0 left-0 w-full h-full rounded-lg shadow-2xl"
-                  src="https://www.youtube.com/embed/H7MbxBp7zvA"
+                  src="https://www.youtube.com/embed/H7MbxBp7zvA?controls=1&rel=0&modestbranding=1"
                   title="Torture Chamber Pro Wrestling Dojo"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
