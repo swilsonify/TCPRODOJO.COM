@@ -79,31 +79,31 @@ const Pros = () => {
       ]
     },
     {
-      name: 'Coach Sarah Martinez',
-      aka: 'Sarah "Lightning" Chen',
+      name: 'Mustapha Jordan',
+      aka: '',
       title: 'Senior Wrestling Instructor',
-      specialty: 'Technical Wrestling & High-Flying',
+      specialty: 'Technical Wrestling',
       experience: '15+ years',
-      bio: 'Former independent circuit champion and one of the most respected names in women\'s wrestling. Sarah brings precision and innovation to every class. Her technical mastery and high-flying style make her an invaluable asset to our training team.',
+      bio: 'Writeup to come',
       achievements: [
-        'Women\'s Champion (3x)',
-        'International Tournament Winner',
-        'Technical Wrestling Specialist',
-        'Pioneer in women\'s wrestling training'
+        'To be added',
+        'To be added',
+        'To be added',
+        'To be added'
       ]
     },
     {
-      name: 'Coach Marcus "Titan" Williams',
+      name: 'Johnny North',
       aka: '',
-      title: 'Performance & Boxing Coach',
-      specialty: 'Character Work, Boxing & Conditioning',
+      title: 'Performance Coach',
+      specialty: 'Character Work & Conditioning',
       experience: '12+ years',
-      bio: 'Marcus specializes in character development, ring psychology, and boxing fundamentals. His comprehensive approach helps students develop both their in-ring skills and their on-camera presence. He understands what it takes to succeed in the modern wrestling landscape.',
+      bio: 'Writeup to come',
       achievements: [
-        'Former Independent Champion',
-        'Certified Boxing Coach',
-        'Over 500 professional matches',
-        'Expert in promo and character work'
+        'To be added',
+        'To be added',
+        'To be added',
+        'To be added'
       ]
     }
   ];
