@@ -197,10 +197,10 @@ const Pros = () => {
           </div>
         </div>
 
-        {/* TRAINERS SECTION */}
+        {/* COACHES SECTION */}
         <div>
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">OUR TRAINERS</h2>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">OUR COACHES</h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Learn from experienced professionals who have competed at the highest levels and are dedicated to developing the next generation.
             </p>
