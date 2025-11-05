@@ -113,19 +113,19 @@ const Pros = () => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">OUR PROS</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">SUCCESS</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
             Meet the champions we've built and the world-class coaches who train them.
           </p>
         </div>
 
-        {/* PRO GRADUATES SECTION */}
+        {/* SUCCESS STORIES SECTION */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">TC GRADUATES GONE PRO</h2>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">SUCCESS STORIES</h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Our students compete on the biggest stages around the world. These are just a few of the many success stories.
+              Our students compete on the biggest stages around the world.
             </p>
           </div>
 
