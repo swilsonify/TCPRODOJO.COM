@@ -27,27 +27,39 @@ const Pros = () => {
       achievement: 'Touring UK & Japan',
       yearGraduated: '2020',
       bio: 'TC Pro Pathway graduate. Currently touring with major promotions across Europe and Asia.'
+    }
+  ];
+
+  const endorsements = [
+    {
+      title: 'Endorsement Video 1',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
     },
     {
-      name: 'Sofia "La Reina" Rodriguez',
-      promotion: 'AAA Lucha Libre',
-      achievement: 'Tag Team Champion',
-      yearGraduated: '2021',
-      bio: 'Specialized in high-flying Lucha style at TC. Now performing for one of Mexico\'s premier wrestling companies.'
+      title: 'Endorsement Video 2',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
     },
     {
-      name: 'David "Dominator" Chen',
-      promotion: 'NWA',
-      achievement: 'Television Regular',
-      yearGraduated: '2017',
-      bio: 'One of our earliest success stories. Regular on NWA programming and mentor to current TC students.'
+      title: 'Endorsement Video 3',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
     },
     {
-      name: 'Isabella "Fury" Thompson',
-      promotion: 'GCW & Beyond',
-      achievement: 'Death Match Specialist',
-      yearGraduated: '2022',
-      bio: 'Trained in both wrestling and boxing at TC. Known for her fearless hardcore style and technical prowess.'
+      title: 'Endorsement Video 4',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 5',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 6',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
     }
   ];
 
