@@ -151,6 +151,52 @@ const Pros = () => {
           </div>
         </div>
 
+        {/* TC ENDORSEMENTS SECTION */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">TC ENDORSEMENTS</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Hear from industry professionals about Torture Chamber Pro Wrestling Dojo.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            {endorsements.map((endorsement, index) => (
+              <div
+                key={index}
+                className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
+                data-testid={`endorsement-${index}`}
+              >
+                {/* Video Placeholder */}
+                <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                  {endorsement.videoUrl ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={endorsement.videoUrl}
+                      title={endorsement.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <div className="text-center p-8">
+                      <svg className="w-16 h-16 mx-auto mb-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                      </svg>
+                      <span className="text-gray-500 text-sm">Video Coming Soon</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white mb-2">{endorsement.title}</h3>
+                  <p className="text-gray-400 text-sm">{endorsement.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* TRAINERS SECTION */}
         <div>
           <div className="text-center mb-12">
