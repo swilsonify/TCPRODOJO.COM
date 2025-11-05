@@ -32,32 +32,62 @@ const Pros = () => {
 
   const endorsements = [
     {
-      title: 'Endorsement Video 1',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
+      title: 'Kevin Owens, WWE Universal Champion',
+      videoUrl: 'https://www.youtube.com/embed/p5ysJ8gSKn0',
+      description: 'WWE Universal Champion Kevin Owens endorsement'
     },
     {
-      title: 'Endorsement Video 2',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
+      title: 'Kevin Owens, Presenting WWE Intercontinental Title to DRU ONYX',
+      videoUrl: 'https://www.youtube.com/embed/Khvh1f6sX1o',
+      description: 'Kevin Owens presenting the WWE Intercontinental title to DRU ONYX'
     },
     {
-      title: 'Endorsement Video 3',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
+      title: 'Kevin Owens, WWE Intercontinental Champion',
+      videoUrl: 'https://www.youtube.com/embed/pneApAAuS0w',
+      description: 'WWE Intercontinental Champion Kevin Owens endorsement'
     },
     {
-      title: 'Endorsement Video 4',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
+      title: 'Kevin Owens, NXT',
+      videoUrl: 'https://www.youtube.com/embed/02Awi83gTyQ',
+      description: 'Kevin Owens NXT endorsement'
     },
     {
-      title: 'Endorsement Video 5',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
+      title: 'Kevin Owens, Training for Something Big',
+      videoUrl: 'https://www.youtube.com/embed/SdQZWVqfP_A',
+      description: 'Kevin Owens training for something big'
     },
     {
       title: 'Endorsement Video 6',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 7',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 8',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 9',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 10',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 11',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 12',
       videoUrl: '', // To be added
       description: 'Endorsement from industry professional'
     }
