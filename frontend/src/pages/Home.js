@@ -70,7 +70,7 @@ const Home = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">BUILT FOR CHAMPIONS.</h2>
             <h3 className="text-2xl md:text-3xl font-bold text-blue-400 mb-8">Montreal's International Pro Wrestling School</h3>
             <p className="text-gray-300 text-lg leading-relaxed mb-12">
-              Founded by coach, promoter and professional wrestler Rodney Kellman (aka Dru Onyx / Soa Amin), Torture Chamber Pro Wrestling Dojo delivers 
+              Founded by coach, promoter and professional wrestler Dru Onyx, Torture Chamber Pro Wrestling Dojo delivers 
               a complete journey - from fundamentals to televised performance. Our top grads tour globally and work across radio, TV and film. 
               In 2025, we celebrate our 21st anniversary and we're recruiting the next wave of professional wrestlers.
             </p>
