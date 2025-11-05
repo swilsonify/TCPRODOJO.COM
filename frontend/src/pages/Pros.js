@@ -65,12 +65,12 @@ const Pros = () => {
 
   const trainers = [
     {
-      name: 'Rodney Kellman',
-      aka: 'Dru Onyx / Soa Amin',
+      name: 'DRU ONYX',
+      aka: 'Soa Amin',
       title: 'Head Coach & Founder',
       specialty: 'All Aspects of Pro Wrestling',
       experience: '20+ years',
-      bio: 'Founder of Torture Chamber Pro Wrestling Dojo in 2004. Rodney has over two decades of experience as both a performer and promoter. His vision was to create Montreal\'s premier training facility for aspiring professional wrestlers. Under his guidance, TC has produced champions who compete globally.',
+      bio: 'Founder of Torture Chamber Pro Wrestling Dojo in 2004. Dru Onyx has over two decades of experience as both a performer and promoter. His vision was to create Montreal\'s premier training facility for aspiring professional wrestlers. Under his guidance, TC has produced champions who compete globally.',
       achievements: [
         'Founded Torture Chamber Dojo - 2004',
         'Trained 200+ professional wrestlers',
