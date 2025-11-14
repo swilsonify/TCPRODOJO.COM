@@ -167,13 +167,13 @@ const AdminMediaLibrary = () => {
                 <div className="aspect-square bg-gray-700 flex items-center justify-center">
                   {isImage(file.filename) ? (
                     <img
-                      src={`${API}${file.url}`}
+                      src={file.url}
                       alt={file.filename}
                       className="w-full h-full object-cover"
                     />
                   ) : isVideo(file.filename) ? (
                     <video
-                      src={`${API}${file.url}`}
+                      src={file.url}
                       className="w-full h-full object-cover"
                     />
                   ) : (
