@@ -110,6 +110,27 @@ const AdminDashboard = () => {
       description: 'Manage SUCCESS page coaches'
     },
     {
+      title: 'Success Stories',
+      icon: Trophy,
+      count: stats.success_stories || 0,
+      link: '/admin/success-stories',
+      description: 'Manage graduate success stories'
+    },
+    {
+      title: 'TC Endorsements',
+      icon: Video,
+      count: stats.endorsements || 0,
+      link: '/admin/endorsements',
+      description: 'Manage endorsement videos'
+    },
+    {
+      title: 'Media Library',
+      icon: Image,
+      count: stats.media || 0,
+      link: '/admin/media',
+      description: 'Upload & manage photos/videos'
+    },
+    {
       title: 'Media Gallery',
       icon: Image,
       count: stats.gallery || 0,
