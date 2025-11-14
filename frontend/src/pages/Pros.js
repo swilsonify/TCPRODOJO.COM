@@ -1,10 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Award, Users as UsersIcon, Trophy } from 'lucide-react';
 
 const Pros = () => {
+  const [successStories, setSuccessStories] = useState([]);
+  const [endorsements, setEndorsements] = useState([]);
+  const [coaches, setCoaches] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    try {
+      const [storiesRes, endorsementsRes, coachesRes] = await Promise.all([
+        axios.get(`${API}/api/success-stories`),
+        axios.get(`${API}/api/endorsements`),
+        axios.get(`${API}/api/coaches`)
+      ]);
+      
+      setSuccessStories(storiesRes.data);
+      setEndorsements(endorsementsRes.data);
+      setCoaches(coachesRes.data);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const proGraduates = [
     {
