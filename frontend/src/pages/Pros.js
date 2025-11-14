@@ -63,7 +63,7 @@ const Pros = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-            {proGraduates.map((graduate, index) => (
+            {successStories.map((graduate, index) => (
               <div
                 key={index}
                 className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
