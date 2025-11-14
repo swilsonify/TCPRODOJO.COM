@@ -1,142 +1,45 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Award, Users as UsersIcon, Trophy } from 'lucide-react';
 
 const Pros = () => {
+  const [successStories, setSuccessStories] = useState([]);
+  const [endorsements, setEndorsements] = useState([]);
+  const [coaches, setCoaches] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadData();
   }, []);
 
-  const proGraduates = [
-    {
-      name: 'Alex "The Apex" Martinez',
-      promotion: 'Major League Wrestling',
-      achievement: 'MLW Champion 2023',
-      yearGraduated: '2018',
-      bio: 'Trained at TC from 2016-2018. Now competing on national television and touring internationally.'
-    },
-    {
-      name: 'Victoria "V-Force" Stone',
-      promotion: 'Independent Circuit',
-      achievement: 'Women\'s Champion (Multiple Promotions)',
-      yearGraduated: '2019',
-      bio: 'Started as a complete beginner at Torture Chamber. Now one of the most sought-after talents on the independent scene.'
-    },
-    {
-      name: 'Marcus "The Machine" Johnson',
-      promotion: 'International Tours',
-      achievement: 'Touring UK & Japan',
-      yearGraduated: '2020',
-      bio: 'TC Pro Pathway graduate. Currently touring with major promotions across Europe and Asia.'
+  const loadData = async () => {
+    try {
+      const [storiesRes, endorsementsRes, coachesRes] = await Promise.all([
+        axios.get(`${API}/api/success-stories`),
+        axios.get(`${API}/api/endorsements`),
+        axios.get(`${API}/api/coaches`)
+      ]);
+      
+      setSuccessStories(storiesRes.data);
+      setEndorsements(endorsementsRes.data);
+      setCoaches(coachesRes.data);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const endorsements = [
-    {
-      title: 'Kevin Owens, WWE Universal Champion',
-      videoUrl: 'https://www.youtube.com/embed/p5ysJ8gSKn0',
-      description: 'WWE Universal Champion Kevin Owens endorsement'
-    },
-    {
-      title: 'Kevin Owens, Presenting WWE Intercontinental Title to DRU ONYX',
-      videoUrl: 'https://www.youtube.com/embed/Khvh1f6sX1o',
-      description: 'Kevin Owens presenting the WWE Intercontinental title to DRU ONYX'
-    },
-    {
-      title: 'Kevin Owens, WWE Intercontinental Champion',
-      videoUrl: 'https://www.youtube.com/embed/pneApAAuS0w',
-      description: 'WWE Intercontinental Champion Kevin Owens endorsement'
-    },
-    {
-      title: 'Kevin Owens, NXT',
-      videoUrl: 'https://www.youtube.com/embed/02Awi83gTyQ',
-      description: 'Kevin Owens NXT endorsement'
-    },
-    {
-      title: 'Kevin Owens, Training for Something Big',
-      videoUrl: 'https://www.youtube.com/embed/SdQZWVqfP_A',
-      description: 'Kevin Owens training for something big'
-    },
-    {
-      title: 'Endorsement Video 6',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
-    },
-    {
-      title: 'Endorsement Video 7',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
-    },
-    {
-      title: 'Endorsement Video 8',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
-    },
-    {
-      title: 'Endorsement Video 9',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
-    },
-    {
-      title: 'Endorsement Video 10',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
-    },
-    {
-      title: 'Endorsement Video 11',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
-    },
-    {
-      title: 'Endorsement Video 12',
-      videoUrl: '', // To be added
-      description: 'Endorsement from industry professional'
-    }
-  ];
-
-  const trainers = [
-    {
-      name: 'DRU ONYX',
-      aka: 'Soa Amin',
-      title: 'Head Coach & Founder',
-      specialty: 'All Aspects of Pro Wrestling',
-      experience: '20+ years',
-      bio: 'Founder of Torture Chamber Pro Wrestling Dojo in 2004. Dru Onyx has over two decades of experience as both a performer and promoter. His vision was to create Montreal\'s premier training facility for aspiring professional wrestlers. Under his guidance, TC has produced champions who compete globally.',
-      achievements: [
-        'Founded Torture Chamber Dojo - 2004',
-        'Trained 200+ professional wrestlers',
-        'Promoter & Wrestling Coach',
-        'Connections with major promotions worldwide'
-      ]
-    },
-    {
-      name: 'Mustapha Jordan',
-      aka: '',
-      title: 'Senior Wrestling Instructor',
-      specialty: 'Technical Wrestling',
-      experience: '15+ years',
-      bio: 'Writeup to come',
-      achievements: [
-        'To be added',
-        'To be added',
-        'To be added',
-        'To be added'
-      ]
-    },
-    {
-      name: 'Johnny North',
-      aka: '',
-      title: 'Performance Coach',
-      specialty: 'Character Work & Conditioning',
-      experience: '12+ years',
-      bio: 'Writeup to come',
-      achievements: [
-        'To be added',
-        'To be added',
-        'To be added',
-        'To be added'
-      ]
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="pt-28 pb-20 px-4 min-h-screen flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-28 pb-20 px-4" data-testid="pros-page">
@@ -160,7 +63,7 @@ const Pros = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-            {proGraduates.map((graduate, index) => (
+            {successStories.map((graduate, index) => (
               <div
                 key={index}
                 className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
@@ -236,7 +139,7 @@ const Pros = () => {
           </div>
 
           <div className="max-w-6xl mx-auto space-y-12">
-            {trainers.map((trainer, index) => (
+            {coaches.map((trainer, index) => (
               <div
                 key={index}
                 className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift flex flex-col md:flex-row"
