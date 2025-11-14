@@ -15,6 +15,10 @@ import AdminTrainers from '@/pages/admin/AdminTrainers';
 import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
 import AdminGallery from '@/pages/admin/AdminGallery';
+import AdminCoaches from '@/pages/admin/AdminCoaches';
+import AdminSuccessStories from '@/pages/admin/AdminSuccessStories';
+import AdminEndorsements from '@/pages/admin/AdminEndorsements';
+import AdminMediaLibrary from '@/pages/admin/AdminMediaLibrary';
 
 function App() {
   return (
@@ -39,6 +43,10 @@ function App() {
         <Route path="/admin/testimonials" element={<AdminTestimonials />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
         <Route path="/admin/gallery" element={<AdminGallery />} />
+        <Route path="/admin/coaches" element={<AdminCoaches />} />
+        <Route path="/admin/success-stories" element={<AdminSuccessStories />} />
+        <Route path="/admin/endorsements" element={<AdminEndorsements />} />
+        <Route path="/admin/media" element={<AdminMediaLibrary />} />
       </Routes>
     </BrowserRouter>
   );
