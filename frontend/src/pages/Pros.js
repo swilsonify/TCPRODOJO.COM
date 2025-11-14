@@ -201,7 +201,7 @@ const Pros = () => {
                 <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
                   {endorsement.videoUrl ? (
                     <iframe
-                      className="w-full h-full"
+                      className="w-full h-full border-4 border-blue-500 rounded-lg"
                       src={endorsement.videoUrl}
                       title={endorsement.title}
                       frameBorder="0"
@@ -220,7 +220,6 @@ const Pros = () => {
                 
                 <div className="p-6">
                   <h3 className="text-lg font-bold text-white mb-2">{endorsement.title}</h3>
-                  <p className="text-gray-400 text-sm">{endorsement.description}</p>
                 </div>
               </div>
             ))}
