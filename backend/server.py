@@ -14,6 +14,9 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
 import shutil
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 
 ROOT_DIR = Path(__file__).parent
