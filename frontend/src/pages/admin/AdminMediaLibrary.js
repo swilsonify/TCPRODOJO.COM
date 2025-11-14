@@ -203,7 +203,7 @@ const AdminMediaLibrary = () => {
                       )}
                     </button>
                     <button
-                      onClick={() => handleDelete(file.filename)}
+                      onClick={() => handleDelete(file)}
                       className="bg-red-600 text-white p-1 rounded hover:bg-red-700"
                     >
                       <Trash2 size={14} />
