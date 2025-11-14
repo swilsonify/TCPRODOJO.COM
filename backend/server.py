@@ -508,9 +508,124 @@ async def delete_coach(coach_id: str, username: str = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="Coach not found")
     return {"message": "Coach deleted successfully"}
 
+# Admin Success Stories Management
+@api_router.get("/admin/success-stories", response_model=List[SuccessStoryModel])
+async def get_admin_success_stories(username: str = Depends(verify_token)):
+    stories = await db.success_stories.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for story in stories:
+        if isinstance(story.get('created_at'), str):
+            story['created_at'] = datetime.fromisoformat(story['created_at'])
+    return stories
+
+@api_router.post("/admin/success-stories", response_model=SuccessStoryModel)
+async def create_success_story(story: SuccessStoryModel, username: str = Depends(verify_token)):
+    doc = story.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.success_stories.insert_one(doc)
+    return story
+
+@api_router.put("/admin/success-stories/{story_id}", response_model=SuccessStoryModel)
+async def update_success_story(story_id: str, story: SuccessStoryModel, username: str = Depends(verify_token)):
+    doc = story.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    await db.success_stories.update_one({"id": story_id}, {"$set": doc})
+    return story
+
+@api_router.delete("/admin/success-stories/{story_id}")
+async def delete_success_story(story_id: str, username: str = Depends(verify_token)):
+    result = await db.success_stories.delete_one({"id": story_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Success story not found")
+    return {"message": "Success story deleted successfully"}
+
+# Admin Endorsements Management
+@api_router.get("/admin/endorsements", response_model=List[EndorsementModel])
+async def get_admin_endorsements(username: str = Depends(verify_token)):
+    endorsements = await db.endorsements.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for endorsement in endorsements:
+        if isinstance(endorsement.get('created_at'), str):
+            endorsement['created_at'] = datetime.fromisoformat(endorsement['created_at'])
+    return endorsements
+
+@api_router.post("/admin/endorsements", response_model=EndorsementModel)
+async def create_endorsement(endorsement: EndorsementModel, username: str = Depends(verify_token)):
+    doc = endorsement.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.endorsements.insert_one(doc)
+    return endorsement
+
+@api_router.put("/admin/endorsements/{endorsement_id}", response_model=EndorsementModel)
+async def update_endorsement(endorsement_id: str, endorsement: EndorsementModel, username: str = Depends(verify_token)):
+    doc = endorsement.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    await db.endorsements.update_one({"id": endorsement_id}, {"$set": doc})
+    return endorsement
+
+@api_router.delete("/admin/endorsements/{endorsement_id}")
+async def delete_endorsement(endorsement_id: str, username: str = Depends(verify_token)):
+    result = await db.endorsements.delete_one({"id": endorsement_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Endorsement not found")
+    return {"message": "Endorsement deleted successfully"}
+
+# Media Upload
+UPLOAD_DIR = Path(__file__).parent / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+@api_router.post("/admin/upload")
+async def upload_file(file: UploadFile = File(...), username: str = Depends(verify_token)):
+    try:
+        # Generate unique filename
+        file_extension = Path(file.filename).suffix
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
+        file_path = UPLOAD_DIR / unique_filename
+        
+        # Save file
+        with file_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Return URL to access the file
+        file_url = f"/uploads/{unique_filename}"
+        return {"url": file_url, "filename": unique_filename}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+
+@api_router.get("/admin/media")
+async def list_media_files(username: str = Depends(verify_token)):
+    try:
+        files = []
+        for file_path in UPLOAD_DIR.iterdir():
+            if file_path.is_file():
+                files.append({
+                    "filename": file_path.name,
+                    "url": f"/uploads/{file_path.name}",
+                    "size": file_path.stat().st_size,
+                    "created": file_path.stat().st_ctime
+                })
+        return sorted(files, key=lambda x: x['created'], reverse=True)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to list files: {str(e)}")
+
+@api_router.delete("/admin/media/{filename}")
+async def delete_media_file(filename: str, username: str = Depends(verify_token)):
+    try:
+        file_path = UPLOAD_DIR / filename
+        if file_path.exists():
+            file_path.unlink()
+            return {"message": "File deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="File not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Delete failed: {str(e)}")
+
 
 # Include the router in the main app
 app.include_router(api_router)
+
+# Mount uploads directory as static files
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
