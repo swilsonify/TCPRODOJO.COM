@@ -452,6 +452,37 @@ async def delete_gallery_item(item_id: str, username: str = Depends(verify_token
         raise HTTPException(status_code=404, detail="Gallery item not found")
     return {"message": "Gallery item deleted successfully"}
 
+# Admin Coaches Management
+@api_router.get("/admin/coaches", response_model=List[CoachModel])
+async def get_admin_coaches(username: str = Depends(verify_token)):
+    coaches = await db.coaches.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for coach in coaches:
+        if isinstance(coach.get('created_at'), str):
+            coach['created_at'] = datetime.fromisoformat(coach['created_at'])
+    return coaches
+
+@api_router.post("/admin/coaches", response_model=CoachModel)
+async def create_coach(coach: CoachModel, username: str = Depends(verify_token)):
+    doc = coach.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.coaches.insert_one(doc)
+    return coach
+
+@api_router.put("/admin/coaches/{coach_id}", response_model=CoachModel)
+async def update_coach(coach_id: str, coach: CoachModel, username: str = Depends(verify_token)):
+    doc = coach.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    await db.coaches.update_one({"id": coach_id}, {"$set": doc})
+    return coach
+
+@api_router.delete("/admin/coaches/{coach_id}")
+async def delete_coach(coach_id: str, username: str = Depends(verify_token)):
+    result = await db.coaches.delete_one({"id": coach_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Coach not found")
+    return {"message": "Coach deleted successfully"}
+
 
 # Include the router in the main app
 app.include_router(api_router)
