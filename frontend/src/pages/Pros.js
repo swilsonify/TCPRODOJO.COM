@@ -27,38 +27,80 @@ const Pros = () => {
       achievement: 'Touring UK & Japan',
       yearGraduated: '2020',
       bio: 'TC Pro Pathway graduate. Currently touring with major promotions across Europe and Asia.'
+    }
+  ];
+
+  const endorsements = [
+    {
+      title: 'Kevin Owens, WWE Universal Champion',
+      videoUrl: 'https://www.youtube.com/embed/p5ysJ8gSKn0',
+      description: 'WWE Universal Champion Kevin Owens endorsement'
     },
     {
-      name: 'Sofia "La Reina" Rodriguez',
-      promotion: 'AAA Lucha Libre',
-      achievement: 'Tag Team Champion',
-      yearGraduated: '2021',
-      bio: 'Specialized in high-flying Lucha style at TC. Now performing for one of Mexico\'s premier wrestling companies.'
+      title: 'Kevin Owens, Presenting WWE Intercontinental Title to DRU ONYX',
+      videoUrl: 'https://www.youtube.com/embed/Khvh1f6sX1o',
+      description: 'Kevin Owens presenting the WWE Intercontinental title to DRU ONYX'
     },
     {
-      name: 'David "Dominator" Chen',
-      promotion: 'NWA',
-      achievement: 'Television Regular',
-      yearGraduated: '2017',
-      bio: 'One of our earliest success stories. Regular on NWA programming and mentor to current TC students.'
+      title: 'Kevin Owens, WWE Intercontinental Champion',
+      videoUrl: 'https://www.youtube.com/embed/pneApAAuS0w',
+      description: 'WWE Intercontinental Champion Kevin Owens endorsement'
     },
     {
-      name: 'Isabella "Fury" Thompson',
-      promotion: 'GCW & Beyond',
-      achievement: 'Death Match Specialist',
-      yearGraduated: '2022',
-      bio: 'Trained in both wrestling and boxing at TC. Known for her fearless hardcore style and technical prowess.'
+      title: 'Kevin Owens, NXT',
+      videoUrl: 'https://www.youtube.com/embed/02Awi83gTyQ',
+      description: 'Kevin Owens NXT endorsement'
+    },
+    {
+      title: 'Kevin Owens, Training for Something Big',
+      videoUrl: 'https://www.youtube.com/embed/SdQZWVqfP_A',
+      description: 'Kevin Owens training for something big'
+    },
+    {
+      title: 'Endorsement Video 6',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 7',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 8',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 9',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 10',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 11',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
+    },
+    {
+      title: 'Endorsement Video 12',
+      videoUrl: '', // To be added
+      description: 'Endorsement from industry professional'
     }
   ];
 
   const trainers = [
     {
-      name: 'Rodney Kellman',
-      aka: 'Dru Onyx / Soa Amin',
+      name: 'DRU ONYX',
+      aka: 'Soa Amin',
       title: 'Head Coach & Founder',
       specialty: 'All Aspects of Pro Wrestling',
       experience: '20+ years',
-      bio: 'Founder of Torture Chamber Pro Wrestling Dojo in 2004. Rodney has over two decades of experience as both a performer and promoter. His vision was to create Montreal\'s premier training facility for aspiring professional wrestlers. Under his guidance, TC has produced champions who compete globally.',
+      bio: 'Founder of Torture Chamber Pro Wrestling Dojo in 2004. Dru Onyx has over two decades of experience as both a performer and promoter. His vision was to create Montreal\'s premier training facility for aspiring professional wrestlers. Under his guidance, TC has produced champions who compete globally.',
       achievements: [
         'Founded Torture Chamber Dojo - 2004',
         'Trained 200+ professional wrestlers',
@@ -67,31 +109,31 @@ const Pros = () => {
       ]
     },
     {
-      name: 'Coach Sarah Martinez',
-      aka: 'Sarah "Lightning" Chen',
+      name: 'Mustapha Jordan',
+      aka: '',
       title: 'Senior Wrestling Instructor',
-      specialty: 'Technical Wrestling & High-Flying',
+      specialty: 'Technical Wrestling',
       experience: '15+ years',
-      bio: 'Former independent circuit champion and one of the most respected names in women\'s wrestling. Sarah brings precision and innovation to every class. Her technical mastery and high-flying style make her an invaluable asset to our training team.',
+      bio: 'Writeup to come',
       achievements: [
-        'Women\'s Champion (3x)',
-        'International Tournament Winner',
-        'Technical Wrestling Specialist',
-        'Pioneer in women\'s wrestling training'
+        'To be added',
+        'To be added',
+        'To be added',
+        'To be added'
       ]
     },
     {
-      name: 'Coach Marcus "Titan" Williams',
+      name: 'Johnny North',
       aka: '',
-      title: 'Performance & Boxing Coach',
-      specialty: 'Character Work, Boxing & Conditioning',
+      title: 'Performance Coach',
+      specialty: 'Character Work & Conditioning',
       experience: '12+ years',
-      bio: 'Marcus specializes in character development, ring psychology, and boxing fundamentals. His comprehensive approach helps students develop both their in-ring skills and their on-camera presence. He understands what it takes to succeed in the modern wrestling landscape.',
+      bio: 'Writeup to come',
       achievements: [
-        'Former Independent Champion',
-        'Certified Boxing Coach',
-        'Over 500 professional matches',
-        'Expert in promo and character work'
+        'To be added',
+        'To be added',
+        'To be added',
+        'To be added'
       ]
     }
   ];
@@ -101,19 +143,19 @@ const Pros = () => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">OUR PROS</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">SUCCESS</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
             Meet the champions we've built and the world-class coaches who train them.
           </p>
         </div>
 
-        {/* PRO GRADUATES SECTION */}
+        {/* SUCCESS STORIES SECTION */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">TC GRADUATES GONE PRO</h2>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">SUCCESS STORIES</h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Our students compete on the biggest stages around the world. These are just a few of the many success stories.
+              Our students compete on the biggest stages around the world.
             </p>
           </div>
 
@@ -139,10 +181,55 @@ const Pros = () => {
           </div>
         </div>
 
-        {/* TRAINERS SECTION */}
+        {/* TC ENDORSEMENTS SECTION */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">TC ENDORSEMENTS</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Hear from industry professionals about Torture Chamber Pro Wrestling Dojo.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {endorsements.map((endorsement, index) => (
+              <div
+                key={index}
+                className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
+                data-testid={`endorsement-${index}`}
+              >
+                {/* Video Placeholder */}
+                <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                  {endorsement.videoUrl ? (
+                    <iframe
+                      className="w-full h-full border-4 border-blue-500 rounded-lg"
+                      src={endorsement.videoUrl}
+                      title={endorsement.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <div className="text-center p-8">
+                      <svg className="w-16 h-16 mx-auto mb-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                      </svg>
+                      <span className="text-gray-500 text-sm">Video Coming Soon</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white mb-2">{endorsement.title}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* COACHES SECTION */}
         <div>
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">OUR TRAINERS</h2>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">OUR COACHES</h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Learn from experienced professionals who have competed at the highest levels and are dedicated to developing the next generation.
             </p>

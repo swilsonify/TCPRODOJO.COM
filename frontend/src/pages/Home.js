@@ -70,44 +70,22 @@ const Home = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">BUILT FOR CHAMPIONS.</h2>
             <h3 className="text-2xl md:text-3xl font-bold text-blue-400 mb-8">Montreal's International Pro Wrestling School</h3>
             <p className="text-gray-300 text-lg leading-relaxed mb-12">
-              Founded by coach, promoter and professional wrestler Rodney Kellman (aka Dru Onyx / Soa Amin), Torture Chamber Pro Wrestling Dojo delivers 
+              Founded by coach, promoter and professional wrestler Dru Onyx, Torture Chamber Pro Wrestling Dojo delivers 
               a complete journey - from fundamentals to televised performance. Our top grads tour globally and work across radio, TV and film. 
               In 2025, we celebrate our 21st anniversary and we're recruiting the next wave of professional wrestlers.
             </p>
 
-            {/* Photo Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-              <div className="aspect-square bg-gray-800 rounded-lg flex items-center justify-center hover-lift">
-                <div className="text-gray-600 text-center">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-xs">Training Action</span>
-                </div>
-              </div>
-              <div className="aspect-square bg-gray-800 rounded-lg flex items-center justify-center hover-lift">
-                <div className="text-gray-600 text-center">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-xs">Ring Work</span>
-                </div>
-              </div>
-              <div className="aspect-square bg-gray-800 rounded-lg flex items-center justify-center hover-lift">
-                <div className="text-gray-600 text-center">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-xs">Champions</span>
-                </div>
-              </div>
-              <div className="aspect-square bg-gray-800 rounded-lg flex items-center justify-center hover-lift">
-                <div className="text-gray-600 text-center">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-xs">Performance</span>
-                </div>
+            {/* YouTube Video Embed */}
+            <div className="mb-12">
+              <div className="relative w-full border-4 border-blue-500 rounded-lg shadow-2xl" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full rounded-lg"
+                  src="https://www.youtube.com/embed/H7MbxBp7zvA?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&loop=1&playlist=H7MbxBp7zvA"
+                  title="Torture Chamber Pro Wrestling Dojo"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
               </div>
             </div>
           </div>
