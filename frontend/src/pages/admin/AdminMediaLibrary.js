@@ -73,14 +73,16 @@ const AdminMediaLibrary = () => {
     }
   };
 
-  const handleDelete = async (filename) => {
-    if (!window.confirm(`Are you sure you want to delete ${filename}?`)) {
+  const handleDelete = async (file) => {
+    if (!window.confirm(`Are you sure you want to delete ${file.filename}?`)) {
       return;
     }
 
     const token = localStorage.getItem('adminToken');
     try {
-      await axios.delete(`${API}/api/admin/media/${filename}`, {
+      // Use public_id for deletion if available, otherwise filename
+      const deleteId = file.public_id || file.filename;
+      await axios.delete(`${API}/api/admin/media/${encodeURIComponent(deleteId)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       await loadMedia();
@@ -91,8 +93,8 @@ const AdminMediaLibrary = () => {
   };
 
   const copyToClipboard = (url) => {
-    const fullUrl = `${API}${url}`;
-    navigator.clipboard.writeText(fullUrl);
+    // For Cloudinary URLs, use the full URL directly
+    navigator.clipboard.writeText(url);
     setCopiedUrl(url);
     setTimeout(() => setCopiedUrl(null), 2000);
   };
@@ -165,13 +167,13 @@ const AdminMediaLibrary = () => {
                 <div className="aspect-square bg-gray-700 flex items-center justify-center">
                   {isImage(file.filename) ? (
                     <img
-                      src={`${API}${file.url}`}
+                      src={file.url}
                       alt={file.filename}
                       className="w-full h-full object-cover"
                     />
                   ) : isVideo(file.filename) ? (
                     <video
-                      src={`${API}${file.url}`}
+                      src={file.url}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -201,7 +203,7 @@ const AdminMediaLibrary = () => {
                       )}
                     </button>
                     <button
-                      onClick={() => handleDelete(file.filename)}
+                      onClick={() => handleDelete(file)}
                       className="bg-red-600 text-white p-1 rounded hover:bg-red-700"
                     >
                       <Trash2 size={14} />

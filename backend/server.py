@@ -14,6 +14,9 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
 import shutil
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 
 ROOT_DIR = Path(__file__).parent
@@ -23,6 +26,14 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Cloudinary configuration
+cloudinary.config(
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+    secure=True
+)
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -570,50 +581,66 @@ async def delete_endorsement(endorsement_id: str, username: str = Depends(verify
         raise HTTPException(status_code=404, detail="Endorsement not found")
     return {"message": "Endorsement deleted successfully"}
 
-# Media Upload
-UPLOAD_DIR = Path(__file__).parent / "uploads"
-UPLOAD_DIR.mkdir(exist_ok=True)
-
+# Media Upload with Cloudinary
 @api_router.post("/admin/upload")
 async def upload_file(file: UploadFile = File(...), username: str = Depends(verify_token)):
     try:
-        # Generate unique filename
-        file_extension = Path(file.filename).suffix
-        unique_filename = f"{uuid.uuid4()}{file_extension}"
-        file_path = UPLOAD_DIR / unique_filename
+        # Read file content
+        contents = await file.read()
         
-        # Save file
-        with file_path.open("wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+        # Determine resource type
+        resource_type = "video" if file.content_type.startswith("video/") else "image"
         
-        # Return URL to access the file
-        file_url = f"/uploads/{unique_filename}"
-        return {"url": file_url, "filename": unique_filename}
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            contents,
+            folder="tcprodojo",
+            resource_type=resource_type,
+            use_filename=True,
+            unique_filename=True
+        )
+        
+        return {
+            "url": upload_result['secure_url'],
+            "filename": upload_result['public_id'],
+            "resource_type": resource_type,
+            "public_id": upload_result['public_id']
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
 @api_router.get("/admin/media")
 async def list_media_files(username: str = Depends(verify_token)):
     try:
+        # Get all resources from Cloudinary
+        result = cloudinary.api.resources(
+            type="upload",
+            prefix="tcprodojo",
+            max_results=500
+        )
+        
         files = []
-        for file_path in UPLOAD_DIR.iterdir():
-            if file_path.is_file():
-                files.append({
-                    "filename": file_path.name,
-                    "url": f"/uploads/{file_path.name}",
-                    "size": file_path.stat().st_size,
-                    "created": file_path.stat().st_ctime
-                })
+        for resource in result.get('resources', []):
+            files.append({
+                "filename": resource['public_id'].split('/')[-1],
+                "url": resource['secure_url'],
+                "size": resource['bytes'],
+                "created": resource['created_at'],
+                "resource_type": resource['resource_type'],
+                "public_id": resource['public_id']
+            })
+        
         return sorted(files, key=lambda x: x['created'], reverse=True)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to list files: {str(e)}")
 
-@api_router.delete("/admin/media/{filename}")
-async def delete_media_file(filename: str, username: str = Depends(verify_token)):
+@api_router.delete("/admin/media/{public_id:path}")
+async def delete_media_file(public_id: str, username: str = Depends(verify_token)):
     try:
-        file_path = UPLOAD_DIR / filename
-        if file_path.exists():
-            file_path.unlink()
+        # Delete from Cloudinary
+        result = cloudinary.uploader.destroy(public_id, invalidate=True)
+        
+        if result.get('result') == 'ok':
             return {"message": "File deleted successfully"}
         else:
             raise HTTPException(status_code=404, detail="File not found")
@@ -648,9 +675,6 @@ async def get_public_coaches():
 
 # Include the router in the main app
 app.include_router(api_router)
-
-# Mount uploads directory as static files
-app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
