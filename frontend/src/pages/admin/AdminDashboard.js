@@ -47,18 +47,27 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, trainers, testimonials, contacts] = await Promise.all([
+      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, media] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/trainers`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/coaches`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/success-stories`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/endorsements`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/media`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       setStats({
         events: events.data.length,
         trainers: trainers.data.length,
         testimonials: testimonials.data.length,
-        contacts: contacts.data.length
+        contacts: contacts.data.length,
+        coaches: coaches.data.length,
+        success_stories: successStories.data.length,
+        endorsements: endorsements.data.length,
+        media: media.data.length,
+        gallery: 0 // Gallery items count can be added later
       });
     } catch (error) {
       console.error('Error loading stats:', error);
