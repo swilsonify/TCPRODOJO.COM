@@ -140,7 +140,7 @@ const Pros = () => {
           </div>
 
           <div className="max-w-6xl mx-auto space-y-12">
-            {trainers.map((trainer, index) => (
+            {coaches.map((trainer, index) => (
               <div
                 key={index}
                 className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift flex flex-col md:flex-row"
