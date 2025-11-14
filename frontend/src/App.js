@@ -40,6 +40,7 @@ function App() {
         <Route path="/admin/testimonials" element={<AdminTestimonials />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
         <Route path="/admin/gallery" element={<AdminGallery />} />
+        <Route path="/admin/coaches" element={<AdminCoaches />} />
       </Routes>
     </BrowserRouter>
   );
