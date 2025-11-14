@@ -620,6 +620,31 @@ async def delete_media_file(filename: str, username: str = Depends(verify_token)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Delete failed: {str(e)}")
 
+# Public API endpoints (no authentication required)
+@api_router.get("/success-stories", response_model=List[SuccessStoryModel])
+async def get_public_success_stories():
+    stories = await db.success_stories.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for story in stories:
+        if isinstance(story.get('created_at'), str):
+            story['created_at'] = datetime.fromisoformat(story['created_at'])
+    return stories
+
+@api_router.get("/endorsements", response_model=List[EndorsementModel])
+async def get_public_endorsements():
+    endorsements = await db.endorsements.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for endorsement in endorsements:
+        if isinstance(endorsement.get('created_at'), str):
+            endorsement['created_at'] = datetime.fromisoformat(endorsement['created_at'])
+    return endorsements
+
+@api_router.get("/coaches", response_model=List[CoachModel])
+async def get_public_coaches():
+    coaches = await db.coaches.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for coach in coaches:
+        if isinstance(coach.get('created_at'), str):
+            coach['created_at'] = datetime.fromisoformat(coach['created_at'])
+    return coaches
+
 
 # Include the router in the main app
 app.include_router(api_router)
