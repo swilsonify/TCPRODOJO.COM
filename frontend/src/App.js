@@ -44,6 +44,9 @@ function App() {
         <Route path="/admin/contacts" element={<AdminContacts />} />
         <Route path="/admin/gallery" element={<AdminGallery />} />
         <Route path="/admin/coaches" element={<AdminCoaches />} />
+        <Route path="/admin/success-stories" element={<AdminSuccessStories />} />
+        <Route path="/admin/endorsements" element={<AdminEndorsements />} />
+        <Route path="/admin/media" element={<AdminMediaLibrary />} />
       </Routes>
     </BrowserRouter>
   );
