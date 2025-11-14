@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image } from 'lucide-react';
+import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image, Video } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -101,6 +101,34 @@ const AdminDashboard = () => {
       count: stats.contacts,
       link: '/admin/contacts',
       description: 'View contact form submissions'
+    },
+    {
+      title: 'Coaches',
+      icon: Users,
+      count: stats.coaches || 0,
+      link: '/admin/coaches',
+      description: 'Manage SUCCESS page coaches'
+    },
+    {
+      title: 'Success Stories',
+      icon: Trophy,
+      count: stats.success_stories || 0,
+      link: '/admin/success-stories',
+      description: 'Manage graduate success stories'
+    },
+    {
+      title: 'TC Endorsements',
+      icon: Video,
+      count: stats.endorsements || 0,
+      link: '/admin/endorsements',
+      description: 'Manage endorsement videos'
+    },
+    {
+      title: 'Media Library',
+      icon: Image,
+      count: stats.media || 0,
+      link: '/admin/media',
+      description: 'Upload & manage photos/videos'
     },
     {
       title: 'Media Gallery',

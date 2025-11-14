@@ -31,8 +31,10 @@ const AdminGallery = () => {
     { value: 'classes-hero', label: 'Classes - Hero Image' },
     { value: 'classes-gallery', label: 'Classes - Class Photos' },
     { value: 'events-hero', label: 'Events - Hero Image' },
-    { value: 'pros-hero', label: 'Pros - Hero Image' },
-    { value: 'pros-gallery', label: 'Pros - Action Shots' },
+    { value: 'success-hero', label: 'Success - Hero Image' },
+    { value: 'success-stories', label: 'Success - Success Stories (Graduates)' },
+    { value: 'success-endorsements', label: 'Success - TC Endorsements' },
+    { value: 'success-coaches', label: 'Success - Coaches Photos' },
     { value: 'shop-hero', label: 'Shop - Hero Image' },
     { value: 'contact-hero', label: 'Contact - Hero Image' },
     { value: 'general', label: 'General Site Media' }
