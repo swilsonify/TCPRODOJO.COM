@@ -103,6 +103,13 @@ const AdminDashboard = () => {
       description: 'View contact form submissions'
     },
     {
+      title: 'Coaches',
+      icon: Users,
+      count: stats.coaches || 0,
+      link: '/admin/coaches',
+      description: 'Manage SUCCESS page coaches'
+    },
+    {
       title: 'Media Gallery',
       icon: Image,
       count: stats.gallery || 0,
