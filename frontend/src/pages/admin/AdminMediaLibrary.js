@@ -73,14 +73,16 @@ const AdminMediaLibrary = () => {
     }
   };
 
-  const handleDelete = async (filename) => {
-    if (!window.confirm(`Are you sure you want to delete ${filename}?`)) {
+  const handleDelete = async (file) => {
+    if (!window.confirm(`Are you sure you want to delete ${file.filename}?`)) {
       return;
     }
 
     const token = localStorage.getItem('adminToken');
     try {
-      await axios.delete(`${API}/api/admin/media/${filename}`, {
+      // Use public_id for deletion if available, otherwise filename
+      const deleteId = file.public_id || file.filename;
+      await axios.delete(`${API}/api/admin/media/${encodeURIComponent(deleteId)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       await loadMedia();
@@ -91,8 +93,8 @@ const AdminMediaLibrary = () => {
   };
 
   const copyToClipboard = (url) => {
-    const fullUrl = `${API}${url}`;
-    navigator.clipboard.writeText(fullUrl);
+    // For Cloudinary URLs, use the full URL directly
+    navigator.clipboard.writeText(url);
     setCopiedUrl(url);
     setTimeout(() => setCopiedUrl(null), 2000);
   };
