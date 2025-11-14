@@ -16,6 +16,9 @@ import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
 import AdminGallery from '@/pages/admin/AdminGallery';
 import AdminCoaches from '@/pages/admin/AdminCoaches';
+import AdminSuccessStories from '@/pages/admin/AdminSuccessStories';
+import AdminEndorsements from '@/pages/admin/AdminEndorsements';
+import AdminMediaLibrary from '@/pages/admin/AdminMediaLibrary';
 
 function App() {
   return (
