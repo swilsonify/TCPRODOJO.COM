@@ -156,14 +156,27 @@ const Home = () => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8 hover-lift"
+                className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`testimonial-${index}`}
               >
-                <div className="text-blue-500 text-5xl mb-4">"</div>
-                <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
-                <div>
-                  <div className="text-white font-bold">{testimonial.name}</div>
-                  <div className="text-blue-400 text-sm">{testimonial.role}</div>
+                {/* Small Square Photo */}
+                {testimonial.photo_url && (
+                  <div className="w-20 h-20 mx-auto mt-6">
+                    <img 
+                      src={testimonial.photo_url} 
+                      alt={testimonial.name}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+                
+                <div className="p-8">
+                  <div className="text-blue-500 text-5xl mb-4">"</div>
+                  <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
+                  <div>
+                    <div className="text-white font-bold">{testimonial.name}</div>
+                    <div className="text-blue-400 text-sm">{testimonial.role}</div>
+                  </div>
                 </div>
               </div>
             ))}
