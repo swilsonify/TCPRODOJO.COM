@@ -153,6 +153,13 @@ const AdminDashboard = () => {
       description: 'Manage weekly class schedule'
     },
     {
+      title: 'Newsletter Subscribers',
+      icon: Mail,
+      count: stats.newsletter || 0,
+      link: '/admin/newsletter',
+      description: 'View and download email list'
+    },
+    {
       title: 'Media Library',
       icon: Image,
       count: stats.media || 0,
