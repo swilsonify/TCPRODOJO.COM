@@ -159,6 +159,7 @@ class TestimonialModel(BaseModel):
     text: str
     photoUrl: str = ""
     videoUrl: str = ""
+    displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class GalleryModel(BaseModel):
@@ -432,7 +433,7 @@ async def delete_trainer(trainer_id: str, username: str = Depends(verify_token))
 # Admin Testimonial Management
 @api_router.get("/admin/testimonials", response_model=List[TestimonialModel])
 async def get_admin_testimonials(username: str = Depends(verify_token)):
-    testimonials = await db.testimonials.find({}, {"_id": 0}).to_list(1000)
+    testimonials = await db.testimonials.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
     for testimonial in testimonials:
         if isinstance(testimonial.get('created_at'), str):
             testimonial['created_at'] = datetime.fromisoformat(testimonial['created_at'])
@@ -676,7 +677,7 @@ async def get_public_coaches():
 
 @api_router.get("/testimonials", response_model=List[TestimonialModel])
 async def get_public_testimonials():
-    testimonials = await db.testimonials.find({}, {"_id": 0}).to_list(1000)
+    testimonials = await db.testimonials.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
     for testimonial in testimonials:
         if isinstance(testimonial.get('created_at'), str):
             testimonial['created_at'] = datetime.fromisoformat(testimonial['created_at'])
