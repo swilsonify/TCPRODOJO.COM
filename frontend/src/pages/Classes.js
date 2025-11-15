@@ -63,33 +63,6 @@ const Classes = () => {
     setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1));
   };
 
-  const handleBookClass = async (classItem) => {
-    setSelectedClass(classItem);
-    setShowBookingModal(true);
-  };
-
-  const submitBooking = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`${API}/bookings`, {
-        class_id: selectedClass.id,
-        name: bookingName,
-        email: bookingEmail,
-        date: selectedDate.toISOString()
-      });
-      alert('Class booked successfully!');
-      setShowBookingModal(false);
-      setBookingName('');
-      setBookingEmail('');
-    } catch (error) {
-      console.error('Error booking class:', error);
-      alert('Booking submitted! (Demo mode)');
-      setShowBookingModal(false);
-      setBookingName('');
-      setBookingEmail('');
-    }
-  };
-
   const getLevelColor = (level) => {
     switch (level) {
       case 'Beginner': return 'bg-green-500/20 text-green-400 border-green-500/50';
