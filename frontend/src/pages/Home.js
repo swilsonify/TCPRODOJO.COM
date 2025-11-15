@@ -86,23 +86,6 @@ const Home = () => {
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up stagger-3">
-            <Link
-              to="/classes"
-              className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-lg transition-all hover-lift"
-              data-testid="view-classes-button"
-            >
-              VIEW CLASS SCHEDULE
-            </Link>
-            <Link
-              to="/training"
-              className="px-8 py-4 bg-transparent border-2 border-blue-500 hover:bg-blue-500 text-white font-bold rounded-lg text-lg transition-all hover-lift"
-              data-testid="get-started-button"
-            >
-              GET STARTED
-            </Link>
-          </div>
         </div>
       </section>
 
