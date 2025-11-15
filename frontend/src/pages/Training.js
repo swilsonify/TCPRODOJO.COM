@@ -28,44 +28,6 @@ const Training = () => {
   return (
     <div className="pt-28 pb-20 px-4" data-testid="training-page">
       <div className="container mx-auto max-w-5xl">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="mb-6">
-            <img 
-              src="/images/your-excuses-v2.webp" 
-              alt="Your Excuses Are Your Own" 
-              className="max-w-4xl mx-auto w-full px-4"
-            />
-          </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">TRAINING AT TC PRO DOJO</h1>
-          <div className="gradient-border mx-auto w-24 mb-12"></div>
-        </div>
-
-        {/* Two Column Info Boxes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          {/* Step into the Ring */}
-          <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
-            <h2 className="text-3xl font-bold text-blue-400 mb-6 text-center">Step into the Ring!</h2>
-            <div className="text-gray-300 text-lg leading-relaxed space-y-4 text-center">
-              <p>We welcome students of ALL levels.</p>
-              <p>Qualified instructors in a safe learning environment.</p>
-              <p>Whether you want to go PRO, get in shape or just experience the thrill of wrestling training, we've got a program for you.</p>
-            </div>
-          </div>
-
-          {/* Why Train With Us */}
-          <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
-            <h2 className="text-3xl font-bold text-blue-400 mb-6 text-center">Why Train With Us?</h2>
-            <div className="text-gray-300 text-lg leading-relaxed space-y-2 text-center">
-              <p>Emphasis on the fundamentals of professional wrestling, all fitness levels welcome.</p>
-              <p>Flexible class schedules.</p>
-              <p>Build confidence, strength, and showmanship.</p>
-              <p>Expert coaching from professional wrestlers.</p>
-              <p>Safe, professional training facility.</p>
-            </div>
-          </div>
-        </div>
-
         {/* Curriculum Section */}
         <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
           <h2 className="text-5xl md:text-6xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
