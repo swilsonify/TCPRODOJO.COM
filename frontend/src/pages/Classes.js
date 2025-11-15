@@ -29,13 +29,9 @@ const Classes = () => {
     }
   };
 
-  const defaultClasses = [
-    // PRO WRESTLING CLASSES
-    { id: 1, day: 'Monday', time: '6:00 PM - 8:00 PM', title: 'Beginner Pro Wrestling', instructor: 'Coach Mike', level: 'Beginner', spots: 8, type: 'Wrestling' },
-    { id: 2, day: 'Monday', time: '8:00 PM - 10:00 PM', title: 'Advanced Pro Wrestling', instructor: 'Coach Sarah', level: 'Advanced', spots: 5, type: 'Wrestling' },
-  ];
+  const defaultClasses = [];
 
-  const currentClasses = classes.length > 0 ? classes : defaultClasses;
+  const currentClasses = classes;
   
   // Filter classes based on selected type
   const filteredClasses = classFilter === 'All' 
@@ -206,8 +202,14 @@ const Classes = () => {
             </button>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredClasses.map((classItem) => (
+          {filteredClasses.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">No classes available at this time.</p>
+              <p className="text-gray-500 text-sm mt-2">Please check back later for schedule updates.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredClasses.map((classItem) => (
               <div
                 key={classItem.id}
                 className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
@@ -251,7 +253,8 @@ const Classes = () => {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
