@@ -85,7 +85,8 @@ const AdminEvents = () => {
       description: event.description,
       attendees: event.attendees,
       imageUrl: event.imageUrl || '',
-      videoUrl: event.videoUrl || ''
+      videoUrl: event.videoUrl || '',
+      displayOrder: event.displayOrder || 0
     });
     setShowForm(true);
   };
