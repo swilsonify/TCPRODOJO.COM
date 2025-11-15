@@ -89,7 +89,7 @@ const Training = () => {
         </div>
 
         {/* CTA Box with How It Works */}
-        <div className="bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500 rounded-lg p-10 text-center">
+        <div className="bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500 rounded-lg p-10 text-center mb-20">
           <h2 className="text-4xl font-bold text-white torture-text mb-6">HOW IT WORKS</h2>
           <p className="text-gray-300 text-xl leading-relaxed mb-6">
             Send a message to our team, they will reach out to answer your questions and discuss your goals.
@@ -104,6 +104,57 @@ const Training = () => {
           >
             Let's go!
           </Link>
+        </div>
+
+        {/* TIPS & TECHNIQUES SECTION */}
+        <div className="mb-20">
+          <h2 className="text-5xl font-bold text-white torture-text text-center mb-4">TIPS & TECHNIQUES</h2>
+          <div className="gradient-border mx-auto w-24 mb-12"></div>
+
+          {loading ? (
+            <div className="text-center text-gray-400">Loading tips...</div>
+          ) : tips.length === 0 ? (
+            <div className="text-center text-gray-400">No tips available yet.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {tips.map((tip, index) => (
+                <div
+                  key={tip.id || index}
+                  className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
+                  data-testid={`tip-${index}`}
+                >
+                  {/* Video - Square Frame */}
+                  <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                    {tip.videoUrl ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={tip.videoUrl}
+                        title={tip.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <div className="text-center p-8">
+                        <svg className="w-16 h-16 mx-auto mb-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                        </svg>
+                        <span className="text-gray-500 text-sm">Video Coming Soon</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-2">{tip.title}</h3>
+                    {tip.description && (
+                      <p className="text-gray-400 text-sm">{tip.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
