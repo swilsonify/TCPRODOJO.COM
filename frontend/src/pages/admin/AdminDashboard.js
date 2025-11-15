@@ -145,7 +145,7 @@ const AdminDashboard = () => {
     },
     {
       title: 'Class Schedule',
-      icon: CalendarIcon,
+      icon: Calendar,
       count: stats.classes || 0,
       link: '/admin/classes',
       description: 'Manage weekly class schedule'
