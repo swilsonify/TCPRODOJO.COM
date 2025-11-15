@@ -11,7 +11,7 @@ const Navigation = () => {
     { name: 'TRAINING', path: '/training' },
     { name: 'CLASSES', path: '/classes' },
     { name: 'EVENTS', path: '/events' },
-    { name: 'SUCCESS', path: '/pros' },
+    { name: 'SUCCESS', path: '/success' },
     { name: 'SHOP', path: '/shop' },
   ];
 
