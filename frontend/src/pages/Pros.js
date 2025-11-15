@@ -69,13 +69,13 @@ const Pros = () => {
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`graduate-${index}`}
               >
-                {/* Photo - Portrait aspect ratio */}
+                {/* Photo - Full image display without cropping */}
                 {graduate.photo_url && (
-                  <div className="aspect-[3/4] bg-gray-800 overflow-hidden">
+                  <div className="w-full bg-gray-800 flex items-center justify-center" style={{ minHeight: '400px' }}>
                     <img 
                       src={graduate.photo_url} 
                       alt={graduate.name}
-                      className="w-full h-full object-cover object-top"
+                      className="w-full h-auto object-contain max-h-[500px]"
                     />
                   </div>
                 )}
