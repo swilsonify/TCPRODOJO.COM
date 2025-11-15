@@ -51,7 +51,7 @@ const Training = () => {
 
   const privateClasses = {
     title: 'PRIVATE CLASSES',
-    subtitle: 'PRO WRESTLING & BOXING',
+    subtitle: 'PRO WRESTLING',
     pricingOptions: [
       { label: 'ONE SESSION', price: '$100' },
       { label: '2 SESSIONS', price: '$150' },
