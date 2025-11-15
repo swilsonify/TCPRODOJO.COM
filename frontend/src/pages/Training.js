@@ -39,6 +39,15 @@ const Training = () => {
           </div>
         </div>
 
+        {/* Featured Photo */}
+        <div className="mb-16">
+          <img 
+            src="https://res.cloudinary.com/dpx8a9k7c/image/upload/v1763246792/WhatsApp_Image_2025-11-15_at_17.43.17_y54uqg.jpg" 
+            alt="TC Pro Dojo Training" 
+            className="w-full rounded-lg shadow-2xl"
+          />
+        </div>
+
         {/* Curriculum Section */}
         <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
           <h2 className="text-5xl md:text-6xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
