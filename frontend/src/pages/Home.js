@@ -105,7 +105,7 @@ const Home = () => {
               <div className="text-gray-300 text-lg leading-relaxed space-y-4 text-center">
                 <p>We welcome students of ALL levels.</p>
                 <p>Qualified instructors in a safe learning environment.</p>
-                <p>Whether you want to go PRO, get in shape or just experience the thrill of wrestling training, we've got a program for you.</p>
+                <p>Whether you want to go PRO, get in shape or just experience the thrill of pro wrestling training, we've got a program for you.</p>
               </div>
             </div>
 
