@@ -69,13 +69,13 @@ const Pros = () => {
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`graduate-${index}`}
               >
-                {/* Photo */}
+                {/* Photo - Portrait aspect ratio */}
                 {graduate.photo_url && (
-                  <div className="aspect-video bg-gray-800 overflow-hidden">
+                  <div className="aspect-[3/4] bg-gray-800 overflow-hidden">
                     <img 
                       src={graduate.photo_url} 
                       alt={graduate.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-top"
                     />
                   </div>
                 )}
