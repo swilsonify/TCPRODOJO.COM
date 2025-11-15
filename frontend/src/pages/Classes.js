@@ -253,7 +253,8 @@ const Classes = () => {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
