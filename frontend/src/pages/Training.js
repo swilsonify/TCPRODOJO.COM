@@ -69,16 +69,12 @@ const Training = () => {
           </div>
         </div>
 
-        {/* How It Works Section */}
-        <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
-          <h2 className="text-4xl font-bold text-white torture-text mb-6 text-center">HOW IT WORKS</h2>
-          <p className="text-gray-300 text-xl leading-relaxed text-center">
+        {/* CTA Box with How It Works */}
+        <div className="bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500 rounded-lg p-10 text-center">
+          <h2 className="text-4xl font-bold text-white torture-text mb-6">HOW IT WORKS</h2>
+          <p className="text-gray-300 text-xl leading-relaxed mb-6">
             Send a message to our team, they will reach out to answer your questions and discuss your goals.
           </p>
-        </div>
-
-        {/* CTA Box */}
-        <div className="bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500 rounded-lg p-10 text-center">
           <p className="text-gray-300 text-xl mb-6">
             All levels are welcome, everyone starts somewhere!
           </p>
