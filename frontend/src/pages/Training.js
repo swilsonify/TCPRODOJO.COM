@@ -1,10 +1,29 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Training = () => {
+  const [tips, setTips] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadTips();
   }, []);
+
+  const loadTips = async () => {
+    try {
+      const response = await axios.get(`${API}/api/tips`);
+      setTips(response.data);
+    } catch (error) {
+      console.error('Error loading tips:', error);
+      setTips([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="pt-28 pb-20 px-4" data-testid="training-page">
