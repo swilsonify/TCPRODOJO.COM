@@ -34,11 +34,6 @@ const Home = () => {
       description: 'Learn from experienced pros who have competed at the highest levels of professional wrestling.'
     },
     {
-      icon: Users,
-      title: 'Small Class Sizes',
-      description: 'Personal attention in every session. We keep our classes small to ensure quality instruction.'
-    },
-    {
       icon: Trophy,
       title: 'Championship Results',
       description: 'Our graduates have gone on to compete in major promotions worldwide since 2004.'
