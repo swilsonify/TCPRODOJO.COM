@@ -49,17 +49,6 @@ const Training = () => {
     }
   ];
 
-  const boxingProgram = {
-    title: 'BOXING CLASSES',
-    price: '$250/month',
-    pricingOptions: [
-      { label: 'ANNUAL FEE', price: '$1,500' },
-      { label: '6 MONTHS', price: '$775' },
-      { label: '3 MONTHS', price: '$425' }
-    ],
-    additionalInfo: 'All PRO WRESTLING students have unlimited free access to all boxing classes.'
-  };
-
   const privateClasses = {
     title: 'PRIVATE CLASSES',
     subtitle: 'PRO WRESTLING & BOXING',
