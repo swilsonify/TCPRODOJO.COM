@@ -46,7 +46,7 @@ const Training = () => {
           {/* Step into the Ring */}
           <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
             <h2 className="text-3xl font-bold text-blue-400 mb-6 text-center">Step into the Ring!</h2>
-            <div className="text-gray-300 text-lg leading-relaxed space-y-4">
+            <div className="text-gray-300 text-lg leading-relaxed space-y-4 text-center">
               <p>We welcome students of ALL levels.</p>
               <p>Qualified instructors in a safe learning environment.</p>
               <p>Whether you want to go PRO, get in shape or just experience the thrill of wrestling training, we've got a program for you.</p>
@@ -56,7 +56,7 @@ const Training = () => {
           {/* Why Train With Us */}
           <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
             <h2 className="text-3xl font-bold text-blue-400 mb-6 text-center">Why Train With Us?</h2>
-            <div className="text-gray-300 text-lg leading-relaxed space-y-2">
+            <div className="text-gray-300 text-lg leading-relaxed space-y-2 text-center">
               <p>Emphasis on the fundamentals of professional wrestling, all fitness levels welcome.</p>
               <p>Flexible class schedules.</p>
               <p>Build confidence, strength, and showmanship.</p>
@@ -68,7 +68,7 @@ const Training = () => {
 
         {/* Curriculum Section */}
         <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
-          <h2 className="text-4xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
+          <h2 className="text-5xl md:text-6xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
           
           <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
             <p>
