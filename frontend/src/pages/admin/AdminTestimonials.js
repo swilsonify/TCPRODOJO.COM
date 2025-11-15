@@ -182,7 +182,7 @@ const AdminTestimonials = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div>
                   <label className="block text-white font-semibold mb-2">Person Photo URL</label>
                   <input
@@ -204,6 +204,18 @@ const AdminTestimonials = () => {
                     className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                   />
                   <p className="text-gray-400 text-xs mt-1">YouTube or Vimeo URL</p>
+                </div>
+                <div>
+                  <label className="block text-white font-semibold mb-2">Display Order</label>
+                  <input
+                    type="number"
+                    value={formData.displayOrder}
+                    onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                    min="0"
+                    placeholder="0"
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">Lower numbers appear first</p>
                 </div>
               </div>
 
