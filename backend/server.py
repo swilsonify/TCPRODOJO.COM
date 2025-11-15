@@ -222,6 +222,20 @@ class TipModel(BaseModel):
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class ClassScheduleModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    day: str
+    time: str
+    title: str
+    instructor: str
+    level: str
+    spots: int
+    type: str = "Wrestling"
+    description: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 
 # Helper functions for admin auth
 def create_access_token(data: dict):
@@ -650,6 +664,40 @@ async def delete_tip(tip_id: str, username: str = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="Tip not found")
     return {"message": "Tip deleted successfully"}
 
+# Admin Class Schedule Management
+@api_router.get("/admin/classes", response_model=List[ClassScheduleModel])
+async def get_admin_classes(username: str = Depends(verify_token)):
+    classes = await db.classes.find({}, {"_id": 0}).to_list(1000)
+    for class_item in classes:
+        if isinstance(class_item.get('created_at'), str):
+            class_item['created_at'] = datetime.fromisoformat(class_item['created_at'])
+    return classes
+
+@api_router.post("/admin/classes", response_model=ClassScheduleModel)
+async def create_class(class_item: ClassScheduleModel, username: str = Depends(verify_token)):
+    class_dict = class_item.model_dump()
+    if isinstance(class_dict.get('created_at'), datetime):
+        class_dict['created_at'] = class_dict['created_at'].isoformat()
+    await db.classes.insert_one(class_dict)
+    return class_item
+
+@api_router.put("/admin/classes/{class_id}", response_model=ClassScheduleModel)
+async def update_class(class_id: str, class_item: ClassScheduleModel, username: str = Depends(verify_token)):
+    class_dict = class_item.model_dump()
+    if isinstance(class_dict.get('created_at'), datetime):
+        class_dict['created_at'] = class_dict['created_at'].isoformat()
+    result = await db.classes.update_one({"id": class_id}, {"$set": class_dict})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Class not found")
+    return class_item
+
+@api_router.delete("/admin/classes/{class_id}")
+async def delete_class(class_id: str, username: str = Depends(verify_token)):
+    result = await db.classes.delete_one({"id": class_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Class not found")
+    return {"message": "Class deleted successfully"}
+
 # Media Upload with Cloudinary
 @api_router.post("/admin/upload")
 async def upload_file(file: UploadFile = File(...), username: str = Depends(verify_token)):
@@ -756,6 +804,14 @@ async def get_public_tips():
         if isinstance(tip.get('created_at'), str):
             tip['created_at'] = datetime.fromisoformat(tip['created_at'])
     return tips
+
+@api_router.get("/classes", response_model=List[ClassScheduleModel])
+async def get_public_classes():
+    classes = await db.classes.find({}, {"_id": 0}).to_list(1000)
+    for class_item in classes:
+        if isinstance(class_item.get('created_at'), str):
+            class_item['created_at'] = datetime.fromisoformat(class_item['created_at'])
+    return classes
 
 
 # Include the router in the main app

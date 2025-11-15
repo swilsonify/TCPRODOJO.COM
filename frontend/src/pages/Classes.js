@@ -7,10 +7,6 @@ const API = `${BACKEND_URL}/api`;
 
 const Classes = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [bookingName, setBookingName] = useState('');
-  const [bookingEmail, setBookingEmail] = useState('');
-  const [showBookingModal, setShowBookingModal] = useState(false);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [classFilter, setClassFilter] = useState('All'); // New filter state
@@ -37,23 +33,6 @@ const Classes = () => {
     // PRO WRESTLING CLASSES
     { id: 1, day: 'Monday', time: '6:00 PM - 8:00 PM', title: 'Beginner Pro Wrestling', instructor: 'Coach Mike', level: 'Beginner', spots: 8, type: 'Wrestling' },
     { id: 2, day: 'Monday', time: '8:00 PM - 10:00 PM', title: 'Advanced Pro Wrestling', instructor: 'Coach Sarah', level: 'Advanced', spots: 5, type: 'Wrestling' },
-    { id: 3, day: 'Tuesday', time: '7:00 PM - 9:00 PM', title: 'High-Flying & Lucha', instructor: 'Coach James', level: 'Intermediate', spots: 6, type: 'Wrestling' },
-    { id: 4, day: 'Wednesday', time: '6:00 PM - 8:00 PM', title: 'Ring Psychology & Promos', instructor: 'Coach Mike', level: 'All Levels', spots: 10, type: 'Wrestling' },
-    { id: 5, day: 'Thursday', time: '7:00 PM - 9:00 PM', title: 'Technical Wrestling', instructor: 'Coach Sarah', level: 'Intermediate', spots: 7, type: 'Wrestling' },
-    { id: 6, day: 'Friday', time: '6:00 PM - 8:00 PM', title: 'Pro Wrestling Fundamentals', instructor: 'Coach Mike', level: 'Beginner', spots: 8, type: 'Wrestling' },
-    { id: 7, day: 'Friday', time: '8:00 PM - 10:00 PM', title: 'Pro Wrestling Sparring', instructor: 'All Coaches', level: 'Advanced', spots: 10, type: 'Wrestling' },
-    { id: 8, day: 'Saturday', time: '10:00 AM - 12:00 PM', title: 'Pro Pathway Weekend Training', instructor: 'Coach James', level: 'All Levels', spots: 15, type: 'Wrestling' },
-    
-    // BOXING CLASSES
-    { id: 9, day: 'Monday', time: '5:00 PM - 6:30 PM', title: 'Boxing Beginners', instructor: 'Coach Tony', level: 'Beginner', spots: 12, type: 'Boxing' },
-    { id: 10, day: 'Tuesday', time: '6:00 PM - 7:30 PM', title: 'Advanced Boxing', instructor: 'Coach Tony', level: 'Advanced', spots: 8, type: 'Boxing' },
-    { id: 11, day: 'Wednesday', time: '5:00 PM - 6:30 PM', title: 'Boxing Technique', instructor: 'Coach Marcus', level: 'Intermediate', spots: 10, type: 'Boxing' },
-    { id: 12, day: 'Thursday', time: '6:00 PM - 7:30 PM', title: 'Boxing Sparring', instructor: 'Coach Tony', level: 'Advanced', spots: 6, type: 'Boxing' },
-    { id: 13, day: 'Saturday', time: '9:00 AM - 10:30 AM', title: 'Self-Defense Boxing', instructor: 'Coach Marcus', level: 'All Levels', spots: 15, type: 'Boxing' },
-    
-    // STRENGTH & CONDITIONING
-    { id: 14, day: 'Wednesday', time: '8:00 PM - 10:00 PM', title: 'Strength & Conditioning', instructor: 'Coach Tony', level: 'All Levels', spots: 12, type: 'Fitness' },
-    { id: 15, day: 'Saturday', time: '2:00 PM - 4:00 PM', title: 'Pro Athlete Training', instructor: 'Coach Sarah', level: 'Advanced', spots: 5, type: 'Wrestling' },
   ];
 
   const currentClasses = classes.length > 0 ? classes : defaultClasses;
@@ -84,33 +63,6 @@ const Classes = () => {
     setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1));
   };
 
-  const handleBookClass = async (classItem) => {
-    setSelectedClass(classItem);
-    setShowBookingModal(true);
-  };
-
-  const submitBooking = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`${API}/bookings`, {
-        class_id: selectedClass.id,
-        name: bookingName,
-        email: bookingEmail,
-        date: selectedDate.toISOString()
-      });
-      alert('Class booked successfully!');
-      setShowBookingModal(false);
-      setBookingName('');
-      setBookingEmail('');
-    } catch (error) {
-      console.error('Error booking class:', error);
-      alert('Booking submitted! (Demo mode)');
-      setShowBookingModal(false);
-      setBookingName('');
-      setBookingEmail('');
-    }
-  };
-
   const getLevelColor = (level) => {
     switch (level) {
       case 'Beginner': return 'bg-green-500/20 text-green-400 border-green-500/50';
@@ -127,9 +79,6 @@ const Classes = () => {
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">CLASS SCHEDULE</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            View our weekly class schedule and book your spot. Classes fill up fast!
-          </p>
         </div>
 
         {/* Calendar */}
@@ -286,7 +235,7 @@ const Classes = () => {
                   </span>
                 </div>
 
-                <div className="space-y-2 mb-4">
+                <div className="space-y-2">
                   <div className="text-gray-300">
                     <span className="font-semibold">Instructor:</span> {classItem.instructor}
                   </div>
@@ -294,77 +243,17 @@ const Classes = () => {
                     <Users size={16} />
                     <span>{classItem.spots} spots available</span>
                   </div>
+                  {classItem.description && (
+                    <div className="text-gray-400 text-sm mt-2">
+                      {classItem.description}
+                    </div>
+                  )}
                 </div>
-
-                <button
-                  onClick={() => handleBookClass(classItem)}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
-                  data-testid={`book-class-${classItem.id}-button`}
-                >
-                  BOOK THIS CLASS
-                </button>
               </div>
             ))}
           </div>
         </div>
       </div>
-
-      {/* Booking Modal */}
-      {showBookingModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" data-testid="booking-modal">
-          <div className="bg-gray-900 border border-blue-500/20 rounded-lg p-8 max-w-md w-full">
-            <h3 className="text-2xl font-bold text-white mb-4">Book {selectedClass?.title}</h3>
-            <div className="text-gray-400 mb-6">
-              <p>{selectedClass?.day} - {selectedClass?.time}</p>
-              <p>Instructor: {selectedClass?.instructor}</p>
-            </div>
-
-            <form onSubmit={submitBooking}>
-              <div className="mb-4">
-                <label className="block text-white font-semibold mb-2">Your Name</label>
-                <input
-                  type="text"
-                  value={bookingName}
-                  onChange={(e) => setBookingName(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  data-testid="booking-name-input"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-white font-semibold mb-2">Email Address</label>
-                <input
-                  type="email"
-                  value={bookingEmail}
-                  onChange={(e) => setBookingEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  data-testid="booking-email-input"
-                />
-              </div>
-
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setShowBookingModal(false)}
-                  className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded transition-colors"
-                  data-testid="cancel-booking-button"
-                >
-                  CANCEL
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
-                  data-testid="submit-booking-button"
-                >
-                  CONFIRM BOOKING
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

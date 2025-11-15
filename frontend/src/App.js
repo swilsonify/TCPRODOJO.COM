@@ -19,6 +19,7 @@ import AdminCoaches from '@/pages/admin/AdminCoaches';
 import AdminSuccessStories from '@/pages/admin/AdminSuccessStories';
 import AdminEndorsements from '@/pages/admin/AdminEndorsements';
 import AdminTips from '@/pages/admin/AdminTips';
+import AdminClassSchedule from '@/pages/admin/AdminClassSchedule';
 import AdminMediaLibrary from '@/pages/admin/AdminMediaLibrary';
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
         <Route path="/admin/success-stories" element={<AdminSuccessStories />} />
         <Route path="/admin/endorsements" element={<AdminEndorsements />} />
         <Route path="/admin/tips" element={<AdminTips />} />
+        <Route path="/admin/classes" element={<AdminClassSchedule />} />
         <Route path="/admin/media" element={<AdminMediaLibrary />} />
       </Routes>
     </BrowserRouter>

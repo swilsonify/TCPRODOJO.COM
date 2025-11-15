@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, media] = await Promise.all([
+      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, classes, media] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/trainers`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -56,6 +56,7 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/success-stories`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/endorsements`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/tips`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/classes`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/media`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
@@ -68,6 +69,7 @@ const AdminDashboard = () => {
         success_stories: successStories.data.length,
         endorsements: endorsements.data.length,
         tips: tips.data.length,
+        classes: classes.data.length,
         media: media.data.length,
         gallery: 0 // Gallery items count can be added later
       });
@@ -140,6 +142,13 @@ const AdminDashboard = () => {
       count: stats.tips || 0,
       link: '/admin/tips',
       description: 'Manage training tips videos'
+    },
+    {
+      title: 'Class Schedule',
+      icon: CalendarIcon,
+      count: stats.classes || 0,
+      link: '/admin/classes',
+      description: 'Manage weekly class schedule'
     },
     {
       title: 'Media Library',
