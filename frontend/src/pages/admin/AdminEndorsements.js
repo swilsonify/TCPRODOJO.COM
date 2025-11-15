@@ -3,62 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Video } from 'lucide-react';
 
-/**
- * Turn any YouTube URL or ID into a proper embed URL for <iframe>.
- * Supports:
- *  - https://www.youtube.com/watch?v=VIDEOID
- *  - https://youtu.be/VIDEOID
- *  - https://www.youtube.com/shorts/VIDEOID
- *  - already-embed URLs
- *  - bare VIDEOID
- */
-const normalizeYouTubeUrl = (rawUrl) => {
-  if (!rawUrl) return '';
-
-  const url = rawUrl.trim();
-
-  // If they paste just the video ID
-  if (!url.startsWith('http')) {
-    return `https://www.youtube.com/embed/${url}`;
-  }
-
-  try {
-    const u = new URL(url);
-    const host = u.hostname.replace('www.', '');
-
-    // Short links: youtu.be/VIDEOID
-    if (host === 'youtu.be') {
-      const id = u.pathname.slice(1).split('/')[0]; // "VIDEOID"
-      return id ? `https://www.youtube.com/embed/${id}` : url;
-    }
-
-    // Normal YouTube domains
-    if (host.endsWith('youtube.com')) {
-      // Already an embed URL
-      if (u.pathname.startsWith('/embed/')) {
-        return url;
-      }
-
-      // Watch URLs: youtube.com/watch?v=VIDEOID
-      if (u.pathname === '/watch') {
-        const id = u.searchParams.get('v');
-        return id ? `https://www.youtube.com/embed/${id}` : url;
-      }
-
-      // Shorts: youtube.com/shorts/VIDEOID
-      if (u.pathname.startsWith('/shorts/')) {
-        const id = u.pathname.split('/shorts/')[1]?.split('/')[0];
-        return id ? `https://www.youtube.com/embed/${id}` : url;
-      }
-    }
-  } catch (err) {
-    console.error('Error parsing YouTube URL:', err);
-  }
-
-  // Fallback: return original
-  return url;
-};
-
 const AdminEndorsements = () => {
   const navigate = useNavigate();
   const [endorsements, setEndorsements] = useState([]);
@@ -69,7 +13,7 @@ const AdminEndorsements = () => {
     title: '',
     videoUrl: '',
     description: '',
-    displayOrder: 0,
+    displayOrder: 0
   });
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
@@ -77,7 +21,6 @@ const AdminEndorsements = () => {
   useEffect(() => {
     verifyAuth();
     loadEndorsements();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const verifyAuth = () => {
@@ -92,7 +35,7 @@ const AdminEndorsements = () => {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
       const response = await axios.get(`${API}/api/admin/endorsements`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` }
       });
       setEndorsements(response.data);
     } catch (error) {
@@ -109,26 +52,29 @@ const AdminEndorsements = () => {
     e.preventDefault();
     const token = localStorage.getItem('adminToken');
 
-    // Normalize ANY YouTube URL into an embed URL
-    const embedUrl = normalizeYouTubeUrl(formData.videoUrl);
+    // Convert YouTube watch URL to embed URL if needed
+    let embedUrl = formData.videoUrl;
+    if (embedUrl.includes('youtube.com/watch')) {
+      const videoId = embedUrl.split('v=')[1]?.split('&')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    } else if (embedUrl.includes('youtu.be/')) {
+      const videoId = embedUrl.split('youtu.be/')[1]?.split('?')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    }
 
     const dataToSubmit = { ...formData, videoUrl: embedUrl };
 
     try {
       if (editingEndorsement) {
-        await axios.put(
-          `${API}/api/admin/endorsements/${editingEndorsement.id}`,
-          dataToSubmit,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await axios.put(`${API}/api/admin/endorsements/${editingEndorsement.id}`, dataToSubmit, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
       } else {
         await axios.post(`${API}/api/admin/endorsements`, dataToSubmit, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` }
         });
       }
-
+      
       await loadEndorsements();
       resetForm();
     } catch (error) {
@@ -143,7 +89,7 @@ const AdminEndorsements = () => {
       title: endorsement.title,
       videoUrl: endorsement.videoUrl,
       description: endorsement.description || '',
-      displayOrder: endorsement.displayOrder || 0,
+      displayOrder: endorsement.displayOrder || 0
     });
     setShowForm(true);
   };
@@ -156,7 +102,7 @@ const AdminEndorsements = () => {
     const token = localStorage.getItem('adminToken');
     try {
       await axios.delete(`${API}/api/admin/endorsements/${endorsementId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` }
       });
       await loadEndorsements();
     } catch (error) {
@@ -170,7 +116,7 @@ const AdminEndorsements = () => {
       title: '',
       videoUrl: '',
       description: '',
-      displayOrder: 0,
+      displayOrder: 0
     });
     setEditingEndorsement(null);
     setShowForm(false);
@@ -179,7 +125,6 @@ const AdminEndorsements = () => {
   return (
     <div className="min-h-screen bg-gray-900 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -188,9 +133,7 @@ const AdminEndorsements = () => {
             >
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-3xl font-bold text-white">
-              Manage TC Endorsements
-            </h1>
+            <h1 className="text-3xl font-bold text-white">Manage TC Endorsements</h1>
           </div>
           {!showForm && (
             <button
@@ -203,7 +146,6 @@ const AdminEndorsements = () => {
           )}
         </div>
 
-        {/* Form */}
         {showForm && (
           <div className="bg-gray-800 rounded-lg p-6 mb-8">
             <h2 className="text-xl font-bold text-white mb-4">
@@ -215,8 +157,123 @@ const AdminEndorsements = () => {
                 <input
                   type="text"
                   value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="w-full bg-gray-700 text-white rounded px-4 py-2"
                   placeholder="e.g., Kevin Owens, WWE Universal Champion"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 mb-2">YouTube Video URL *</label>
+                <input
+                  type="url"
+                  value={formData.videoUrl}
+                  onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                  className="w-full bg-gray-700 text-white rounded px-4 py-2"
+                  placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                  required
+                />
+                <p className="text-gray-500 text-xs mt-1">
+                  Paste any YouTube URL format - it will be converted automatically
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-gray-300 mb-2">Description</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full bg-gray-700 text-white rounded px-4 py-2 h-20"
+                  placeholder="Brief description of the endorsement..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 mb-2">Display Order</label>
+                <input
+                  type="number"
+                  value={formData.displayOrder}
+                  onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                  className="w-full bg-gray-700 text-white rounded px-4 py-2"
+                  min="0"
+                />
+              </div>
+
+              <div className="flex space-x-4">
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                >
+                  {editingEndorsement ? 'Update Endorsement' : 'Add Endorsement'}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="text-center text-gray-400 py-8">Loading endorsements...</div>
+        ) : endorsements.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">
+            No endorsements yet. Click "Add Endorsement" to create one.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {endorsements.map((endorsement) => (
+              <div
+                key={endorsement.id}
+                className="bg-gray-800 rounded-lg overflow-hidden"
+              >
+                <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                  {endorsement.videoUrl ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={endorsement.videoUrl}
+                      title={endorsement.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <Video className="text-blue-500" size={48} />
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-white font-bold text-sm flex-1">{endorsement.title}</h3>
+                    <div className="flex space-x-1 ml-2">
+                      <button
+                        onClick={() => handleEdit(endorsement)}
+                        className="text-blue-400 hover:text-blue-300 p-1"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(endorsement.id)}
+                        className="text-red-400 hover:text-red-300 p-1"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-xs">{endorsement.description}</p>
+                  <p className="text-gray-600 text-xs mt-2">Order: {endorsement.displayOrder}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AdminEndorsements;
