@@ -652,11 +652,34 @@ class GalleryAPITester:
 
 def main():
     """Main test runner"""
-    tester = GalleryAPITester()
-    passed, failed, results = tester.run_all_tests()
+    print("🚀 TC Pro Dojo Backend API Testing Suite")
+    print("=" * 80)
+    
+    # Run Testimonials API Tests (Primary focus)
+    print("\n🎯 TESTIMONIALS API TESTING")
+    testimonials_tester = TestimonialsAPITester()
+    t_passed, t_failed, t_results = testimonials_tester.run_all_tests()
+    
+    # Run Gallery API Tests (Secondary)
+    print("\n📸 GALLERY API TESTING")
+    gallery_tester = GalleryAPITester()
+    g_passed, g_failed, g_results = gallery_tester.run_all_tests()
+    
+    # Overall Summary
+    total_passed = t_passed + g_passed
+    total_failed = t_failed + g_failed
+    
+    print("\n" + "=" * 80)
+    print("🏆 OVERALL TEST SUMMARY")
+    print(f"Testimonials: {t_passed}/{t_passed + t_failed} passed")
+    print(f"Gallery: {g_passed}/{g_passed + g_failed} passed")
+    print(f"Total Tests: {total_passed + total_failed}")
+    print(f"Total Passed: {total_passed}")
+    print(f"Total Failed: {total_failed}")
+    print("=" * 80)
     
     # Exit with error code if any tests failed
-    sys.exit(0 if failed == 0 else 1)
+    sys.exit(0 if total_failed == 0 else 1)
 
 if __name__ == "__main__":
     main()
