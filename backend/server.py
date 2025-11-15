@@ -749,6 +749,14 @@ async def get_public_testimonials():
             testimonial['created_at'] = datetime.fromisoformat(testimonial['created_at'])
     return testimonials
 
+@api_router.get("/tips", response_model=List[TipModel])
+async def get_public_tips():
+    tips = await db.tips.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for tip in tips:
+        if isinstance(tip.get('created_at'), str):
+            tip['created_at'] = datetime.fromisoformat(tip['created_at'])
+    return tips
+
 
 # Include the router in the main app
 app.include_router(api_router)
