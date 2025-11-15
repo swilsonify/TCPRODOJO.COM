@@ -44,8 +44,16 @@ const Events = () => {
         <div className="max-w-4xl mx-auto mb-16">
           <h2 className="text-3xl font-bold text-white torture-text mb-8">UPCOMING EVENTS</h2>
           
-          <div className="space-y-6">
-            {upcomingEvents.map((event) => (
+          {loading ? (
+            <div className="text-center text-gray-400 py-12">Loading events...</div>
+          ) : upcomingEvents.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">No upcoming events at this time.</p>
+              <p className="text-gray-500 text-sm mt-2">Check back soon for announcements!</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {upcomingEvents.map((event) => (
               <div
                 key={event.id}
                 className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
