@@ -19,7 +19,8 @@ const AdminEvents = () => {
     description: '',
     attendees: '',
     imageUrl: '',
-    videoUrl: ''
+    videoUrl: '',
+    displayOrder: 0
   });
   const navigate = useNavigate();
 
