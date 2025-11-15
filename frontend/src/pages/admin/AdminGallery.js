@@ -312,7 +312,7 @@ const AdminGallery = () => {
                 className="bg-gray-900 border border-blue-500/20 rounded-lg overflow-hidden"
               >
                 {/* Media Preview */}
-                <div className="aspect-video bg-black flex items-center justify-center">
+                <div className="aspect-square bg-black flex items-center justify-center">
                   {item.type === 'image' ? (
                     item.url ? (
                       <img 
