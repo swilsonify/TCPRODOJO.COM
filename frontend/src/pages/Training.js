@@ -68,7 +68,7 @@ const Training = () => {
 
         {/* Curriculum Section */}
         <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
-          <h2 className="text-4xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
+          <h2 className="text-5xl md:text-6xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
           
           <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
             <p>
