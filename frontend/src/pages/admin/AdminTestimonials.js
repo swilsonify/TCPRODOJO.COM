@@ -108,7 +108,8 @@ const AdminTestimonials = () => {
       role: '',
       text: '',
       photoUrl: '',
-      videoUrl: ''
+      videoUrl: '',
+      displayOrder: 0
     });
     setEditingTestimonial(null);
     setShowForm(false);
