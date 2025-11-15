@@ -222,6 +222,20 @@ class TipModel(BaseModel):
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class ClassScheduleModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    day: str
+    time: str
+    title: str
+    instructor: str
+    level: str
+    spots: int
+    type: str = "Wrestling"
+    description: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 
 # Helper functions for admin auth
 def create_access_token(data: dict):
