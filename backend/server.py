@@ -398,7 +398,7 @@ async def verify_admin(username: str = Depends(verify_token)):
 # Admin Event Management
 @api_router.get("/admin/events", response_model=List[EventModel])
 async def get_admin_events(username: str = Depends(verify_token)):
-    events = await db.events.find({}, {"_id": 0}).to_list(1000)
+    events = await db.events.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
     for event in events:
         if isinstance(event.get('created_at'), str):
             event['created_at'] = datetime.fromisoformat(event['created_at'])
