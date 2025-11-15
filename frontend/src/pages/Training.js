@@ -47,17 +47,9 @@ const Training = () => {
           </div>
         </div>
 
-        {/* How It Works Section */}
-        <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
-          <h2 className="text-4xl font-bold text-white torture-text mb-6 text-center">HOW IT WORKS</h2>
-          <p className="text-gray-300 text-xl leading-relaxed text-center">
-            Send a message to our team, they will reach out to answer your questions and discuss your goals.
-          </p>
-        </div>
-
         {/* Curriculum Section */}
         <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
-          <h2 className="text-4xl font-bold text-white torture-text mb-8 text-center">Curriculum</h2>
+          <h2 className="text-4xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
           
           <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
             <p>
@@ -75,6 +67,14 @@ const Training = () => {
               Working a televised match, Industry tryouts, bookings, touring prep and agent showcases through our network.
             </p>
           </div>
+        </div>
+
+        {/* How It Works Section */}
+        <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
+          <h2 className="text-4xl font-bold text-white torture-text mb-6 text-center">HOW IT WORKS</h2>
+          <p className="text-gray-300 text-xl leading-relaxed text-center">
+            Send a message to our team, they will reach out to answer your questions and discuss your goals.
+          </p>
         </div>
 
         {/* CTA Box */}
