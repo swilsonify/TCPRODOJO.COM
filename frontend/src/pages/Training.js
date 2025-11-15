@@ -51,8 +51,7 @@ const Training = () => {
         <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
           <h2 className="text-4xl font-bold text-white torture-text mb-6 text-center">HOW IT WORKS</h2>
           <p className="text-gray-300 text-xl leading-relaxed text-center">
-            Send a message to our team, they will reach out to answer your questions and discuss your goals. 
-            All levels are welcome, everyone starts somewhere!
+            Send a message to our team, they will reach out to answer your questions and discuss your goals.
           </p>
         </div>
 
@@ -78,8 +77,11 @@ const Training = () => {
           </div>
         </div>
 
-        {/* CTA Button */}
-        <div className="text-center">
+        {/* CTA Box */}
+        <div className="bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500 rounded-lg p-10 text-center">
+          <p className="text-gray-300 text-xl mb-6">
+            All levels are welcome, everyone starts somewhere!
+          </p>
           <Link
             to="/contact"
             className="inline-block px-16 py-5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-2xl rounded-lg transition-all transform hover:scale-105 shadow-lg shadow-blue-500/50"
