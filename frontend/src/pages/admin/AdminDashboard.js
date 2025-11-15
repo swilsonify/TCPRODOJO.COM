@@ -135,6 +135,13 @@ const AdminDashboard = () => {
       description: 'Manage endorsement videos'
     },
     {
+      title: 'Tips & Techniques',
+      icon: Video,
+      count: stats.tips || 0,
+      link: '/admin/tips',
+      description: 'Manage training tips videos'
+    },
+    {
       title: 'Media Library',
       icon: Image,
       count: stats.media || 0,
