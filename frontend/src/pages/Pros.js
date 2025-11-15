@@ -10,6 +10,25 @@ const Pros = () => {
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
+  // Helper function to convert YouTube URL to embed format
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return '';
+    
+    // Already in embed format
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+    
+    // Convert watch format to embed format
+    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+    if (videoIdMatch && videoIdMatch[1]) {
+      return `https://www.youtube.com/embed/${videoIdMatch[1]}`;
+    }
+    
+    // Return original URL if no match
+    return url;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     loadData();
