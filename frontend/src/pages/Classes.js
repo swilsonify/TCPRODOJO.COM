@@ -238,7 +238,7 @@ const Classes = () => {
                   </span>
                 </div>
 
-                <div className="space-y-2 mb-4">
+                <div className="space-y-2">
                   <div className="text-gray-300">
                     <span className="font-semibold">Instructor:</span> {classItem.instructor}
                   </div>
@@ -246,15 +246,12 @@ const Classes = () => {
                     <Users size={16} />
                     <span>{classItem.spots} spots available</span>
                   </div>
+                  {classItem.description && (
+                    <div className="text-gray-400 text-sm mt-2">
+                      {classItem.description}
+                    </div>
+                  )}
                 </div>
-
-                <button
-                  onClick={() => handleBookClass(classItem)}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
-                  data-testid={`book-class-${classItem.id}-button`}
-                >
-                  BOOK THIS CLASS
-                </button>
               </div>
             ))}
           </div>
