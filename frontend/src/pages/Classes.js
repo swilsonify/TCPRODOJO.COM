@@ -79,9 +79,6 @@ const Classes = () => {
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">CLASS SCHEDULE</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            View our weekly class schedule and book your spot. Classes fill up fast!
-          </p>
         </div>
 
         {/* Calendar */}
