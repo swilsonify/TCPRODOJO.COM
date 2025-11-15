@@ -202,8 +202,14 @@ const Classes = () => {
             </button>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredClasses.map((classItem) => (
+          {filteredClasses.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">No classes available at this time.</p>
+              <p className="text-gray-500 text-sm mt-2">Please check back later for schedule updates.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredClasses.map((classItem) => (
               <div
                 key={classItem.id}
                 className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
