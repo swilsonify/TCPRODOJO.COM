@@ -594,6 +594,62 @@ async def delete_endorsement(endorsement_id: str, username: str = Depends(verify
         raise HTTPException(status_code=404, detail="Endorsement not found")
     return {"message": "Endorsement deleted successfully"}
 
+# Admin Tips Management
+@api_router.get("/admin/tips", response_model=List[TipModel])
+async def get_admin_tips(username: str = Depends(verify_token)):
+    tips = await db.tips.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for tip in tips:
+        if isinstance(tip.get('created_at'), str):
+            tip['created_at'] = datetime.fromisoformat(tip['created_at'])
+    return tips
+
+@api_router.post("/admin/tips", response_model=TipModel)
+async def create_tip(tip: TipModel, username: str = Depends(verify_token)):
+    tip_dict = tip.model_dump()
+    if isinstance(tip_dict.get('created_at'), datetime):
+        tip_dict['created_at'] = tip_dict['created_at'].isoformat()
+    
+    # Convert YouTube URL to embed format
+    if tip_dict.get('videoUrl'):
+        video_url = tip_dict['videoUrl']
+        if 'youtube.com/watch?v=' in video_url:
+            video_id = video_url.split('watch?v=')[1].split('&')[0]
+            tip_dict['videoUrl'] = f'https://www.youtube.com/embed/{video_id}'
+        elif 'youtu.be/' in video_url:
+            video_id = video_url.split('youtu.be/')[1].split('?')[0]
+            tip_dict['videoUrl'] = f'https://www.youtube.com/embed/{video_id}'
+    
+    await db.tips.insert_one(tip_dict)
+    return tip
+
+@api_router.put("/admin/tips/{tip_id}", response_model=TipModel)
+async def update_tip(tip_id: str, tip: TipModel, username: str = Depends(verify_token)):
+    tip_dict = tip.model_dump()
+    if isinstance(tip_dict.get('created_at'), datetime):
+        tip_dict['created_at'] = tip_dict['created_at'].isoformat()
+    
+    # Convert YouTube URL to embed format
+    if tip_dict.get('videoUrl'):
+        video_url = tip_dict['videoUrl']
+        if 'youtube.com/watch?v=' in video_url:
+            video_id = video_url.split('watch?v=')[1].split('&')[0]
+            tip_dict['videoUrl'] = f'https://www.youtube.com/embed/{video_id}'
+        elif 'youtu.be/' in video_url:
+            video_id = video_url.split('youtu.be/')[1].split('?')[0]
+            tip_dict['videoUrl'] = f'https://www.youtube.com/embed/{video_id}'
+    
+    result = await db.tips.update_one({"id": tip_id}, {"$set": tip_dict})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Tip not found")
+    return tip
+
+@api_router.delete("/admin/tips/{tip_id}")
+async def delete_tip(tip_id: str, username: str = Depends(verify_token)):
+    result = await db.tips.delete_one({"id": tip_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Tip not found")
+    return {"message": "Tip deleted successfully"}
+
 # Media Upload with Cloudinary
 @api_router.post("/admin/upload")
 async def upload_file(file: UploadFile = File(...), username: str = Depends(verify_token)):
