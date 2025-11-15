@@ -805,6 +805,14 @@ async def get_public_tips():
             tip['created_at'] = datetime.fromisoformat(tip['created_at'])
     return tips
 
+@api_router.get("/classes", response_model=List[ClassScheduleModel])
+async def get_public_classes():
+    classes = await db.classes.find({}, {"_id": 0}).to_list(1000)
+    for class_item in classes:
+        if isinstance(class_item.get('created_at'), str):
+            class_item['created_at'] = datetime.fromisoformat(class_item['created_at'])
+    return classes
+
 
 # Include the router in the main app
 app.include_router(api_router)
