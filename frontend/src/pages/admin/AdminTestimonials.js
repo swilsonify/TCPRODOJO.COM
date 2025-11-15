@@ -79,7 +79,8 @@ const AdminTestimonials = () => {
       role: testimonial.role,
       text: testimonial.text,
       photoUrl: testimonial.photoUrl || '',
-      videoUrl: testimonial.videoUrl || ''
+      videoUrl: testimonial.videoUrl || '',
+      displayOrder: testimonial.displayOrder || 0
     });
     setShowForm(true);
   };
