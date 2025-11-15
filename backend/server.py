@@ -237,6 +237,13 @@ class ClassScheduleModel(BaseModel):
     description: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class NewsletterSubscriptionModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: str
+    subscribed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 
 # Helper functions for admin auth
 def create_access_token(data: dict):
