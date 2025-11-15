@@ -7,10 +7,6 @@ const API = `${BACKEND_URL}/api`;
 
 const Classes = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [bookingName, setBookingName] = useState('');
-  const [bookingEmail, setBookingEmail] = useState('');
-  const [showBookingModal, setShowBookingModal] = useState(false);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [classFilter, setClassFilter] = useState('All'); // New filter state
