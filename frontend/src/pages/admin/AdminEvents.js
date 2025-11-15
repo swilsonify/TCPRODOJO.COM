@@ -117,7 +117,8 @@ const AdminEvents = () => {
       description: '',
       attendees: '',
       imageUrl: '',
-      videoUrl: ''
+      videoUrl: '',
+      displayOrder: 0
     });
     setEditingEvent(null);
     setShowForm(false);
