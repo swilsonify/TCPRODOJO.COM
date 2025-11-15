@@ -165,7 +165,7 @@ const Home = () => {
                 >
                   {/* Square Photo */}
                   {testimonial.photoUrl && (
-                    <div className="w-40 h-40 mx-auto mt-6">
+                    <div className="w-80 h-80 mx-auto mt-6">
                       <img 
                         src={testimonial.photoUrl} 
                         alt={testimonial.name}
