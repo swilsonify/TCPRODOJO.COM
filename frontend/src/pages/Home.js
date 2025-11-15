@@ -1,11 +1,31 @@
 import { Link } from 'react-router-dom';
 import { Dumbbell, Users, Trophy, Calendar } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Home = () => {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadTestimonials();
   }, []);
+
+  const loadTestimonials = async () => {
+    try {
+      const response = await axios.get(`${API}/api/testimonials`);
+      setTestimonials(response.data);
+    } catch (error) {
+      console.error('Error loading testimonials:', error);
+      // Fallback to empty array if API fails
+      setTestimonials([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -27,24 +47,6 @@ const Home = () => {
       icon: Calendar,
       title: 'Flexible Schedule',
       description: 'Multiple class times throughout the week to fit your training into your busy life.'
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: 'Mike "The Hammer" Rodriguez',
-      role: 'Professional Wrestler',
-      text: 'Training at Torture Chamber transformed my career. The dedication and expertise of the coaches is unmatched. I went from amateur to pro in just two years.'
-    },
-    {
-      name: 'Sarah Chen',
-      role: 'Fitness Enthusiast',
-      text: 'I joined to get in shape and ended up finding a passion I never knew I had. The community here is supportive and welcoming to all skill levels.'
-    },
-    {
-      name: 'James Williams',
-      role: 'Beginner Student',
-      text: 'Never thought I could do this at my age, but the coaches made me feel comfortable from day one. Best decision I ever made for my confidence and fitness.'
     }
   ];
 
@@ -150,20 +152,39 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8 hover-lift"
-                data-testid={`testimonial-${index}`}
-              >
-                <div className="text-blue-500 text-5xl mb-4">"</div>
-                <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
-                <div>
-                  <div className="text-white font-bold">{testimonial.name}</div>
-                  <div className="text-blue-400 text-sm">{testimonial.role}</div>
+            {loading ? (
+              <div className="col-span-3 text-center text-gray-400">Loading testimonials...</div>
+            ) : testimonials.length === 0 ? (
+              <div className="col-span-3 text-center text-gray-400">No testimonials available yet.</div>
+            ) : (
+              testimonials.map((testimonial, index) => (
+                <div
+                  key={testimonial.id || index}
+                  className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
+                  data-testid={`testimonial-${index}`}
+                >
+                  {/* Small Square Photo */}
+                  {testimonial.photoUrl && (
+                    <div className="w-20 h-20 mx-auto mt-6">
+                      <img 
+                        src={testimonial.photoUrl} 
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover rounded-lg aspect-square"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="p-8">
+                    <div className="text-blue-500 text-5xl mb-4">"</div>
+                    <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
+                    <div>
+                      <div className="text-white font-bold">{testimonial.name}</div>
+                      <div className="text-blue-400 text-sm">{testimonial.role}</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
