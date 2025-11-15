@@ -139,15 +139,32 @@ const Events = () => {
         <div className="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Stay Updated</h2>
           <p className="text-blue-100 mb-6">
-            Don't miss out on our events. Contact us to get added to our mailing list.
+            Don't miss out on our exciting events! Get notified when we announce new shows and special appearances.
           </p>
-          <Link
-            to="/contact"
-            className="inline-block px-8 py-3 bg-white text-blue-600 font-bold rounded hover:bg-gray-100 transition-colors"
-            data-testid="stay-updated-button"
-          >
-            GET NOTIFICATIONS
-          </Link>
+          
+          <form onSubmit={handleNewsletterSubscribe} className="max-w-md mx-auto">
+            <div className="flex gap-3">
+              <input
+                type="email"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                placeholder="Enter your email address"
+                required
+                className="flex-1 px-4 py-3 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+                data-testid="newsletter-email-input"
+              />
+              <button
+                type="submit"
+                className="px-8 py-3 bg-white text-blue-600 font-bold rounded hover:bg-gray-100 transition-colors"
+                data-testid="subscribe-button"
+              >
+                Subscribe
+              </button>
+            </div>
+            {subscribeMessage && (
+              <p className="mt-4 text-white font-semibold">{subscribeMessage}</p>
+            )}
+          </form>
         </div>
       </div>
     </div>
