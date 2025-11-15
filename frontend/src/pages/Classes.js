@@ -29,13 +29,9 @@ const Classes = () => {
     }
   };
 
-  const defaultClasses = [
-    // PRO WRESTLING CLASSES
-    { id: 1, day: 'Monday', time: '6:00 PM - 8:00 PM', title: 'Beginner Pro Wrestling', instructor: 'Coach Mike', level: 'Beginner', spots: 8, type: 'Wrestling' },
-    { id: 2, day: 'Monday', time: '8:00 PM - 10:00 PM', title: 'Advanced Pro Wrestling', instructor: 'Coach Sarah', level: 'Advanced', spots: 5, type: 'Wrestling' },
-  ];
+  const defaultClasses = [];
 
-  const currentClasses = classes.length > 0 ? classes : defaultClasses;
+  const currentClasses = classes;
   
   // Filter classes based on selected type
   const filteredClasses = classFilter === 'All' 
