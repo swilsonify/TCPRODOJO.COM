@@ -139,7 +139,7 @@ const Events = () => {
         <div className="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Stay Updated</h2>
           <p className="text-blue-100 mb-6">
-            Don't miss out on our exciting events! Get notified when we announce new shows and special appearances.
+            Don't miss out on our events. Get added to our mailing list.
           </p>
           
           <form onSubmit={handleNewsletterSubscribe} className="max-w-md mx-auto">
