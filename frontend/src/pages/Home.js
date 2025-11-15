@@ -152,33 +152,39 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
-                data-testid={`testimonial-${index}`}
-              >
-                {/* Small Square Photo */}
-                {testimonial.photo_url && (
-                  <div className="w-20 h-20 mx-auto mt-6">
-                    <img 
-                      src={testimonial.photo_url} 
-                      alt={testimonial.name}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
-                )}
-                
-                <div className="p-8">
-                  <div className="text-blue-500 text-5xl mb-4">"</div>
-                  <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
-                  <div>
-                    <div className="text-white font-bold">{testimonial.name}</div>
-                    <div className="text-blue-400 text-sm">{testimonial.role}</div>
+            {loading ? (
+              <div className="col-span-3 text-center text-gray-400">Loading testimonials...</div>
+            ) : testimonials.length === 0 ? (
+              <div className="col-span-3 text-center text-gray-400">No testimonials available yet.</div>
+            ) : (
+              testimonials.map((testimonial, index) => (
+                <div
+                  key={testimonial.id || index}
+                  className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
+                  data-testid={`testimonial-${index}`}
+                >
+                  {/* Small Square Photo */}
+                  {testimonial.photoUrl && (
+                    <div className="w-20 h-20 mx-auto mt-6">
+                      <img 
+                        src={testimonial.photoUrl} 
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover rounded-lg aspect-square"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="p-8">
+                    <div className="text-blue-500 text-5xl mb-4">"</div>
+                    <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
+                    <div>
+                      <div className="text-white font-bold">{testimonial.name}</div>
+                      <div className="text-blue-400 text-sm">{testimonial.role}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
