@@ -144,6 +144,13 @@ const AdminDashboard = () => {
       description: 'Manage training tips videos'
     },
     {
+      title: 'Class Schedule',
+      icon: CalendarIcon,
+      count: stats.classes || 0,
+      link: '/admin/classes',
+      description: 'Manage weekly class schedule'
+    },
+    {
       title: 'Media Library',
       icon: Image,
       count: stats.media || 0,
