@@ -257,63 +257,6 @@ const Classes = () => {
           </div>
         </div>
       </div>
-
-      {/* Booking Modal */}
-      {showBookingModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" data-testid="booking-modal">
-          <div className="bg-gray-900 border border-blue-500/20 rounded-lg p-8 max-w-md w-full">
-            <h3 className="text-2xl font-bold text-white mb-4">Book {selectedClass?.title}</h3>
-            <div className="text-gray-400 mb-6">
-              <p>{selectedClass?.day} - {selectedClass?.time}</p>
-              <p>Instructor: {selectedClass?.instructor}</p>
-            </div>
-
-            <form onSubmit={submitBooking}>
-              <div className="mb-4">
-                <label className="block text-white font-semibold mb-2">Your Name</label>
-                <input
-                  type="text"
-                  value={bookingName}
-                  onChange={(e) => setBookingName(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  data-testid="booking-name-input"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-white font-semibold mb-2">Email Address</label>
-                <input
-                  type="email"
-                  value={bookingEmail}
-                  onChange={(e) => setBookingEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  data-testid="booking-email-input"
-                />
-              </div>
-
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setShowBookingModal(false)}
-                  className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded transition-colors"
-                  data-testid="cancel-booking-button"
-                >
-                  CANCEL
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
-                  data-testid="submit-booking-button"
-                >
-                  CONFIRM BOOKING
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
