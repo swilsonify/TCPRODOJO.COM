@@ -3,18 +3,21 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Video } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
-
 /**
- * Turn any YouTube URL (watch, youtu.be, shorts, or bare ID)
- * into a proper embed URL that works in an <iframe>.
+ * Turn any YouTube URL or ID into a proper embed URL for <iframe>.
+ * Supports:
+ *  - https://www.youtube.com/watch?v=VIDEOID
+ *  - https://youtu.be/VIDEOID
+ *  - https://www.youtube.com/shorts/VIDEOID
+ *  - already-embed URLs
+ *  - bare VIDEOID
  */
 const normalizeYouTubeUrl = (rawUrl) => {
   if (!rawUrl) return '';
 
   const url = rawUrl.trim();
 
-  // If they paste just the ID, accept it
+  // If they paste just the video ID
   if (!url.startsWith('http')) {
     return `https://www.youtube.com/embed/${url}`;
   }
@@ -23,26 +26,26 @@ const normalizeYouTubeUrl = (rawUrl) => {
     const u = new URL(url);
     const host = u.hostname.replace('www.', '');
 
-    // Short URLs: https://youtu.be/VIDEOID
+    // Short links: youtu.be/VIDEOID
     if (host === 'youtu.be') {
-      const id = u.pathname.slice(1).split('/')[0]; // first segment after '/'
+      const id = u.pathname.slice(1).split('/')[0]; // "VIDEOID"
       return id ? `https://www.youtube.com/embed/${id}` : url;
     }
 
-    // Standard YouTube domains
+    // Normal YouTube domains
     if (host.endsWith('youtube.com')) {
       // Already an embed URL
       if (u.pathname.startsWith('/embed/')) {
         return url;
       }
 
-      // Watch URL: https://www.youtube.com/watch?v=VIDEOID
+      // Watch URLs: youtube.com/watch?v=VIDEOID
       if (u.pathname === '/watch') {
         const id = u.searchParams.get('v');
         return id ? `https://www.youtube.com/embed/${id}` : url;
       }
 
-      // Shorts: https://www.youtube.com/shorts/VIDEOID
+      // Shorts: youtube.com/shorts/VIDEOID
       if (u.pathname.startsWith('/shorts/')) {
         const id = u.pathname.split('/shorts/')[1]?.split('/')[0];
         return id ? `https://www.youtube.com/embed/${id}` : url;
@@ -50,9 +53,9 @@ const normalizeYouTubeUrl = (rawUrl) => {
     }
   } catch (err) {
     console.error('Error parsing YouTube URL:', err);
-    // Fall through to returning original URL
   }
 
+  // Fallback: return original
   return url;
 };
 
@@ -69,9 +72,12 @@ const AdminEndorsements = () => {
     displayOrder: 0,
   });
 
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
   useEffect(() => {
     verifyAuth();
     loadEndorsements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const verifyAuth = () => {
@@ -106,10 +112,7 @@ const AdminEndorsements = () => {
     // Normalize ANY YouTube URL into an embed URL
     const embedUrl = normalizeYouTubeUrl(formData.videoUrl);
 
-    const dataToSubmit = {
-      ...formData,
-      videoUrl: embedUrl,
-    };
+    const dataToSubmit = { ...formData, videoUrl: embedUrl };
 
     try {
       if (editingEndorsement) {
@@ -138,7 +141,7 @@ const AdminEndorsements = () => {
     setEditingEndorsement(endorsement);
     setFormData({
       title: endorsement.title,
-      videoUrl: endorsement.videoUrl, // will already be embed URL from DB
+      videoUrl: endorsement.videoUrl,
       description: endorsement.description || '',
       displayOrder: endorsement.displayOrder || 0,
     });
@@ -150,4 +153,70 @@ const AdminEndorsements = () => {
       return;
     }
 
-    const token = localStorage.getI
+    const token = localStorage.getItem('adminToken');
+    try {
+      await axios.delete(`${API}/api/admin/endorsements/${endorsementId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await loadEndorsements();
+    } catch (error) {
+      console.error('Error deleting endorsement:', error);
+      alert('Error deleting endorsement. Please try again.');
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      videoUrl: '',
+      description: '',
+      displayOrder: 0,
+    });
+    setEditingEndorsement(null);
+    setShowForm(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate('/admin/dashboard')}
+              className="text-blue-400 hover:text-blue-300"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <h1 className="text-3xl font-bold text-white">
+              Manage TC Endorsements
+            </h1>
+          </div>
+          {!showForm && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              <Plus size={20} />
+              <span>Add Endorsement</span>
+            </button>
+          )}
+        </div>
+
+        {/* Form */}
+        {showForm && (
+          <div className="bg-gray-800 rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-bold text-white mb-4">
+              {editingEndorsement ? 'Edit Endorsement' : 'Add New Endorsement'}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-gray-300 mb-2">Title *</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  className="w-full bg-gray-700 text-white rounded px-4 py-2"
+                  placeholder="e.g., Kevin Owens, WWE Universal Champion"
