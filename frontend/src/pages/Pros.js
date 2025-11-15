@@ -113,8 +113,8 @@ const Pros = () => {
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`endorsement-${index}`}
               >
-                {/* Video Placeholder */}
-                <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                {/* Video - Square Frame */}
+                <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
                   {endorsement.videoUrl ? (
                     <iframe
                       className="w-full h-full"
