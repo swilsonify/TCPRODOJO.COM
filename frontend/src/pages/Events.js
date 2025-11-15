@@ -95,8 +95,9 @@ const Events = () => {
                   </Link>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Past Events */}
