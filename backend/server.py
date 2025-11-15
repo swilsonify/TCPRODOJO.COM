@@ -677,7 +677,7 @@ async def get_public_coaches():
 
 @api_router.get("/testimonials", response_model=List[TestimonialModel])
 async def get_public_testimonials():
-    testimonials = await db.testimonials.find({}, {"_id": 0}).to_list(1000)
+    testimonials = await db.testimonials.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
     for testimonial in testimonials:
         if isinstance(testimonial.get('created_at'), str):
             testimonial['created_at'] = datetime.fromisoformat(testimonial['created_at'])
