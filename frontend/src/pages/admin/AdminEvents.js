@@ -247,6 +247,18 @@ const AdminEvents = () => {
                   />
                   <p className="text-gray-400 text-xs mt-1">YouTube or Vimeo URL</p>
                 </div>
+                <div>
+                  <label className="block text-white font-semibold mb-2">Display Order</label>
+                  <input
+                    type="number"
+                    value={formData.displayOrder}
+                    onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                    min="0"
+                    placeholder="0"
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">Lower numbers appear first</p>
+                </div>
               </div>
 
               <div className="flex space-x-4">
