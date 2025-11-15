@@ -28,6 +28,17 @@ const Training = () => {
   return (
     <div className="pt-28 pb-20 px-4" data-testid="training-page">
       <div className="container mx-auto max-w-5xl">
+        {/* Header Image */}
+        <div className="text-center mb-16">
+          <div className="mb-6">
+            <img 
+              src="/images/your-excuses-v2.webp" 
+              alt="Your Excuses Are Your Own" 
+              className="max-w-4xl mx-auto w-full px-4"
+            />
+          </div>
+        </div>
+
         {/* Curriculum Section */}
         <div className="bg-black border border-blue-500/20 rounded-lg p-10 mb-12">
           <h2 className="text-5xl md:text-6xl font-bold text-white torture-text mb-8 text-center">Training Curriculum:</h2>
