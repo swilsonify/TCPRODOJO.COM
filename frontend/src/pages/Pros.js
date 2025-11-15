@@ -10,6 +10,25 @@ const Pros = () => {
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
+  // Helper function to convert YouTube URL to embed format
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return '';
+    
+    // Already in embed format
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+    
+    // Convert watch format to embed format
+    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+    if (videoIdMatch && videoIdMatch[1]) {
+      return `https://www.youtube.com/embed/${videoIdMatch[1]}`;
+    }
+    
+    // Return original URL if no match
+    return url;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     loadData();
@@ -117,8 +136,8 @@ const Pros = () => {
                 <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
                   {endorsement.videoUrl ? (
                     <iframe
-                      className="w-full h-full border-4 border-blue-500 rounded-lg"
-                      src={endorsement.videoUrl}
+                      className="w-full h-full"
+                      src={getYouTubeEmbedUrl(endorsement.videoUrl)}
                       title={endorsement.title}
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

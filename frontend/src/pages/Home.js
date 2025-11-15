@@ -163,9 +163,9 @@ const Home = () => {
                   className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                   data-testid={`testimonial-${index}`}
                 >
-                  {/* Small Square Photo */}
+                  {/* Square Photo */}
                   {testimonial.photoUrl && (
-                    <div className="w-20 h-20 mx-auto mt-6">
+                    <div className="w-40 h-40 mx-auto mt-6">
                       <img 
                         src={testimonial.photoUrl} 
                         alt={testimonial.name}
