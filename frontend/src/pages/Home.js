@@ -34,17 +34,20 @@ const Home = () => {
     {
       name: 'Mike "The Hammer" Rodriguez',
       role: 'Professional Wrestler',
-      text: 'Training at Torture Chamber transformed my career. The dedication and expertise of the coaches is unmatched. I went from amateur to pro in just two years.'
+      text: 'Training at Torture Chamber transformed my career. The dedication and expertise of the coaches is unmatched. I went from amateur to pro in just two years.',
+      photo_url: '' // Add photo URL from Media Library
     },
     {
       name: 'Sarah Chen',
       role: 'Fitness Enthusiast',
-      text: 'I joined to get in shape and ended up finding a passion I never knew I had. The community here is supportive and welcoming to all skill levels.'
+      text: 'I joined to get in shape and ended up finding a passion I never knew I had. The community here is supportive and welcoming to all skill levels.',
+      photo_url: '' // Add photo URL from Media Library
     },
     {
       name: 'James Williams',
       role: 'Beginner Student',
-      text: 'Never thought I could do this at my age, but the coaches made me feel comfortable from day one. Best decision I ever made for my confidence and fitness.'
+      text: 'Never thought I could do this at my age, but the coaches made me feel comfortable from day one. Best decision I ever made for my confidence and fitness.',
+      photo_url: '' // Add photo URL from Media Library
     }
   ];
 
