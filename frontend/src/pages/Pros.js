@@ -66,19 +66,32 @@ const Pros = () => {
             {successStories.map((graduate, index) => (
               <div
                 key={index}
-                className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
+                className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`graduate-${index}`}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <Trophy className="text-blue-500" size={32} />
-                  <span className="text-xs text-gray-500">Class of {graduate.yearGraduated}</span>
+                {/* Photo */}
+                {graduate.photo_url && (
+                  <div className="aspect-video bg-gray-800 overflow-hidden">
+                    <img 
+                      src={graduate.photo_url} 
+                      alt={graduate.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Trophy className="text-blue-500" size={32} />
+                    <span className="text-xs text-gray-500">Class of {graduate.yearGraduated}</span>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-white mb-2">{graduate.name}</h3>
+                  <div className="text-blue-400 text-sm font-semibold mb-1">{graduate.promotion}</div>
+                  <div className="text-gray-400 text-sm mb-3">{graduate.achievement}</div>
+                  
+                  <p className="text-gray-300 text-sm">{graduate.bio}</p>
                 </div>
-                
-                <h3 className="text-xl font-bold text-white mb-2">{graduate.name}</h3>
-                <div className="text-blue-400 text-sm font-semibold mb-1">{graduate.promotion}</div>
-                <div className="text-gray-400 text-sm mb-3">{graduate.achievement}</div>
-                
-                <p className="text-gray-300 text-sm">{graduate.bio}</p>
               </div>
             ))}
           </div>
