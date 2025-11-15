@@ -6,6 +6,8 @@ import axios from 'axios';
 const Events = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [subscribeMessage, setSubscribeMessage] = useState('');
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -23,6 +25,20 @@ const Events = () => {
       setUpcomingEvents([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleNewsletterSubscribe = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`${API}/api/newsletter/subscribe?email=${encodeURIComponent(newsletterEmail)}`);
+      setSubscribeMessage('✅ Successfully subscribed to our newsletter!');
+      setNewsletterEmail('');
+      setTimeout(() => setSubscribeMessage(''), 5000);
+    } catch (error) {
+      console.error('Error subscribing:', error);
+      setSubscribeMessage('❌ Error subscribing. Please try again.');
+      setTimeout(() => setSubscribeMessage(''), 5000);
     }
   };
 
