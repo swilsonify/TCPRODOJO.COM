@@ -674,6 +674,14 @@ async def get_public_coaches():
             coach['created_at'] = datetime.fromisoformat(coach['created_at'])
     return coaches
 
+@api_router.get("/testimonials", response_model=List[TestimonialModel])
+async def get_public_testimonials():
+    testimonials = await db.testimonials.find({}, {"_id": 0}).to_list(1000)
+    for testimonial in testimonials:
+        if isinstance(testimonial.get('created_at'), str):
+            testimonial['created_at'] = datetime.fromisoformat(testimonial['created_at'])
+    return testimonials
+
 
 # Include the router in the main app
 app.include_router(api_router)
