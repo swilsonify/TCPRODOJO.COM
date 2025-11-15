@@ -167,37 +167,6 @@ const Training = () => {
           </div>
         </div>
 
-        {/* BOXING CLASSES */}
-        <div className="mb-20">
-          <div className="max-w-4xl mx-auto bg-black border border-blue-500/20 rounded-lg p-8">
-            <div className="text-center mb-6">
-              <h2 className="text-4xl font-bold text-white torture-text mb-6">{boxingProgram.title}</h2>
-              <div className="text-4xl font-bold text-white mb-6">{boxingProgram.price}</div>
-              
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                {boxingProgram.pricingOptions.map((option, idx) => (
-                  <div key={idx} className="text-center">
-                    <div className="text-white font-bold text-2xl">{option.price}</div>
-                    <div className="text-gray-400 text-sm">{option.label}</div>
-                  </div>
-                ))}
-              </div>
-              
-              <p className="text-gray-300">{boxingProgram.additionalInfo}</p>
-            </div>
-
-            <div className="text-center mt-6">
-              <Link
-                to="/contact"
-                className="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
-                data-testid="enroll-boxing-button"
-              >
-                SIGN UP NOW
-              </Link>
-            </div>
-          </div>
-        </div>
-
         {/* PRIVATE CLASSES */}
         <div className="mb-20">
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500 rounded-lg p-10 shadow-2xl shadow-blue-500/30 relative overflow-hidden">
