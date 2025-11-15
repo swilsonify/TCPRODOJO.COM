@@ -69,13 +69,13 @@ const Pros = () => {
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`graduate-${index}`}
               >
-                {/* Photo */}
+                {/* Photo - Square aspect ratio */}
                 {graduate.photo_url && (
-                  <div className="aspect-video bg-gray-800 overflow-hidden">
+                  <div className="aspect-square bg-gray-800 overflow-hidden">
                     <img 
                       src={graduate.photo_url} 
                       alt={graduate.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-center"
                     />
                   </div>
                 )}
@@ -113,8 +113,8 @@ const Pros = () => {
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`endorsement-${index}`}
               >
-                {/* Video Placeholder */}
-                <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                {/* Video - Square Frame */}
+                <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
                   {endorsement.videoUrl ? (
                     <iframe
                       className="w-full h-full border-4 border-blue-500 rounded-lg"

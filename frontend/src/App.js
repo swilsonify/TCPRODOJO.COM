@@ -30,7 +30,8 @@ function App() {
           <Route path="training" element={<Training />} />
           <Route path="classes" element={<Classes />} />
           <Route path="events" element={<Events />} />
-          <Route path="pros" element={<Pros />} />
+          <Route path="success" element={<Pros />} />
+          <Route path="pros" element={<Pros />} /> {/* Keep old URL for backwards compatibility */}
           <Route path="shop" element={<Shop />} />
           <Route path="contact" element={<Contact />} />
         </Route>
