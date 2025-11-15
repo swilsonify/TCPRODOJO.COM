@@ -157,6 +157,8 @@ class TestimonialModel(BaseModel):
     name: str
     role: str
     text: str
+    photoUrl: str = ""
+    videoUrl: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class GalleryModel(BaseModel):
