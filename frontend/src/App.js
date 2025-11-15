@@ -48,6 +48,7 @@ function App() {
         <Route path="/admin/coaches" element={<AdminCoaches />} />
         <Route path="/admin/success-stories" element={<AdminSuccessStories />} />
         <Route path="/admin/endorsements" element={<AdminEndorsements />} />
+        <Route path="/admin/tips" element={<AdminTips />} />
         <Route path="/admin/media" element={<AdminMediaLibrary />} />
       </Routes>
     </BrowserRouter>
