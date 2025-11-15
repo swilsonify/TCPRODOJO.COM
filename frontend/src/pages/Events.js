@@ -1,72 +1,32 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Calendar, MapPin, Clock, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Events = () => {
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadEvents();
   }, []);
 
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: 'TC Winter Showcase 2025',
-      date: 'February 15, 2025',
-      time: '7:00 PM',
-      location: 'Torture Chamber Main Arena',
-      description: 'Watch our students and pro graduates battle it out in an action-packed evening of professional wrestling. Special guest appearances confirmed!',
-      attendees: '200+',
-      ticketLink: '/shop' // Links to shop page
-    },
-    {
-      id: 2,
-      title: 'Pro Wrestling Invitational',
-      date: 'March 22, 2025',
-      time: '8:00 PM',
-      location: 'Montreal Convention Center',
-      description: 'TC Pro Dojo presents an inter-promotional event featuring talent from across North America. Championship matches and special attractions.',
-      attendees: '500+',
-      ticketLink: '/shop'
-    },
-    {
-      id: 3,
-      title: 'Spring Training Exhibition',
-      date: 'April 19, 2025',
-      time: '6:00 PM',
-      location: 'Torture Chamber Main Arena',
-      description: 'See our advanced students showcase new moves and characters. Free admission for current TC students!',
-      attendees: '150+',
-      ticketLink: '/shop'
-    },
-    {
-      id: 4,
-      title: 'TC 21st Anniversary Celebration',
-      date: 'June 7, 2025',
-      time: '7:00 PM',
-      location: 'Special Venue TBA',
-      description: '21 years of building champions! A massive event celebrating TC history with alumni returns, championship matches, and surprises.',
-      attendees: '1000+',
-      ticketLink: '/shop'
+  const loadEvents = async () => {
+    try {
+      const response = await axios.get(`${API}/api/admin/events`);
+      setUpcomingEvents(response.data);
+    } catch (error) {
+      console.error('Error loading events:', error);
+      setUpcomingEvents([]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const pastEvents = [
-    {
-      title: 'Winter Training Camp 2024',
-      date: 'December 2024',
-      description: 'Intensive 2-week training camp with guest coaches from major promotions.'
-    },
-    {
-      title: 'Fall Showcase 2024',
-      date: 'October 2024',
-      description: 'Student performance night featuring over 30 matches.'
-    },
-    {
-      title: '20th Anniversary Celebration',
-      date: 'April 2024',
-      description: 'Celebrated 20 years of building champions with alumni from around the world.'
-    }
-  ];
+  const pastEvents = [];
 
   return (
     <div className="pt-28 pb-20 px-4" data-testid="events-page">
