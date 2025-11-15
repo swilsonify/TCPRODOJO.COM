@@ -106,31 +106,37 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Training at TC Pro Dojo Section */}
       <section className="py-20 px-4 bg-black/50">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white torture-text mb-4">WHY TRAIN WITH US</h2>
-            <div className="gradient-border mx-auto w-24 mb-6"></div>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              We've been building champions for over two decades. Here's what sets us apart.
-            </p>
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-12">
+            <h2 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">TRAINING AT TC PRO DOJO</h2>
+            <div className="gradient-border mx-auto w-24 mb-12"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
-                data-testid={`feature-${index}`}
-              >
-                <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
-                  <feature.icon size={32} className="text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
+          {/* Two Column Info Boxes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Step into the Ring */}
+            <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
+              <h3 className="text-3xl font-bold text-blue-400 mb-6 text-center">Step into the Ring!</h3>
+              <div className="text-gray-300 text-lg leading-relaxed space-y-4 text-center">
+                <p>We welcome students of ALL levels.</p>
+                <p>Qualified instructors in a safe learning environment.</p>
+                <p>Whether you want to go PRO, get in shape or just experience the thrill of wrestling training, we've got a program for you.</p>
               </div>
-            ))}
+            </div>
+
+            {/* Why Train With Us */}
+            <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
+              <h3 className="text-3xl font-bold text-blue-400 mb-6 text-center">Why Train With Us?</h3>
+              <div className="text-gray-300 text-lg leading-relaxed space-y-2 text-center">
+                <p>Emphasis on the fundamentals of professional wrestling, all fitness levels welcome.</p>
+                <p>Flexible class schedules.</p>
+                <p>Build confidence, strength, and showmanship.</p>
+                <p>Expert coaching from professional wrestlers.</p>
+                <p>Safe, professional training facility.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
