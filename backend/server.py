@@ -821,6 +821,37 @@ async def get_public_classes():
             class_item['created_at'] = datetime.fromisoformat(class_item['created_at'])
     return classes
 
+# Newsletter Subscription Endpoints
+@api_router.post("/newsletter/subscribe")
+async def subscribe_newsletter(email: str):
+    # Check if email already exists
+    existing = await db.newsletter_subscriptions.find_one({"email": email})
+    if existing:
+        return {"message": "Email already subscribed", "success": True}
+    
+    subscription = {
+        "id": str(uuid.uuid4()),
+        "email": email,
+        "subscribed_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.newsletter_subscriptions.insert_one(subscription)
+    return {"message": "Successfully subscribed", "success": True}
+
+@api_router.get("/admin/newsletter-subscriptions", response_model=List[NewsletterSubscriptionModel])
+async def get_newsletter_subscriptions(username: str = Depends(verify_token)):
+    subscriptions = await db.newsletter_subscriptions.find({}, {"_id": 0}).sort("subscribed_at", -1).to_list(10000)
+    for sub in subscriptions:
+        if isinstance(sub.get('subscribed_at'), str):
+            sub['subscribed_at'] = datetime.fromisoformat(sub['subscribed_at'])
+    return subscriptions
+
+@api_router.delete("/admin/newsletter-subscriptions/{subscription_id}")
+async def delete_subscription(subscription_id: str, username: str = Depends(verify_token)):
+    result = await db.newsletter_subscriptions.delete_one({"id": subscription_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    return {"message": "Subscription deleted successfully"}
+
 
 # Include the router in the main app
 app.include_router(api_router)
