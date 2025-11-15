@@ -42,7 +42,7 @@ const Training = () => {
         {/* Featured Photo */}
         <div className="mb-16">
           <img 
-            src="https://res.cloudinary.com/dpx8a9k7c/image/upload/v1763246792/WhatsApp_Image_2025-11-15_at_17.43.17_y54uqg.jpg" 
+            src="https://res.cloudinary.com/dpx8a9k7c/image/upload/v1763246788/WhatsApp_Image_2025-11-15_at_17.43.18_3_djziql.jpg" 
             alt="TC Pro Dojo Training" 
             className="w-full rounded-lg shadow-2xl"
           />
