@@ -137,7 +137,7 @@ const Pros = () => {
                   {endorsement.videoUrl ? (
                     <iframe
                       className="w-full h-full"
-                      src={endorsement.videoUrl}
+                      src={getYouTubeEmbedUrl(endorsement.videoUrl)}
                       title={endorsement.title}
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
