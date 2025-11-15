@@ -3,12 +3,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Video } from 'lucide-react';
 
-const AdminEndorsements = () => {
+const AdminTips = () => {
   const navigate = useNavigate();
-  const [endorsements, setEndorsements] = useState([]);
+  const [tips, setTips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingEndorsement, setEditingEndorsement] = useState(null);
+  const [editingTip, setEditingTip] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     videoUrl: '',
@@ -20,7 +20,7 @@ const AdminEndorsements = () => {
 
   useEffect(() => {
     verifyAuth();
-    loadEndorsements();
+    loadTips();
   }, []);
 
   const verifyAuth = () => {
@@ -30,16 +30,16 @@ const AdminEndorsements = () => {
     }
   };
 
-  const loadEndorsements = async () => {
+  const loadTips = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${API}/api/admin/endorsements`, {
+      const response = await axios.get(`${API}/api/admin/tips`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setEndorsements(response.data);
+      setTips(response.data);
     } catch (error) {
-      console.error('Error loading endorsements:', error);
+      console.error('Error loading tips:', error);
       if (error.response?.status === 401) {
         navigate('/admin/login');
       }
@@ -65,49 +65,49 @@ const AdminEndorsements = () => {
     const dataToSubmit = { ...formData, videoUrl: embedUrl };
 
     try {
-      if (editingEndorsement) {
-        await axios.put(`${API}/api/admin/endorsements/${editingEndorsement.id}`, dataToSubmit, {
+      if (editingTip) {
+        await axios.put(`${API}/api/admin/tips/${editingTip.id}`, dataToSubmit, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post(`${API}/api/admin/endorsements`, dataToSubmit, {
+        await axios.post(`${API}/api/admin/tips`, dataToSubmit, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
       
-      await loadEndorsements();
+      await loadTips();
       resetForm();
     } catch (error) {
-      console.error('Error saving endorsement:', error);
-      alert('Error saving endorsement. Please try again.');
+      console.error('Error saving tip:', error);
+      alert('Error saving tip. Please try again.');
     }
   };
 
-  const handleEdit = (endorsement) => {
-    setEditingEndorsement(endorsement);
+  const handleEdit = (tip) => {
+    setEditingTip(tip);
     setFormData({
-      title: endorsement.title,
-      videoUrl: endorsement.videoUrl,
-      description: endorsement.description || '',
-      displayOrder: endorsement.displayOrder || 0
+      title: tip.title,
+      videoUrl: tip.videoUrl,
+      description: tip.description || '',
+      displayOrder: tip.displayOrder || 0
     });
     setShowForm(true);
   };
 
-  const handleDelete = async (endorsementId) => {
-    if (!window.confirm('Are you sure you want to delete this endorsement?')) {
+  const handleDelete = async (tipId) => {
+    if (!window.confirm('Are you sure you want to delete this tip?')) {
       return;
     }
 
     const token = localStorage.getItem('adminToken');
     try {
-      await axios.delete(`${API}/api/admin/endorsements/${endorsementId}`, {
+      await axios.delete(`${API}/api/admin/tips/${tipId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      await loadEndorsements();
+      await loadTips();
     } catch (error) {
-      console.error('Error deleting endorsement:', error);
-      alert('Error deleting endorsement. Please try again.');
+      console.error('Error deleting tip:', error);
+      alert('Error deleting tip. Please try again.');
     }
   };
 
@@ -118,7 +118,7 @@ const AdminEndorsements = () => {
       description: '',
       displayOrder: 0
     });
-    setEditingEndorsement(null);
+    setEditingTip(null);
     setShowForm(false);
   };
 
@@ -133,7 +133,7 @@ const AdminEndorsements = () => {
             >
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-3xl font-bold text-white">Manage TC Endorsements</h1>
+            <h1 className="text-3xl font-bold text-white">Manage TC Tips</h1>
           </div>
           {!showForm && (
             <button
@@ -141,7 +141,7 @@ const AdminEndorsements = () => {
               className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               <Plus size={20} />
-              <span>Add Endorsement</span>
+              <span>Add Tip</span>
             </button>
           )}
         </div>
@@ -149,7 +149,7 @@ const AdminEndorsements = () => {
         {showForm && (
           <div className="bg-gray-800 rounded-lg p-6 mb-8">
             <h2 className="text-xl font-bold text-white mb-4">
-              {editingEndorsement ? 'Edit Endorsement' : 'Add New Endorsement'}
+              {editingTip ? 'Edit Tip' : 'Add New Tip'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -185,7 +185,7 @@ const AdminEndorsements = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full bg-gray-700 text-white rounded px-4 py-2 h-20"
-                  placeholder="Brief description of the endorsement..."
+                  placeholder="Brief description of the tip..."
                 />
               </div>
 
@@ -205,7 +205,7 @@ const AdminEndorsements = () => {
                   type="submit"
                   className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
                 >
-                  {editingEndorsement ? 'Update Endorsement' : 'Add Endorsement'}
+                  {editingTip ? 'Update Tip' : 'Add Tip'}
                 </button>
                 <button
                   type="button"
@@ -220,24 +220,24 @@ const AdminEndorsements = () => {
         )}
 
         {loading ? (
-          <div className="text-center text-gray-400 py-8">Loading endorsements...</div>
-        ) : endorsements.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">Loading tips...</div>
+        ) : tips.length === 0 ? (
           <div className="text-center text-gray-400 py-8">
-            No endorsements yet. Click "Add Endorsement" to create one.
+            No tips yet. Click "Add Tip" to create one.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {endorsements.map((endorsement) => (
+            {tips.map((tip) => (
               <div
-                key={endorsement.id}
+                key={tip.id}
                 className="bg-gray-800 rounded-lg overflow-hidden"
               >
                 <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
-                  {endorsement.videoUrl ? (
+                  {tip.videoUrl ? (
                     <iframe
                       className="w-full h-full"
-                      src={endorsement.videoUrl}
-                      title={endorsement.title}
+                      src={tip.videoUrl}
+                      title={tip.title}
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
@@ -248,24 +248,24 @@ const AdminEndorsements = () => {
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-white font-bold text-sm flex-1">{endorsement.title}</h3>
+                    <h3 className="text-white font-bold text-sm flex-1">{tip.title}</h3>
                     <div className="flex space-x-1 ml-2">
                       <button
-                        onClick={() => handleEdit(endorsement)}
+                        onClick={() => handleEdit(tip)}
                         className="text-blue-400 hover:text-blue-300 p-1"
                       >
                         <Edit size={16} />
                       </button>
                       <button
-                        onClick={() => handleDelete(endorsement.id)}
+                        onClick={() => handleDelete(tip.id)}
                         className="text-red-400 hover:text-red-300 p-1"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
-                  <p className="text-gray-400 text-xs">{endorsement.description}</p>
-                  <p className="text-gray-600 text-xs mt-2">Order: {endorsement.displayOrder}</p>
+                  <p className="text-gray-400 text-xs">{tip.description}</p>
+                  <p className="text-gray-600 text-xs mt-2">Order: {tip.displayOrder}</p>
                 </div>
               </div>
             ))}
@@ -276,4 +276,4 @@ const AdminEndorsements = () => {
   );
 };
 
-export default AdminEndorsements;
+export default AdminTips;
