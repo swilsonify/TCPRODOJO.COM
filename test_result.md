@@ -225,9 +225,28 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 2. **AdminGallery.js handleDelete**: Changed `loadMedia()` to `await loadMedia()` to ensure state updates before re-render
 
 ## Incorporate User Feedback
-- If user reports issues, add them here
-- Track resolution status
-- Verify fixes with user confirmation
+
+### User Report: Testimonials Not Loading from Admin Panel
+**Reported:** Current session
+**Status:** 🔍 INVESTIGATING
+
+**Issues Found:**
+1. ❌ Backend TestimonialModel missing `photoUrl` and `videoUrl` fields
+2. ❌ No public API endpoint for testimonials (only admin endpoints exist)
+3. ❌ Home.js using hardcoded testimonials instead of fetching from API
+4. ⚠️ Frontend-backend field mismatch (frontend expects `photoUrl`/`videoUrl`, backend doesn't have them)
+
+**Required Fixes:**
+1. Update TestimonialModel to include `photoUrl` and `videoUrl` fields
+2. Create public endpoint `/api/testimonials` for frontend access
+3. Update Home.js to fetch testimonials dynamically from API
+4. Test full flow: Admin creates testimonial → Appears on homepage
+
+**Next Steps:**
+- Fix backend model and add public endpoint
+- Update frontend to fetch testimonials
+- Test end-to-end flow
+- Verify other frontend-backend connections
 
 ## Notes
 - Backend URL: REACT_APP_BACKEND_URL environment variable
