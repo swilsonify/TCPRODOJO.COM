@@ -135,6 +135,7 @@ class EventModel(BaseModel):
     location: str
     description: str
     attendees: str
+    displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class TrainerModel(BaseModel):
@@ -235,6 +236,13 @@ class ClassScheduleModel(BaseModel):
     type: str = "Wrestling"
     description: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class NewsletterSubscriptionModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: str
+    subscribed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # Helper functions for admin auth
@@ -397,7 +405,7 @@ async def verify_admin(username: str = Depends(verify_token)):
 # Admin Event Management
 @api_router.get("/admin/events", response_model=List[EventModel])
 async def get_admin_events(username: str = Depends(verify_token)):
-    events = await db.events.find({}, {"_id": 0}).to_list(1000)
+    events = await db.events.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
     for event in events:
         if isinstance(event.get('created_at'), str):
             event['created_at'] = datetime.fromisoformat(event['created_at'])
@@ -812,6 +820,37 @@ async def get_public_classes():
         if isinstance(class_item.get('created_at'), str):
             class_item['created_at'] = datetime.fromisoformat(class_item['created_at'])
     return classes
+
+# Newsletter Subscription Endpoints
+@api_router.post("/newsletter/subscribe")
+async def subscribe_newsletter(email: str):
+    # Check if email already exists
+    existing = await db.newsletter_subscriptions.find_one({"email": email})
+    if existing:
+        return {"message": "Email already subscribed", "success": True}
+    
+    subscription = {
+        "id": str(uuid.uuid4()),
+        "email": email,
+        "subscribed_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.newsletter_subscriptions.insert_one(subscription)
+    return {"message": "Successfully subscribed", "success": True}
+
+@api_router.get("/admin/newsletter-subscriptions", response_model=List[NewsletterSubscriptionModel])
+async def get_newsletter_subscriptions(username: str = Depends(verify_token)):
+    subscriptions = await db.newsletter_subscriptions.find({}, {"_id": 0}).sort("subscribed_at", -1).to_list(10000)
+    for sub in subscriptions:
+        if isinstance(sub.get('subscribed_at'), str):
+            sub['subscribed_at'] = datetime.fromisoformat(sub['subscribed_at'])
+    return subscriptions
+
+@api_router.delete("/admin/newsletter-subscriptions/{subscription_id}")
+async def delete_subscription(subscription_id: str, username: str = Depends(verify_token)):
+    result = await db.newsletter_subscriptions.delete_one({"id": subscription_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    return {"message": "Subscription deleted successfully"}
 
 
 # Include the router in the main app
