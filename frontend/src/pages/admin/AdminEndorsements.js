@@ -232,7 +232,7 @@ const AdminEndorsements = () => {
                 key={endorsement.id}
                 className="bg-gray-800 rounded-lg overflow-hidden"
               >
-                <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
                   {endorsement.videoUrl ? (
                     <iframe
                       className="w-full h-full"
