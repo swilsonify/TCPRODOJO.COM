@@ -1,11 +1,31 @@
 import { Link } from 'react-router-dom';
 import { Dumbbell, Users, Trophy, Calendar } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Home = () => {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadTestimonials();
   }, []);
+
+  const loadTestimonials = async () => {
+    try {
+      const response = await axios.get(`${API}/api/testimonials`);
+      setTestimonials(response.data);
+    } catch (error) {
+      console.error('Error loading testimonials:', error);
+      // Fallback to empty array if API fails
+      setTestimonials([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -27,27 +47,6 @@ const Home = () => {
       icon: Calendar,
       title: 'Flexible Schedule',
       description: 'Multiple class times throughout the week to fit your training into your busy life.'
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: 'Mike "The Hammer" Rodriguez',
-      role: 'Professional Wrestler',
-      text: 'Training at Torture Chamber transformed my career. The dedication and expertise of the coaches is unmatched. I went from amateur to pro in just two years.',
-      photo_url: '' // Add photo URL from Media Library
-    },
-    {
-      name: 'Sarah Chen',
-      role: 'Fitness Enthusiast',
-      text: 'I joined to get in shape and ended up finding a passion I never knew I had. The community here is supportive and welcoming to all skill levels.',
-      photo_url: '' // Add photo URL from Media Library
-    },
-    {
-      name: 'James Williams',
-      role: 'Beginner Student',
-      text: 'Never thought I could do this at my age, but the coaches made me feel comfortable from day one. Best decision I ever made for my confidence and fitness.',
-      photo_url: '' // Add photo URL from Media Library
     }
   ];
 
