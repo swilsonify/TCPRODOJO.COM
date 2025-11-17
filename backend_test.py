@@ -334,6 +334,366 @@ class TestimonialsAPITester:
         
         return passed, failed, self.test_results
 
+class EventsAPITester:
+    def __init__(self):
+        self.access_token: Optional[str] = None
+        self.created_event_ids: list = []
+        self.test_results = []
+        
+    def log_test(self, test_name: str, status: str, details: str = ""):
+        """Log test result"""
+        result = {
+            "test": test_name,
+            "status": status,
+            "details": details
+        }
+        self.test_results.append(result)
+        print(f"{status} {test_name}")
+        if details:
+            print(f"   Details: {details}")
+    
+    def get_auth_headers(self) -> Dict[str, str]:
+        """Get authorization headers"""
+        if not self.access_token:
+            raise Exception("No access token available")
+        return {"Authorization": f"Bearer {self.access_token}"}
+    
+    def test_admin_login(self) -> bool:
+        """Test 1: Admin Login"""
+        try:
+            url = f"{API_BASE}/admin/login"
+            payload = {
+                "username": ADMIN_USERNAME,
+                "password": ADMIN_PASSWORD
+            }
+            
+            response = requests.post(url, json=payload, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "access_token" in data and "token_type" in data:
+                    if data["token_type"] == "bearer":
+                        self.access_token = data["access_token"]
+                        self.log_test("Admin Login", "✅ PASSED", f"Token received successfully")
+                        return True
+                    else:
+                        self.log_test("Admin Login", "❌ FAILED", f"Invalid token type: {data['token_type']}")
+                        return False
+                else:
+                    self.log_test("Admin Login", "❌ FAILED", f"Missing token fields in response: {data}")
+                    return False
+            else:
+                self.log_test("Admin Login", "❌ FAILED", f"Status: {response.status_code}, Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Admin Login", "❌ FAILED", f"Exception: {str(e)}")
+            return False
+    
+    def test_create_future_event(self) -> bool:
+        """Test 2: Create Future Event"""
+        try:
+            url = f"{API_BASE}/admin/events"
+            payload = {
+                "title": "Future Championship Match",
+                "date": "December 25, 2025",
+                "time": "7:00 PM",
+                "location": "TC Pro Dojo Arena",
+                "description": "An exciting championship match featuring top wrestlers",
+                "attendees": "200",
+                "displayOrder": 1
+            }
+            
+            response = requests.post(url, json=payload, headers=self.get_auth_headers(), timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "id" in data:
+                    self.created_event_ids.append(data["id"])
+                    # Verify all required fields are present
+                    required_fields = ["id", "title", "date", "time", "location", "description", "attendees", "displayOrder", "created_at"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if not missing_fields:
+                        self.log_test("Create Future Event", "✅ PASSED", f"Future event created with ID: {data['id']}")
+                        return True
+                    else:
+                        self.log_test("Create Future Event", "❌ FAILED", f"Missing fields: {missing_fields}")
+                        return False
+                else:
+                    self.log_test("Create Future Event", "❌ FAILED", f"No ID in response: {data}")
+                    return False
+            else:
+                self.log_test("Create Future Event", "❌ FAILED", f"Status: {response.status_code}, Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Create Future Event", "❌ FAILED", f"Exception: {str(e)}")
+            return False
+    
+    def test_create_past_event(self) -> bool:
+        """Test 3: Create Past Event"""
+        try:
+            url = f"{API_BASE}/admin/events"
+            payload = {
+                "title": "New Year Wrestling Spectacular",
+                "date": "January 1, 2024",
+                "time": "8:00 PM",
+                "location": "TC Pro Dojo Arena",
+                "description": "A spectacular wrestling event to celebrate the new year",
+                "attendees": "150",
+                "displayOrder": 2
+            }
+            
+            response = requests.post(url, json=payload, headers=self.get_auth_headers(), timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "id" in data:
+                    self.created_event_ids.append(data["id"])
+                    # Verify all required fields are present
+                    required_fields = ["id", "title", "date", "time", "location", "description", "attendees", "displayOrder", "created_at"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if not missing_fields:
+                        self.log_test("Create Past Event", "✅ PASSED", f"Past event created with ID: {data['id']}")
+                        return True
+                    else:
+                        self.log_test("Create Past Event", "❌ FAILED", f"Missing fields: {missing_fields}")
+                        return False
+                else:
+                    self.log_test("Create Past Event", "❌ FAILED", f"No ID in response: {data}")
+                    return False
+            else:
+                self.log_test("Create Past Event", "❌ FAILED", f"Status: {response.status_code}, Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Create Past Event", "❌ FAILED", f"Exception: {str(e)}")
+            return False
+    
+    def test_public_events_endpoint(self) -> bool:
+        """Test 4: Public Events Endpoint (No Auth Required)"""
+        try:
+            url = f"{API_BASE}/events"
+            
+            # NO Authorization header - this is a public endpoint
+            response = requests.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    # Verify our created events are in the list
+                    found_events = []
+                    for event in data:
+                        if event.get("id") in self.created_event_ids:
+                            found_events.append(event)
+                    
+                    if len(found_events) >= 2:
+                        # Verify required fields are present
+                        required_fields = ["id", "title", "date", "time", "location", "description", "attendees", "displayOrder", "created_at"]
+                        all_fields_present = True
+                        
+                        for event in found_events:
+                            missing_fields = [field for field in required_fields if field not in event]
+                            if missing_fields:
+                                all_fields_present = False
+                                self.log_test("Public Events Endpoint", "❌ FAILED", f"Event {event.get('id')} missing fields: {missing_fields}")
+                                return False
+                        
+                        if all_fields_present:
+                            self.log_test("Public Events Endpoint", "✅ PASSED", f"Public endpoint works without auth, found {len(found_events)} created events with all required fields")
+                            return True
+                    else:
+                        self.log_test("Public Events Endpoint", "❌ FAILED", f"Only found {len(found_events)} of {len(self.created_event_ids)} created events")
+                        return False
+                else:
+                    self.log_test("Public Events Endpoint", "❌ FAILED", f"Response is not an array: {type(data)}")
+                    return False
+            else:
+                self.log_test("Public Events Endpoint", "❌ FAILED", f"Status: {response.status_code}, Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Public Events Endpoint", "❌ FAILED", f"Exception: {str(e)}")
+            return False
+    
+    def test_date_format_validation(self) -> bool:
+        """Test 5: Date Format Validation"""
+        try:
+            url = f"{API_BASE}/events"
+            
+            response = requests.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    # Find our created events and test date parsing
+                    test_dates = []
+                    for event in data:
+                        if event.get("id") in self.created_event_ids:
+                            date_str = event.get("date", "")
+                            try:
+                                # Try to parse the date string with JavaScript Date() compatible formats
+                                from datetime import datetime
+                                
+                                # Test common date formats that JavaScript can parse
+                                parsed_date = None
+                                formats_to_try = [
+                                    "%B %d, %Y",  # "December 25, 2025"
+                                    "%Y-%m-%d",   # "2025-12-25"
+                                    "%m/%d/%Y",   # "12/25/2025"
+                                ]
+                                
+                                for fmt in formats_to_try:
+                                    try:
+                                        parsed_date = datetime.strptime(date_str, fmt)
+                                        break
+                                    except ValueError:
+                                        continue
+                                
+                                if parsed_date:
+                                    test_dates.append({
+                                        "event_id": event.get("id"),
+                                        "date_str": date_str,
+                                        "parsed": True,
+                                        "title": event.get("title")
+                                    })
+                                else:
+                                    test_dates.append({
+                                        "event_id": event.get("id"),
+                                        "date_str": date_str,
+                                        "parsed": False,
+                                        "title": event.get("title")
+                                    })
+                            except Exception as parse_error:
+                                test_dates.append({
+                                    "event_id": event.get("id"),
+                                    "date_str": date_str,
+                                    "parsed": False,
+                                    "error": str(parse_error),
+                                    "title": event.get("title")
+                                })
+                    
+                    # Check if all dates are parseable
+                    unparseable_dates = [d for d in test_dates if not d.get("parsed", False)]
+                    
+                    if not unparseable_dates:
+                        self.log_test("Date Format Validation", "✅ PASSED", f"All {len(test_dates)} event dates are in valid JavaScript-parseable format")
+                        return True
+                    else:
+                        details = f"Unparseable dates: {unparseable_dates}"
+                        self.log_test("Date Format Validation", "❌ FAILED", details)
+                        return False
+                else:
+                    self.log_test("Date Format Validation", "❌ FAILED", f"Response is not an array: {type(data)}")
+                    return False
+            else:
+                self.log_test("Date Format Validation", "❌ FAILED", f"Status: {response.status_code}, Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Date Format Validation", "❌ FAILED", f"Exception: {str(e)}")
+            return False
+    
+    def test_display_order_sorting(self) -> bool:
+        """Test 6: Display Order Sorting"""
+        try:
+            url = f"{API_BASE}/events"
+            
+            response = requests.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list) and len(data) >= 2:
+                    # Check if events are sorted by displayOrder
+                    display_orders = [event.get("displayOrder", 0) for event in data]
+                    is_sorted = all(display_orders[i] <= display_orders[i+1] for i in range(len(display_orders)-1))
+                    
+                    if is_sorted:
+                        self.log_test("Display Order Sorting", "✅ PASSED", f"Events are properly sorted by displayOrder: {display_orders}")
+                        return True
+                    else:
+                        self.log_test("Display Order Sorting", "❌ FAILED", f"Events not sorted by displayOrder: {display_orders}")
+                        return False
+                else:
+                    self.log_test("Display Order Sorting", "⚠️ WARNING", f"Not enough events to test sorting (found {len(data) if isinstance(data, list) else 0})")
+                    return True  # Consider this a pass since we can't test with insufficient data
+            else:
+                self.log_test("Display Order Sorting", "❌ FAILED", f"Status: {response.status_code}, Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Display Order Sorting", "❌ FAILED", f"Exception: {str(e)}")
+            return False
+    
+    def test_cleanup_events(self) -> bool:
+        """Test 7: Cleanup Created Events"""
+        try:
+            success_count = 0
+            for event_id in self.created_event_ids:
+                url = f"{API_BASE}/admin/events/{event_id}"
+                
+                response = requests.delete(url, headers=self.get_auth_headers(), timeout=30)
+                
+                if response.status_code == 200:
+                    success_count += 1
+                else:
+                    self.log_test("Cleanup Events", "⚠️ WARNING", f"Failed to delete event {event_id}: {response.status_code}")
+            
+            if success_count == len(self.created_event_ids):
+                self.log_test("Cleanup Events", "✅ PASSED", f"Successfully deleted {success_count} test events")
+                return True
+            else:
+                self.log_test("Cleanup Events", "⚠️ WARNING", f"Deleted {success_count}/{len(self.created_event_ids)} test events")
+                return True  # Don't fail the test suite for cleanup issues
+                
+        except Exception as e:
+            self.log_test("Cleanup Events", "⚠️ WARNING", f"Exception during cleanup: {str(e)}")
+            return True  # Don't fail the test suite for cleanup issues
+    
+    def run_all_tests(self):
+        """Run all events API tests in sequence"""
+        print(f"Starting Events API Tests")
+        print(f"Backend URL: {BACKEND_URL}")
+        print(f"API Base: {API_BASE}")
+        print("=" * 60)
+        
+        # Test sequence
+        tests = [
+            self.test_admin_login,
+            self.test_create_future_event,
+            self.test_create_past_event,
+            self.test_public_events_endpoint,
+            self.test_date_format_validation,
+            self.test_display_order_sorting,
+            self.test_cleanup_events
+        ]
+        
+        passed = 0
+        failed = 0
+        
+        for test in tests:
+            try:
+                if test():
+                    passed += 1
+                else:
+                    failed += 1
+            except Exception as e:
+                print(f"❌ FAILED {test.__name__}: Exception: {str(e)}")
+                failed += 1
+            print()  # Empty line between tests
+        
+        # Summary
+        print("=" * 60)
+        print(f"EVENTS API TEST SUMMARY")
+        print(f"Total Tests: {passed + failed}")
+        print(f"Passed: {passed}")
+        print(f"Failed: {failed}")
+        print("=" * 60)
+        
+        return passed, failed, self.test_results
+
 class GalleryAPITester:
     def __init__(self):
         self.access_token: Optional[str] = None
