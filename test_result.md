@@ -73,8 +73,8 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Gallery Management API Testing Completed**
 
 **Test Environment:**
-- Backend URL: https://wrestling-dojo.preview.emergentagent.com
-- API Base: https://wrestling-dojo.preview.emergentagent.com/api
+- Backend URL: https://tcpro-dashboard.preview.emergentagent.com
+- API Base: https://tcpro-dashboard.preview.emergentagent.com/api
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
@@ -142,7 +142,7 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Media Gallery Manager Frontend Testing Completed**
 
 **Test Environment:**
-- Frontend URL: https://wrestling-dojo.preview.emergentagent.com
+- Frontend URL: https://tcpro-dashboard.preview.emergentagent.com
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
@@ -254,8 +254,8 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Testimonials API Testing Completed**
 
 **Test Environment:**
-- Backend URL: https://wrestling-dojo.preview.emergentagent.com
-- API Base: https://wrestling-dojo.preview.emergentagent.com/api
+- Backend URL: https://tcpro-dashboard.preview.emergentagent.com
+- API Base: https://tcpro-dashboard.preview.emergentagent.com/api
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
@@ -338,7 +338,7 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Testimonials Frontend Testing Completed**
 
 **Test Environment:**
-- Frontend URL: https://wrestling-dojo.preview.emergentagent.com
+- Frontend URL: https://tcpro-dashboard.preview.emergentagent.com
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
