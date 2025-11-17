@@ -106,7 +106,7 @@ const Training = () => {
                   data-testid={`tip-${index}`}
                 >
                   {/* Video - Square Frame */}
-                  <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                  <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                     {tip.videoUrl ? (
                       <iframe
                         className="w-full h-full"

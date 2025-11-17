@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const Events = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribeMessage, setSubscribeMessage] = useState('');
@@ -19,10 +20,34 @@ const Events = () => {
   const loadEvents = async () => {
     try {
       const response = await axios.get(`${API}/api/admin/events`);
-      setUpcomingEvents(response.data);
+      const allEvents = response.data;
+      
+      // Get today's date at midnight for comparison
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Separate events into upcoming and past
+      const upcoming = [];
+      const past = [];
+      
+      allEvents.forEach(event => {
+        // Parse event date (format: "February 15, 2025" or "2025-02-15")
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+        
+        if (eventDate >= today) {
+          upcoming.push(event);
+        } else {
+          past.push(event);
+        }
+      });
+      
+      setUpcomingEvents(upcoming);
+      setPastEvents(past);
     } catch (error) {
       console.error('Error loading events:', error);
       setUpcomingEvents([]);
+      setPastEvents([]);
     } finally {
       setLoading(false);
     }
@@ -41,8 +66,6 @@ const Events = () => {
       setTimeout(() => setSubscribeMessage(''), 5000);
     }
   };
-
-  const pastEvents = [];
 
   return (
     <div className="pt-28 pb-20 px-4" data-testid="events-page">
@@ -117,23 +140,31 @@ const Events = () => {
         </div>
 
         {/* Past Events */}
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-white torture-text mb-8">PAST EVENTS</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pastEvents.map((event, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-6"
-                data-testid={`past-event-${index}`}
-              >
-                <div className="text-blue-400 text-sm font-semibold mb-2">{event.date}</div>
-                <h3 className="text-xl font-bold text-white mb-3">{event.title}</h3>
-                <p className="text-gray-400 text-sm">{event.description}</p>
-              </div>
-            ))}
+        {pastEvents.length > 0 && (
+          <div className="max-w-4xl mx-auto mb-16">
+            <h2 className="text-3xl font-bold text-white torture-text mb-8">PAST EVENTS</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {pastEvents.map((event, index) => (
+                <div
+                  key={event.id || index}
+                  className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-6"
+                  data-testid={`past-event-${index}`}
+                >
+                  <div className="text-blue-400 text-sm font-semibold mb-2">{event.date}</div>
+                  <h3 className="text-xl font-bold text-white mb-3">{event.title}</h3>
+                  <p className="text-gray-400 text-sm">{event.description}</p>
+                  {event.location && (
+                    <div className="flex items-center space-x-2 text-gray-400 text-sm mt-2">
+                      <MapPin size={14} />
+                      <span>{event.location}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* CTA Section */}
         <div className="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-center">
