@@ -91,47 +91,82 @@ const Events = () => {
               <p className="text-gray-500 text-sm mt-2">Check back soon for announcements!</p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {upcomingEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-black border border-blue-500/20 rounded-lg p-6 hover-lift"
+                className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`event-${event.id}`}
               >
-                <div className="mb-4">
-                  <h3 className="text-2xl font-bold text-white mb-2">{event.title}</h3>
-                  <div className="flex flex-wrap gap-4 text-gray-400">
-                    <div className="flex items-center space-x-2">
-                      <Calendar size={16} />
-                      <span>{event.date}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Clock size={16} />
-                      <span>{event.time}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <MapPin size={16} />
-                      <span>{event.location}</span>
-                    </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Side - Poster & Video */}
+                  <div className="space-y-4 p-6">
+                    {/* Event Poster */}
+                    {event.posterUrl && (
+                      <div className="rounded-lg overflow-hidden border-2 border-blue-500">
+                        <img 
+                          src={event.posterUrl} 
+                          alt={event.title}
+                          className="w-full h-auto object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Promotional Video */}
+                    {event.promoVideoUrl && (
+                      <div className="aspect-video bg-gradient-to-br from-blue-900 to-black rounded-lg overflow-hidden border-2 border-blue-500">
+                        <iframe
+                          className="w-full h-full"
+                          src={event.promoVideoUrl}
+                          title={`${event.title} Promo`}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                <p className="text-gray-300 mb-4">{event.description}</p>
+                  {/* Right Side - Event Details */}
+                  <div className="p-6 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-3xl font-bold text-white mb-4">{event.title}</h3>
+                      
+                      <div className="flex flex-wrap gap-4 text-gray-400 mb-6">
+                        <div className="flex items-center space-x-2">
+                          <Calendar size={18} />
+                          <span className="font-semibold">{event.date}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Clock size={18} />
+                          <span>{event.time}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <MapPin size={18} />
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex items-center space-x-6 text-gray-400">
-                    <div className="flex items-center space-x-2">
-                      <Users size={16} />
-                      <span>{event.attendees} expected</span>
+                      <p className="text-gray-300 mb-4 leading-relaxed">{event.description}</p>
+
+                      <div className="flex items-center space-x-2 text-gray-400 mb-6">
+                        <Users size={18} />
+                        <span>{event.attendees} expected attendees</span>
+                      </div>
                     </div>
+
+                    {event.ticketLink && (
+                      <a
+                        href={event.ticketLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded transition-colors text-center block"
+                        data-testid={`buy-tickets-${event.id}-button`}
+                      >
+                        BUY TICKETS
+                      </a>
+                    )}
                   </div>
-                  <Link
-                    to={event.ticketLink}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors text-center"
-                    data-testid={`buy-tickets-${event.id}-button`}
-                  >
-                    BUY TICKETS
-                  </Link>
                 </div>
               </div>
               ))}
