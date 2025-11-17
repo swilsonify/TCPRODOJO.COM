@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const Events = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribeMessage, setSubscribeMessage] = useState('');
@@ -19,10 +20,34 @@ const Events = () => {
   const loadEvents = async () => {
     try {
       const response = await axios.get(`${API}/api/admin/events`);
-      setUpcomingEvents(response.data);
+      const allEvents = response.data;
+      
+      // Get today's date at midnight for comparison
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Separate events into upcoming and past
+      const upcoming = [];
+      const past = [];
+      
+      allEvents.forEach(event => {
+        // Parse event date (format: "February 15, 2025" or "2025-02-15")
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+        
+        if (eventDate >= today) {
+          upcoming.push(event);
+        } else {
+          past.push(event);
+        }
+      });
+      
+      setUpcomingEvents(upcoming);
+      setPastEvents(past);
     } catch (error) {
       console.error('Error loading events:', error);
       setUpcomingEvents([]);
+      setPastEvents([]);
     } finally {
       setLoading(false);
     }
@@ -41,8 +66,6 @@ const Events = () => {
       setTimeout(() => setSubscribeMessage(''), 5000);
     }
   };
-
-  const pastEvents = [];
 
   return (
     <div className="pt-28 pb-20 px-4" data-testid="events-page">
