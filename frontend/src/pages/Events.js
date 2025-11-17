@@ -19,7 +19,7 @@ const Events = () => {
 
   const loadEvents = async () => {
     try {
-      const response = await axios.get(`${API}/api/admin/events`);
+      const response = await axios.get(`${API}/api/events`);
       const allEvents = response.data;
       
       // Get today's date at midnight for comparison

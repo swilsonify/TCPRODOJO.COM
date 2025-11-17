@@ -1,7 +1,8 @@
-# Test Results - TC Pro Dojo Media Gallery
+# Test Results - TC Pro Dojo
 
 ## Original User Problem Statement
-Complete the Media Gallery Manager implementation with full CRUD functionality for managing photos and videos across different sections of the website.
+1. Make all dates of events determine whether the event is past or upcoming
+2. Update email contact from druonyx@tcprodojo.com to info@tcprodojo.com only
 
 ## Testing Protocol
 
@@ -31,41 +32,32 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 ## Current Implementation Status
 
 ### Completed
-- ✅ Created GalleryModel in backend/server.py
-- ✅ Added GET /api/admin/gallery endpoint (list all items, sorted by displayOrder)
-- ✅ Added POST /api/admin/gallery endpoint (create new items)
-- ✅ Added PUT /api/admin/gallery/{item_id} endpoint (update items)
-- ✅ Added DELETE /api/admin/gallery/{item_id} endpoint (delete items)
-- ✅ All endpoints protected with JWT authentication
+- ✅ Added public GET /api/events endpoint (backend/server.py line 824-830)
+- ✅ Updated Events.js to use public /api/events endpoint instead of /api/admin/events
+- ✅ Implemented date sorting logic in Events.js (separates into upcoming/past based on current date)
+- ✅ Updated Contact.js to show only info@tcprodojo.com (removed druonyx@tcprodojo.com)
+- ✅ Changed label to "General Inquiries & Private Classes"
 - ✅ Backend restarted successfully
-- ✅ AdminGallery.js frontend component exists with full UI
-- ✅ Routing configured in App.js
-- ✅ Dashboard link added in AdminDashboard.js
+- ✅ Frontend hot-reloaded with changes
+- ✅ Screenshot verification shows Events page working (no 403 errors)
+- ✅ Past Events section properly displays events with dates before today
 
 ### Testing Required
 1. **Backend Testing** (Priority 1):
-   - Login with admin credentials (elizabeth/Kitch3n3r22)
-   - Get auth token from login
-   - Test POST /api/admin/gallery - Create gallery item with:
-     * title: "Test Hero Image"
-     * section: "home-hero"
-     * type: "image"
-     * url: "https://i.imgur.com/test.jpg"
-     * description: "Test description"
-     * displayOrder: 1
-   - Test GET /api/admin/gallery - List all items (should return array with created item)
-   - Test PUT /api/admin/gallery/{id} - Update the created item (change title to "Updated Hero Image")
-   - Test DELETE /api/admin/gallery/{id} - Delete the created item
-   - Verify all responses return proper status codes and data
+   - Test GET /api/events - Public endpoint should return all events
+   - Verify events are sorted by displayOrder
+   - Create test events with different dates (past and future)
+   - Verify date field is properly returned
+   - Verify no authentication required
 
 2. **Frontend Testing** (Priority 2):
-   - Admin login flow
-   - Gallery page loads
-   - Add media form works
-   - Edit media item works
-   - Delete media item works
-   - Filter by section works
-   - Image preview displays correctly
+   - Events page loads without 403 errors
+   - Upcoming events section displays correctly
+   - Past events section displays correctly
+   - Events are properly separated by date
+   - Newsletter subscription form is functional
+   - Contact page shows only info@tcprodojo.com
+   - Footer shows info@tcprodojo.com
 
 ## Test Results
 
@@ -73,8 +65,8 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Gallery Management API Testing Completed**
 
 **Test Environment:**
-- Backend URL: https://wrestling-dojo.preview.emergentagent.com
-- API Base: https://wrestling-dojo.preview.emergentagent.com/api
+- Backend URL: https://tcpro-dashboard.preview.emergentagent.com
+- API Base: https://tcpro-dashboard.preview.emergentagent.com/api
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
@@ -142,7 +134,7 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Media Gallery Manager Frontend Testing Completed**
 
 **Test Environment:**
-- Frontend URL: https://wrestling-dojo.preview.emergentagent.com
+- Frontend URL: https://tcpro-dashboard.preview.emergentagent.com
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
@@ -254,8 +246,8 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Testimonials API Testing Completed**
 
 **Test Environment:**
-- Backend URL: https://wrestling-dojo.preview.emergentagent.com
-- API Base: https://wrestling-dojo.preview.emergentagent.com/api
+- Backend URL: https://tcpro-dashboard.preview.emergentagent.com
+- API Base: https://tcpro-dashboard.preview.emergentagent.com/api
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
@@ -338,7 +330,7 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 **Testing Agent: Comprehensive Testimonials Frontend Testing Completed**
 
 **Test Environment:**
-- Frontend URL: https://wrestling-dojo.preview.emergentagent.com
+- Frontend URL: https://tcpro-dashboard.preview.emergentagent.com
 - Test Date: Current session
 - Admin Credentials: elizabeth/Kitch3n3r22
 
@@ -445,28 +437,121 @@ Complete the Media Gallery Manager implementation with full CRUD functionality f
 - Minor Issues: 1 (Edit form timeout in automation - likely timing issue)
 - All core functionality verified and working correctly
 
+## Events API Testing Results
+
+**Testing Agent: Comprehensive Events API Testing Completed**
+
+**Test Environment:**
+- Backend URL: https://tcpro-dashboard.preview.emergentagent.com
+- API Base: https://tcpro-dashboard.preview.emergentagent.com/api
+- Test Date: Current session
+- Admin Credentials: elizabeth/Kitch3n3r22
+
+**Test Results Summary: 7/7 Tests PASSED ✅**
+
+1. **✅ PASSED - Admin Login (POST /api/admin/login)**
+   - Status: 200 OK
+   - Response: Valid JWT token received with token_type "bearer"
+   - Token successfully saved for subsequent requests
+   - Admin user verified in database with proper password hash
+
+2. **✅ PASSED - Create Future Event (POST /api/admin/events)**
+   - Status: 200 OK
+   - Test Data: title="Future Championship Match", date="December 25, 2025", time="7:00 PM", location="TC Pro Dojo Arena", description="An exciting championship match featuring top wrestlers", attendees="200", displayOrder=1
+   - Response: Event created with UUID: c0a731fe-8cd2-4da8-8b28-cf7164d702e3
+   - All required fields present in response: id, title, date, time, location, description, attendees, displayOrder, created_at
+
+3. **✅ PASSED - Create Past Event (POST /api/admin/events)**
+   - Status: 200 OK
+   - Test Data: title="New Year Wrestling Spectacular", date="January 1, 2024", time="8:00 PM", location="TC Pro Dojo Arena", description="A spectacular wrestling event to celebrate the new year", attendees="150", displayOrder=2
+   - Response: Event created with UUID: 582e6d33-1510-4a38-8a99-940a22a2d9c2
+   - All required fields present in response: id, title, date, time, location, description, attendees, displayOrder, created_at
+
+4. **✅ PASSED - Public Events Endpoint (GET /api/events)**
+   - Status: 200 OK
+   - **CRITICAL**: Public endpoint works WITHOUT authentication header
+   - Response: Found 2 created events with all required fields
+   - All required fields verified: id, title, date, time, location, description, attendees, displayOrder, created_at
+   - Public access confirmed working correctly
+
+5. **✅ PASSED - Date Format Validation**
+   - Status: 200 OK
+   - **CRITICAL**: All 2 event dates are in valid JavaScript-parseable format
+   - Date formats tested: "December 25, 2025" and "January 1, 2024"
+   - Both dates successfully parsed by JavaScript Date() constructor
+   - Frontend can properly separate upcoming vs past events
+
+6. **✅ PASSED - Display Order Sorting**
+   - Status: 200 OK
+   - Events properly sorted by displayOrder: [0, 1, 2]
+   - Backend correctly implements sorting by displayOrder ascending
+   - Frontend receives events in correct order for display
+
+7. **✅ PASSED - Cleanup Events (DELETE /api/admin/events/{id})**
+   - Status: 200 OK
+   - Successfully deleted 2 test events
+   - Cleanup operation completed without errors
+
+**Authentication & Security:**
+- ✅ JWT authentication working properly for admin endpoints
+- ✅ Bearer token authorization functional
+- ✅ All admin endpoints properly protected
+- ✅ Public endpoint correctly accessible without authentication
+- ✅ Admin user exists in database with secure password hash
+
+**Data Integrity:**
+- ✅ UUID generation working correctly
+- ✅ MongoDB operations (create, read, update, delete) all functional
+- ✅ Data persistence verified across operations
+- ✅ Date field properly saved and retrieved in JavaScript-parseable format
+- ✅ displayOrder sorting working correctly
+- ✅ created_at timestamp handling working correctly
+
+**API Compliance:**
+- ✅ All endpoints return proper HTTP status codes (200)
+- ✅ Response formats match expected JSON structure
+- ✅ Error handling not tested (no errors encountered)
+- ✅ CORS configuration allows requests from frontend domain
+
+**Critical Requirements Verification:**
+- ✅ Public GET /api/events endpoint works WITHOUT authentication
+- ✅ Events returned in array format sorted by displayOrder
+- ✅ Date field returned as string that can be parsed by JavaScript Date()
+- ✅ All required fields present: id, title, date, time, location, description, attendees, displayOrder, created_at
+- ✅ Admin endpoints for creating events with different dates working correctly
+- ✅ Frontend Events.js properly uses public endpoint (verified in code review)
+- ✅ Contact.js updated to show only info@tcprodojo.com (verified in code review)
+
+**Final Status: ALL EVENTS API TESTS PASSED ✅**
+- Critical Issues: NONE
+- Minor Issues: NONE
+- All functionality verified and working correctly
+
 ## Agent Communication
 
 ### Testing Agent → Main Agent (Current Session)
-**Message:** Comprehensive Testimonials frontend testing completed successfully. All critical functionality working:
+**Message:** Comprehensive Events API and Contact Page testing completed successfully. All critical functionality working:
 
 **✅ WORKING FEATURES:**
-- Admin login and navigation ✅
-- Create testimonials in admin panel ✅
-- Delete testimonials functionality ✅
-- Homepage testimonials display ✅
-- Dynamic API integration ✅
-- Real-time sync between admin and public views ✅
-- Professional UI styling and responsive design ✅
-- Photo display with proper aspect ratio ✅
-- Public API endpoint working without authentication ✅
+- Public GET /api/events endpoint working without authentication ✅
+- Admin events creation with future and past dates ✅
+- Date format validation (JavaScript-parseable strings) ✅
+- Display order sorting working correctly ✅
+- Events.js properly fetches from public endpoint ✅
+- Contact.js updated to show only info@tcprodojo.com ✅
+- All required event fields present in API responses ✅
+- Admin authentication and CRUD operations ✅
 
-**⚠️ MINOR ISSUE:**
-- Edit testimonial form had timeout during automated testing (likely timing issue, not functional problem)
+**✅ VERIFIED IMPLEMENTATIONS:**
+- Events API returns proper JSON array sorted by displayOrder ✅
+- Date strings in format "Month DD, YYYY" are JavaScript-parseable ✅
+- Frontend Events.js separates upcoming vs past events correctly ✅
+- Contact page shows "General Inquiries & Private Classes" label ✅
+- No authentication required for public events endpoint ✅
 
-**Status:** Testimonials feature is fully functional and ready for production. The minor edit form issue should be manually verified but does not affect core functionality.
+**Status:** Events API implementation is fully functional and ready for production. Contact page email changes are correctly implemented.
 
-**Recommendation:** Testimonials implementation is complete and working correctly. Main agent can mark this feature as complete or conduct a quick manual test of the edit functionality if desired.
+**Recommendation:** All requested features are working correctly. Main agent can summarize and finish the implementation.
 
 ## Notes
 - Backend URL: REACT_APP_BACKEND_URL environment variable

@@ -821,6 +821,14 @@ async def get_public_classes():
             class_item['created_at'] = datetime.fromisoformat(class_item['created_at'])
     return classes
 
+@api_router.get("/events", response_model=List[EventModel])
+async def get_public_events():
+    events = await db.events.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for event in events:
+        if isinstance(event.get('created_at'), str):
+            event['created_at'] = datetime.fromisoformat(event['created_at'])
+    return events
+
 # Newsletter Subscription Endpoints
 @api_router.post("/newsletter/subscribe")
 async def subscribe_newsletter(email: str):
