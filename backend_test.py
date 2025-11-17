@@ -1015,22 +1015,28 @@ def main():
     print("🚀 TC Pro Dojo Backend API Testing Suite")
     print("=" * 80)
     
-    # Run Testimonials API Tests (Primary focus)
+    # Run Events API Tests (Primary focus for this session)
+    print("\n🎪 EVENTS API TESTING")
+    events_tester = EventsAPITester()
+    e_passed, e_failed, e_results = events_tester.run_all_tests()
+    
+    # Run Testimonials API Tests (Secondary)
     print("\n🎯 TESTIMONIALS API TESTING")
     testimonials_tester = TestimonialsAPITester()
     t_passed, t_failed, t_results = testimonials_tester.run_all_tests()
     
-    # Run Gallery API Tests (Secondary)
+    # Run Gallery API Tests (Tertiary)
     print("\n📸 GALLERY API TESTING")
     gallery_tester = GalleryAPITester()
     g_passed, g_failed, g_results = gallery_tester.run_all_tests()
     
     # Overall Summary
-    total_passed = t_passed + g_passed
-    total_failed = t_failed + g_failed
+    total_passed = e_passed + t_passed + g_passed
+    total_failed = e_failed + t_failed + g_failed
     
     print("\n" + "=" * 80)
     print("🏆 OVERALL TEST SUMMARY")
+    print(f"Events: {e_passed}/{e_passed + e_failed} passed")
     print(f"Testimonials: {t_passed}/{t_passed + t_failed} passed")
     print(f"Gallery: {g_passed}/{g_passed + g_failed} passed")
     print(f"Total Tests: {total_passed + total_failed}")
