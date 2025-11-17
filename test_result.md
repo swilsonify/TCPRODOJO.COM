@@ -32,23 +32,22 @@
 ## Current Implementation Status
 
 ### Completed
-- ✅ Created GalleryModel in backend/server.py
-- ✅ Added GET /api/admin/gallery endpoint (list all items, sorted by displayOrder)
-- ✅ Added POST /api/admin/gallery endpoint (create new items)
-- ✅ Added PUT /api/admin/gallery/{item_id} endpoint (update items)
-- ✅ Added DELETE /api/admin/gallery/{item_id} endpoint (delete items)
-- ✅ All endpoints protected with JWT authentication
+- ✅ Added public GET /api/events endpoint (backend/server.py line 824-830)
+- ✅ Updated Events.js to use public /api/events endpoint instead of /api/admin/events
+- ✅ Implemented date sorting logic in Events.js (separates into upcoming/past based on current date)
+- ✅ Updated Contact.js to show only info@tcprodojo.com (removed druonyx@tcprodojo.com)
+- ✅ Changed label to "General Inquiries & Private Classes"
 - ✅ Backend restarted successfully
-- ✅ AdminGallery.js frontend component exists with full UI
-- ✅ Routing configured in App.js
-- ✅ Dashboard link added in AdminDashboard.js
+- ✅ Frontend hot-reloaded with changes
+- ✅ Screenshot verification shows Events page working (no 403 errors)
+- ✅ Past Events section properly displays events with dates before today
 
 ### Testing Required
 1. **Backend Testing** (Priority 1):
-   - Login with admin credentials (elizabeth/Kitch3n3r22)
-   - Get auth token from login
-   - Test POST /api/admin/gallery - Create gallery item with:
-     * title: "Test Hero Image"
+   - Test GET /api/events - Public endpoint should return all events
+   - Verify events are sorted by displayOrder
+   - Create test events with different dates (past and future)
+   - Verify date field is properly returned
      * section: "home-hero"
      * type: "image"
      * url: "https://i.imgur.com/test.jpg"
