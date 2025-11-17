@@ -135,6 +135,9 @@ class EventModel(BaseModel):
     location: str
     description: str
     attendees: str
+    posterUrl: str = ""
+    promoVideoUrl: str = ""
+    ticketLink: str = ""
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

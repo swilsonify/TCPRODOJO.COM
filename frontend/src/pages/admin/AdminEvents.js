@@ -18,8 +18,9 @@ const AdminEvents = () => {
     location: '',
     description: '',
     attendees: '',
-    imageUrl: '',
-    videoUrl: '',
+    posterUrl: '',
+    promoVideoUrl: '',
+    ticketLink: '',
     displayOrder: 0
   });
   const navigate = useNavigate();
@@ -84,8 +85,9 @@ const AdminEvents = () => {
       location: event.location,
       description: event.description,
       attendees: event.attendees,
-      imageUrl: event.imageUrl || '',
-      videoUrl: event.videoUrl || '',
+      posterUrl: event.posterUrl || '',
+      promoVideoUrl: event.promoVideoUrl || '',
+      ticketLink: event.ticketLink || '',
       displayOrder: event.displayOrder || 0
     });
     setShowForm(true);
@@ -116,8 +118,9 @@ const AdminEvents = () => {
       location: '',
       description: '',
       attendees: '',
-      imageUrl: '',
-      videoUrl: '',
+      posterUrl: '',
+      promoVideoUrl: '',
+      ticketLink: '',
       displayOrder: 0
     });
     setEditingEvent(null);
@@ -226,28 +229,42 @@ const AdminEvents = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-white font-semibold mb-2">Event Image URL</label>
+                  <label className="block text-white font-semibold mb-2">Event Poster URL</label>
                   <input
                     type="url"
-                    value={formData.imageUrl}
-                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                    value={formData.posterUrl}
+                    onChange={(e) => setFormData({ ...formData, posterUrl: e.target.value })}
                     placeholder="https://i.imgur.com/example.jpg"
                     className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                   />
-                  <p className="text-gray-400 text-xs mt-1">Upload to Imgur and paste URL here</p>
+                  <p className="text-gray-400 text-xs mt-1">Event poster/flyer image (upload to Imgur/Cloudinary)</p>
                 </div>
                 <div>
                   <label className="block text-white font-semibold mb-2">Event Video URL</label>
                   <input
                     type="url"
-                    value={formData.videoUrl}
-                    onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                    placeholder="https://www.youtube.com/watch?v=..."
+                    value={formData.promoVideoUrl}
+                    onChange={(e) => setFormData({ ...formData, promoVideoUrl: e.target.value })}
+                    placeholder="https://www.youtube.com/embed/VIDEO_ID"
                     className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                   />
-                  <p className="text-gray-400 text-xs mt-1">YouTube or Vimeo URL</p>
+                  <p className="text-gray-400 text-xs mt-1">Promo video (upcoming) or event highlights (past events)</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-white font-semibold mb-2">Ticket Link</label>
+                  <input
+                    type="url"
+                    value={formData.ticketLink}
+                    onChange={(e) => setFormData({ ...formData, ticketLink: e.target.value })}
+                    placeholder="https://example.com/tickets"
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">Where to buy tickets (for upcoming events)</p>
                 </div>
                 <div>
                   <label className="block text-white font-semibold mb-2">Display Order</label>
