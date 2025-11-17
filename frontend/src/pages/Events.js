@@ -176,25 +176,53 @@ const Events = () => {
 
         {/* Past Events */}
         {pastEvents.length > 0 && (
-          <div className="max-w-4xl mx-auto mb-16">
+          <div className="max-w-6xl mx-auto mb-16">
             <h2 className="text-3xl font-bold text-white torture-text mb-8">PAST EVENTS</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pastEvents.map((event, index) => (
                 <div
                   key={event.id || index}
-                  className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-6"
+                  className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                   data-testid={`past-event-${index}`}
                 >
-                  <div className="text-blue-400 text-sm font-semibold mb-2">{event.date}</div>
-                  <h3 className="text-xl font-bold text-white mb-3">{event.title}</h3>
-                  <p className="text-gray-400 text-sm">{event.description}</p>
-                  {event.location && (
-                    <div className="flex items-center space-x-2 text-gray-400 text-sm mt-2">
-                      <MapPin size={14} />
-                      <span>{event.location}</span>
-                    </div>
-                  )}
+                  {/* Video/Poster - Square Frame */}
+                  <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
+                    {event.promoVideoUrl ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={event.promoVideoUrl}
+                        title={event.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    ) : event.posterUrl ? (
+                      <img 
+                        src={event.posterUrl} 
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-center p-8">
+                        <Calendar className="w-16 h-16 mx-auto mb-2 text-blue-500" />
+                        <span className="text-gray-500 text-sm">Event Archive</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <div className="text-blue-400 text-sm font-semibold mb-2">{event.date}</div>
+                    <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
+                    <p className="text-gray-400 text-sm mb-3">{event.description}</p>
+                    {event.location && (
+                      <div className="flex items-center space-x-2 text-gray-400 text-sm">
+                        <MapPin size={14} />
+                        <span>{event.location}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
