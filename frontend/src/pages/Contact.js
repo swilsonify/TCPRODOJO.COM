@@ -196,9 +196,7 @@ const Contact = () => {
                   <div>
                     <h3 className="text-white font-semibold mb-1">Email Us</h3>
                     <p className="text-gray-400">info@tcprodojo.com</p>
-                    <p className="text-gray-400 text-sm">General Inquiries</p>
-                    <p className="text-gray-400 mt-2">druonyx@tcprodojo.com</p>
-                    <p className="text-gray-400 text-sm">Private Classes</p>
+                    <p className="text-gray-400 text-sm">General Inquiries & Private Classes</p>
                   </div>
                 </div>
               </div>
