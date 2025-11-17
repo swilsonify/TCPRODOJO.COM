@@ -1,7 +1,8 @@
-# Test Results - TC Pro Dojo Media Gallery
+# Test Results - TC Pro Dojo
 
 ## Original User Problem Statement
-Complete the Media Gallery Manager implementation with full CRUD functionality for managing photos and videos across different sections of the website.
+1. Make all dates of events determine whether the event is past or upcoming
+2. Update email contact from druonyx@tcprodojo.com to info@tcprodojo.com only
 
 ## Testing Protocol
 
