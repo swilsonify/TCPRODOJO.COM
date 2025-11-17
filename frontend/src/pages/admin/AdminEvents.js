@@ -118,8 +118,9 @@ const AdminEvents = () => {
       location: '',
       description: '',
       attendees: '',
-      imageUrl: '',
-      videoUrl: '',
+      posterUrl: '',
+      promoVideoUrl: '',
+      ticketLink: '',
       displayOrder: 0
     });
     setEditingEvent(null);
