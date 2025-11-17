@@ -48,24 +48,16 @@
    - Verify events are sorted by displayOrder
    - Create test events with different dates (past and future)
    - Verify date field is properly returned
-     * section: "home-hero"
-     * type: "image"
-     * url: "https://i.imgur.com/test.jpg"
-     * description: "Test description"
-     * displayOrder: 1
-   - Test GET /api/admin/gallery - List all items (should return array with created item)
-   - Test PUT /api/admin/gallery/{id} - Update the created item (change title to "Updated Hero Image")
-   - Test DELETE /api/admin/gallery/{id} - Delete the created item
-   - Verify all responses return proper status codes and data
+   - Verify no authentication required
 
 2. **Frontend Testing** (Priority 2):
-   - Admin login flow
-   - Gallery page loads
-   - Add media form works
-   - Edit media item works
-   - Delete media item works
-   - Filter by section works
-   - Image preview displays correctly
+   - Events page loads without 403 errors
+   - Upcoming events section displays correctly
+   - Past events section displays correctly
+   - Events are properly separated by date
+   - Newsletter subscription form is functional
+   - Contact page shows only info@tcprodojo.com
+   - Footer shows info@tcprodojo.com
 
 ## Test Results
 
