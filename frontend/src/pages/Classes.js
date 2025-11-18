@@ -16,9 +16,13 @@ const Classes = () => {
     return monday;
   });
   const [classes, setClasses] = useState([]);
+  const [cancelledClasses, setCancelledClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingClass, setEditingClass] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [selectedClassForCancel, setSelectedClassForCancel] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
