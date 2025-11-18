@@ -60,8 +60,26 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/newsletter-subscriptions`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
+      // Separate events into upcoming and past
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const upcomingEvents = events.data.filter(event => {
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate >= today;
+      });
+      
+      const pastEvents = events.data.filter(event => {
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate < today;
+      });
+
       setStats({
         events: events.data.length,
+        upcomingEvents: upcomingEvents.length,
+        pastEvents: pastEvents.length,
         trainers: trainers.data.length,
         testimonials: testimonials.data.length,
         contacts: contacts.data.length,
