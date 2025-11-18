@@ -23,6 +23,12 @@ const Classes = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedClassForCancel, setSelectedClassForCancel] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  
+  // Check if user is admin
+  const isAdmin = () => {
+    const token = localStorage.getItem('adminToken');
+    return token !== null && token !== '';
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
