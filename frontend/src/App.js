@@ -11,7 +11,6 @@ import Contact from '@/pages/Contact';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import AdminEvents from '@/pages/admin/AdminEvents';
-import AdminTrainers from '@/pages/admin/AdminTrainers';
 import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
 import AdminCoaches from '@/pages/admin/AdminCoaches';
