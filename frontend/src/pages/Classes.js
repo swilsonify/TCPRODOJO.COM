@@ -192,6 +192,59 @@ const Classes = () => {
     }
   };
 
+  const isClassCancelled = (classId, date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return cancelledClasses.some(c => c.class_id === classId && c.cancelled_date === dateStr);
+  };
+
+  const handleCancelClass = async (classItem, date) => {
+    const reason = prompt('Reason for cancellation (optional):');
+    if (reason === null) return; // User clicked cancel
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = date.toISOString().split('T')[0];
+      
+      await axios.post(
+        `${API}/admin/classes/cancel`,
+        {
+          class_id: classItem.id,
+          cancelled_date: dateStr,
+          reason: reason || 'No reason provided'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      alert('Class cancelled successfully');
+    } catch (error) {
+      console.error('Error cancelling class:', error);
+      alert('Failed to cancel class. Please make sure you are logged in as admin.');
+    }
+  };
+
+  const handleUncancelClass = async (classId, date) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = date.toISOString().split('T')[0];
+      
+      // Find the cancellation
+      const cancellation = cancelledClasses.find(c => c.class_id === classId && c.cancelled_date === dateStr);
+      if (!cancellation) return;
+      
+      await axios.delete(
+        `${API}/admin/classes/cancel/${cancellation.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      alert('Class restored successfully');
+    } catch (error) {
+      console.error('Error restoring class:', error);
+      alert('Failed to restore class. Please make sure you are logged in as admin.');
+    }
+  };
+
   return (
     <div className="pt-28 pb-20 px-4" data-testid="classes-page">
       <div className="container mx-auto">
