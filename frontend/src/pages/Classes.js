@@ -150,6 +150,63 @@ const Classes = () => {
           </div>
         </div>
 
+        {/* Class List */}
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-6">Weekly Classes</h2>
+          
+          {loading ? (
+            <div className="text-center text-gray-400 py-12">Loading classes...</div>
+          ) : filteredClasses.length === 0 ? (
+            <div className="text-center text-gray-400 py-12">No classes scheduled at this time.</div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {daysOfWeek.map((dayName) => {
+                const dayClasses = filteredClasses.filter(c => c.day === dayName);
+                if (dayClasses.length === 0) return null;
+                
+                return (
+                  <div key={dayName} className="bg-black border border-blue-500/20 rounded-lg p-6">
+                    <h3 className="text-2xl font-bold text-blue-400 mb-4">{dayName}</h3>
+                    <div className="space-y-4">
+                      {dayClasses.map((classItem, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-gradient-to-br from-gray-900 to-black border border-blue-500/20 rounded-lg p-4 hover-lift"
+                        >
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div className="flex-1">
+                              <h4 className="text-xl font-bold text-white mb-2">{classItem.title}</h4>
+                              <div className="flex flex-wrap gap-4 text-gray-400 text-sm">
+                                <div className="flex items-center space-x-2">
+                                  <Clock size={16} />
+                                  <span>{classItem.time}</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Users size={16} />
+                                  <span>{classItem.instructor}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className={`px-4 py-2 rounded border text-sm font-semibold ${getLevelColor(classItem.level)}`}>
+                                {classItem.level}
+                              </span>
+                              <div className="text-right">
+                                <div className="text-blue-400 font-bold text-lg">{classItem.spots}</div>
+                                <div className="text-gray-500 text-xs">spots left</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );
