@@ -445,36 +445,6 @@ async def delete_past_event(event_id: str, username: str = Depends(verify_token)
         raise HTTPException(status_code=404, detail="Past event not found")
     return {"message": "Past event deleted successfully"}
 
-# Admin Trainer Management
-@api_router.get("/admin/trainers", response_model=List[TrainerModel])
-async def get_admin_trainers(username: str = Depends(verify_token)):
-    trainers = await db.trainers.find({}, {"_id": 0}).to_list(1000)
-    for trainer in trainers:
-        if isinstance(trainer.get('created_at'), str):
-            trainer['created_at'] = datetime.fromisoformat(trainer['created_at'])
-    return trainers
-
-@api_router.post("/admin/trainers", response_model=TrainerModel)
-async def create_trainer(trainer: TrainerModel, username: str = Depends(verify_token)):
-    doc = trainer.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    await db.trainers.insert_one(doc)
-    return trainer
-
-@api_router.put("/admin/trainers/{trainer_id}", response_model=TrainerModel)
-async def update_trainer(trainer_id: str, trainer: TrainerModel, username: str = Depends(verify_token)):
-    doc = trainer.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    await db.trainers.update_one({"id": trainer_id}, {"$set": doc})
-    return trainer
-
-@api_router.delete("/admin/trainers/{trainer_id}")
-async def delete_trainer(trainer_id: str, username: str = Depends(verify_token)):
-    result = await db.trainers.delete_one({"id": trainer_id})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Trainer not found")
-    return {"message": "Trainer deleted successfully"}
-
 # Admin Testimonial Management
 @api_router.get("/admin/testimonials", response_model=List[TestimonialModel])
 async def get_admin_testimonials(username: str = Depends(verify_token)):
