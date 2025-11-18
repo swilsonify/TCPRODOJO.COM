@@ -312,12 +312,12 @@ const Classes = () => {
           
           {loading ? (
             <div className="text-center text-gray-400 py-12">Loading classes...</div>
-          ) : filteredClasses.length === 0 ? (
+          ) : currentClasses.length === 0 ? (
             <div className="text-center text-gray-400 py-12">No classes scheduled at this time.</div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {daysOfWeek.map((dayName) => {
-                const dayClasses = filteredClasses.filter(c => c.day === dayName);
+                const dayClasses = currentClasses.filter(c => c.day === dayName);
                 if (dayClasses.length === 0) return null;
                 
                 return (
