@@ -14,14 +14,12 @@ import AdminEvents from '@/pages/admin/AdminEvents';
 import AdminTrainers from '@/pages/admin/AdminTrainers';
 import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
-import AdminGallery from '@/pages/admin/AdminGallery';
 import AdminCoaches from '@/pages/admin/AdminCoaches';
 import AdminSuccessStories from '@/pages/admin/AdminSuccessStories';
 import AdminEndorsements from '@/pages/admin/AdminEndorsements';
 import AdminTips from '@/pages/admin/AdminTips';
 import AdminClassSchedule from '@/pages/admin/AdminClassSchedule';
 import AdminNewsletterSubscriptions from '@/pages/admin/AdminNewsletterSubscriptions';
-import AdminMediaLibrary from '@/pages/admin/AdminMediaLibrary';
 
 function App() {
   return (
@@ -46,14 +44,12 @@ function App() {
         <Route path="/admin/trainers" element={<AdminTrainers />} />
         <Route path="/admin/testimonials" element={<AdminTestimonials />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
-        <Route path="/admin/gallery" element={<AdminGallery />} />
         <Route path="/admin/coaches" element={<AdminCoaches />} />
         <Route path="/admin/success-stories" element={<AdminSuccessStories />} />
         <Route path="/admin/endorsements" element={<AdminEndorsements />} />
         <Route path="/admin/tips" element={<AdminTips />} />
         <Route path="/admin/classes" element={<AdminClassSchedule />} />
         <Route path="/admin/newsletter" element={<AdminNewsletterSubscriptions />} />
-        <Route path="/admin/media" element={<AdminMediaLibrary />} />
       </Routes>
     </BrowserRouter>
   );

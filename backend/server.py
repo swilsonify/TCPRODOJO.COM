@@ -138,6 +138,7 @@ class EventModel(BaseModel):
     posterUrl: str = ""
     promoVideoUrl: str = ""
     ticketLink: str = ""
+    section: str = "upcoming"  # "upcoming" or "past"
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -163,18 +164,6 @@ class TestimonialModel(BaseModel):
     text: str
     photoUrl: str = ""
     videoUrl: str = ""
-    displayOrder: int = 0
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class GalleryModel(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    title: str
-    section: str
-    type: str  # 'image' or 'video'
-    url: str
-    description: str = ""
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -304,31 +293,14 @@ async def get_status_checks():
     
     return status_checks
 
-# Classes Endpoints
-@api_router.get("/classes", response_model=List[WrestlingClass])
+# Classes Endpoints (Public - fetches from database)
+@api_router.get("/classes", response_model=List[ClassScheduleModel])
 async def get_classes():
-    # Return default classes with both wrestling and boxing
-    default_classes = [
-        # PRO WRESTLING CLASSES
-        {"id": 1, "day": "Monday", "time": "6:00 PM - 8:00 PM", "title": "Beginner Pro Wrestling", "instructor": "Coach Mike", "level": "Beginner", "spots": 8},
-        {"id": 2, "day": "Monday", "time": "8:00 PM - 10:00 PM", "title": "Advanced Pro Wrestling", "instructor": "Coach Sarah", "level": "Advanced", "spots": 5},
-        {"id": 3, "day": "Tuesday", "time": "7:00 PM - 9:00 PM", "title": "High-Flying & Lucha", "instructor": "Coach James", "level": "Intermediate", "spots": 6},
-        {"id": 4, "day": "Wednesday", "time": "6:00 PM - 8:00 PM", "title": "Ring Psychology & Promos", "instructor": "Coach Mike", "level": "All Levels", "spots": 10},
-        {"id": 5, "day": "Thursday", "time": "7:00 PM - 9:00 PM", "title": "Technical Wrestling", "instructor": "Coach Sarah", "level": "Intermediate", "spots": 7},
-        {"id": 6, "day": "Friday", "time": "6:00 PM - 8:00 PM", "title": "Pro Wrestling Fundamentals", "instructor": "Coach Mike", "level": "Beginner", "spots": 8},
-        {"id": 7, "day": "Friday", "time": "8:00 PM - 10:00 PM", "title": "Pro Wrestling Sparring", "instructor": "All Coaches", "level": "Advanced", "spots": 10},
-        {"id": 8, "day": "Saturday", "time": "10:00 AM - 12:00 PM", "title": "Pro Pathway Weekend Training", "instructor": "Coach James", "level": "All Levels", "spots": 15},
-        # BOXING CLASSES
-        {"id": 9, "day": "Monday", "time": "5:00 PM - 6:30 PM", "title": "Boxing Beginners", "instructor": "Coach Tony", "level": "Beginner", "spots": 12},
-        {"id": 10, "day": "Tuesday", "time": "6:00 PM - 7:30 PM", "title": "Advanced Boxing", "instructor": "Coach Tony", "level": "Advanced", "spots": 8},
-        {"id": 11, "day": "Wednesday", "time": "5:00 PM - 6:30 PM", "title": "Boxing Technique", "instructor": "Coach Marcus", "level": "Intermediate", "spots": 10},
-        {"id": 12, "day": "Thursday", "time": "6:00 PM - 7:30 PM", "title": "Boxing Sparring", "instructor": "Coach Tony", "level": "Advanced", "spots": 6},
-        {"id": 13, "day": "Saturday", "time": "9:00 AM - 10:30 AM", "title": "Self-Defense Boxing", "instructor": "Coach Marcus", "level": "All Levels", "spots": 15},
-        # FITNESS
-        {"id": 14, "day": "Wednesday", "time": "8:00 PM - 10:00 PM", "title": "Strength & Conditioning", "instructor": "Coach Tony", "level": "All Levels", "spots": 12},
-        {"id": 15, "day": "Saturday", "time": "2:00 PM - 4:00 PM", "title": "Pro Athlete Training", "instructor": "Coach Sarah", "level": "Advanced", "spots": 5},
-    ]
-    return default_classes
+    classes = await db.classes.find({}, {"_id": 0}).to_list(1000)
+    for class_item in classes:
+        if isinstance(class_item.get('created_at'), str):
+            class_item['created_at'] = datetime.fromisoformat(class_item['created_at'])
+    return classes
 
 # Bookings Endpoints
 @api_router.post("/bookings", response_model=Booking)
@@ -494,37 +466,6 @@ async def delete_testimonial(testimonial_id: str, username: str = Depends(verify
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Testimonial not found")
     return {"message": "Testimonial deleted successfully"}
-
-# Admin Gallery Management
-@api_router.get("/admin/gallery", response_model=List[GalleryModel])
-async def get_admin_gallery(username: str = Depends(verify_token)):
-    gallery_items = await db.gallery.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
-    for item in gallery_items:
-        if isinstance(item.get('created_at'), str):
-            item['created_at'] = datetime.fromisoformat(item['created_at'])
-    return gallery_items
-
-@api_router.post("/admin/gallery", response_model=GalleryModel)
-async def create_gallery_item(gallery_item: GalleryModel, username: str = Depends(verify_token)):
-    doc = gallery_item.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    await db.gallery.insert_one(doc)
-    return gallery_item
-
-@api_router.put("/admin/gallery/{item_id}", response_model=GalleryModel)
-async def update_gallery_item(item_id: str, gallery_item: GalleryModel, username: str = Depends(verify_token)):
-    doc = gallery_item.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
-    await db.gallery.update_one({"id": item_id}, {"$set": doc})
-    return gallery_item
-
-@api_router.delete("/admin/gallery/{item_id}")
-async def delete_gallery_item(item_id: str, username: str = Depends(verify_token)):
-    result = await db.gallery.delete_one({"id": item_id})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Gallery item not found")
-    return {"message": "Gallery item deleted successfully"}
 
 # Admin Coaches Management
 @api_router.get("/admin/coaches", response_model=List[CoachModel])
@@ -708,72 +649,6 @@ async def delete_class(class_id: str, username: str = Depends(verify_token)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Class not found")
     return {"message": "Class deleted successfully"}
-
-# Media Upload with Cloudinary
-@api_router.post("/admin/upload")
-async def upload_file(file: UploadFile = File(...), username: str = Depends(verify_token)):
-    try:
-        # Read file content
-        contents = await file.read()
-        
-        # Determine resource type
-        resource_type = "video" if file.content_type.startswith("video/") else "image"
-        
-        # Upload to Cloudinary
-        upload_result = cloudinary.uploader.upload(
-            contents,
-            folder="tcprodojo",
-            resource_type=resource_type,
-            use_filename=True,
-            unique_filename=True
-        )
-        
-        return {
-            "url": upload_result['secure_url'],
-            "filename": upload_result['public_id'],
-            "resource_type": resource_type,
-            "public_id": upload_result['public_id']
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
-
-@api_router.get("/admin/media")
-async def list_media_files(username: str = Depends(verify_token)):
-    try:
-        # Get all resources from Cloudinary
-        result = cloudinary.api.resources(
-            type="upload",
-            prefix="tcprodojo",
-            max_results=500
-        )
-        
-        files = []
-        for resource in result.get('resources', []):
-            files.append({
-                "filename": resource['public_id'].split('/')[-1],
-                "url": resource['secure_url'],
-                "size": resource['bytes'],
-                "created": resource['created_at'],
-                "resource_type": resource['resource_type'],
-                "public_id": resource['public_id']
-            })
-        
-        return sorted(files, key=lambda x: x['created'], reverse=True)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to list files: {str(e)}")
-
-@api_router.delete("/admin/media/{public_id:path}")
-async def delete_media_file(public_id: str, username: str = Depends(verify_token)):
-    try:
-        # Delete from Cloudinary
-        result = cloudinary.uploader.destroy(public_id, invalidate=True)
-        
-        if result.get('result') == 'ok':
-            return {"message": "File deleted successfully"}
-        else:
-            raise HTTPException(status_code=404, detail="File not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Delete failed: {str(e)}")
 
 # Public API endpoints (no authentication required)
 @api_router.get("/success-stories", response_model=List[SuccessStoryModel])

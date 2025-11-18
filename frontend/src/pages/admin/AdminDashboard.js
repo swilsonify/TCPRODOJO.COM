@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, media] = await Promise.all([
+      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/trainers`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -57,12 +57,29 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/endorsements`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/tips`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/classes`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/newsletter-subscriptions`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/media`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/newsletter-subscriptions`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
+
+      // Separate events into upcoming and past
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const upcomingEvents = events.data.filter(event => {
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate >= today;
+      });
+      
+      const pastEvents = events.data.filter(event => {
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate < today;
+      });
 
       setStats({
         events: events.data.length,
+        upcomingEvents: upcomingEvents.length,
+        pastEvents: pastEvents.length,
         trainers: trainers.data.length,
         testimonials: testimonials.data.length,
         contacts: contacts.data.length,
@@ -71,9 +88,7 @@ const AdminDashboard = () => {
         endorsements: endorsements.data.length,
         tips: tips.data.length,
         classes: classes.data.length,
-        newsletter: newsletter.data.length,
-        media: media.data.length,
-        gallery: 0 // Gallery items count can be added later
+        newsletter: newsletter.data.length
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -90,11 +105,18 @@ const AdminDashboard = () => {
 
   const adminSections = [
     {
-      title: 'Events',
+      title: 'Upcoming Events',
       icon: Calendar,
-      count: stats.events,
+      count: stats.upcomingEvents || 0,
       link: '/admin/events',
-      description: 'Manage upcoming events and tickets'
+      description: 'Manage future events and tickets'
+    },
+    {
+      title: 'Past Events',
+      icon: Calendar,
+      count: stats.pastEvents || 0,
+      link: '/admin/events',
+      description: 'View event history and archives'
     },
     {
       title: 'Trainers',
@@ -158,20 +180,6 @@ const AdminDashboard = () => {
       count: stats.newsletter || 0,
       link: '/admin/newsletter',
       description: 'View and download email list'
-    },
-    {
-      title: 'Media Library',
-      icon: Image,
-      count: stats.media || 0,
-      link: '/admin/media',
-      description: 'Upload & manage photos/videos'
-    },
-    {
-      title: 'Media Gallery',
-      icon: Image,
-      count: stats.gallery || 0,
-      link: '/admin/gallery',
-      description: 'Manage site photos & videos'
     }
   ];
 
@@ -256,13 +264,6 @@ const AdminDashboard = () => {
             >
               <MessageSquare className="text-blue-400 mx-auto mb-3" size={32} />
               <div className="text-white font-semibold">Add Testimonial</div>
-            </Link>
-            <Link
-              to="/admin/gallery"
-              className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
-            >
-              <Image className="text-blue-400 mx-auto mb-3" size={32} />
-              <div className="text-white font-semibold">Add Media</div>
             </Link>
           </div>
         </div>
