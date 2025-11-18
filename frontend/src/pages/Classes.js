@@ -191,11 +191,13 @@ const Classes = () => {
                               return (
                                 <div
                                   key={idx}
-                                  className={`absolute left-1 right-1 rounded p-2 border ${getLevelColor(classItem.level)} hover:shadow-lg transition-shadow cursor-pointer z-10`}
+                                  onClick={() => handleClassClick(classItem)}
+                                  className={`absolute left-1 right-1 rounded p-2 border ${getLevelColor(classItem.level)} hover:shadow-lg hover:scale-105 transition-all cursor-pointer z-10`}
                                   style={{ 
                                     height: `${heightMultiplier * 60 - 8}px`,
                                     top: '4px'
                                   }}
+                                  title="Click to edit"
                                 >
                                   <div className="text-xs font-bold text-white mb-1 leading-tight">
                                     {classItem.title}
