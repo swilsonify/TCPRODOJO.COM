@@ -38,25 +38,47 @@ const Classes = () => {
     ? currentClasses 
     : currentClasses.filter(c => c.type === classFilter);
 
-  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
+  // Time slots from 8 AM to 10 PM (14 hours)
+  const timeSlots = [
+    '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+    '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
+    '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'
+  ];
 
-  const getDaysInMonth = (date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    return { firstDay, daysInMonth };
+  // Helper function to parse time and get position
+  const getTimePosition = (timeString) => {
+    // Parse times like "6:00 PM - 8:00 PM"
+    const startTime = timeString.split(' - ')[0].trim();
+    const hour = parseInt(startTime.split(':')[0]);
+    const isPM = startTime.includes('PM');
+    const isAM = startTime.includes('AM');
+    
+    let hour24 = hour;
+    if (isPM && hour !== 12) hour24 = hour + 12;
+    if (isAM && hour === 12) hour24 = 0;
+    
+    // Calculate position (8 AM = slot 0)
+    return hour24 - 8;
   };
 
-  const { firstDay, daysInMonth } = getDaysInMonth(selectedDate);
-
-  const previousMonth = () => {
-    setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1));
-  };
-
-  const nextMonth = () => {
-    setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1));
+  // Helper to calculate duration in hours
+  const getDuration = (timeString) => {
+    const times = timeString.split(' - ');
+    if (times.length !== 2) return 2; // default 2 hours
+    
+    const parseTime = (time) => {
+      const [hourMin, period] = time.trim().split(' ');
+      let [hour, min] = hourMin.split(':').map(Number);
+      if (period === 'PM' && hour !== 12) hour += 12;
+      if (period === 'AM' && hour === 12) hour = 0;
+      return hour + (min || 0) / 60;
+    };
+    
+    const start = parseTime(times[0]);
+    const end = parseTime(times[1]);
+    return end - start;
   };
 
   const getLevelColor = (level) => {
