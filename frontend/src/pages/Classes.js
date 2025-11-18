@@ -154,11 +154,12 @@ const Classes = () => {
     }
   };
 
-  const handleClassClick = (classItem) => {
+  const handleClassClick = (classItem, date) => {
     if (!isAdmin()) {
       return; // Only admins can edit
     }
     setEditingClass(classItem);
+    setSelectedDate(date);
     setShowEditModal(true);
   };
 
