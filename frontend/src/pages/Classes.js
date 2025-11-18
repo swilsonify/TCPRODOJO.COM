@@ -279,6 +279,137 @@ const Classes = () => {
           )}
         </div>
 
+        {/* Edit Class Modal */}
+        {showEditModal && editingClass && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-white">Edit Class</h3>
+                <button
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingClass(null);
+                  }}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleUpdateClass(editingClass);
+                }}
+                className="space-y-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Class Title</label>
+                    <input
+                      type="text"
+                      value={editingClass.title}
+                      onChange={(e) => setEditingClass({ ...editingClass, title: e.target.value })}
+                      className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Day</label>
+                    <select
+                      value={editingClass.day}
+                      onChange={(e) => setEditingClass({ ...editingClass, day: e.target.value })}
+                      className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                      required
+                    >
+                      {daysOfWeek.map((day) => (
+                        <option key={day} value={day}>{day}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Time</label>
+                    <input
+                      type="text"
+                      value={editingClass.time}
+                      onChange={(e) => setEditingClass({ ...editingClass, time: e.target.value })}
+                      placeholder="6:00 PM - 8:00 PM"
+                      className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Instructor</label>
+                    <input
+                      type="text"
+                      value={editingClass.instructor}
+                      onChange={(e) => setEditingClass({ ...editingClass, instructor: e.target.value })}
+                      className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Level</label>
+                    <select
+                      value={editingClass.level}
+                      onChange={(e) => setEditingClass({ ...editingClass, level: e.target.value })}
+                      className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                      required
+                    >
+                      <option value="Beginner">Beginner</option>
+                      <option value="Intermediate">Intermediate</option>
+                      <option value="Advanced">Advanced</option>
+                      <option value="All Levels">All Levels</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Available Spots</label>
+                    <input
+                      type="number"
+                      value={editingClass.spots}
+                      onChange={(e) => setEditingClass({ ...editingClass, spots: parseInt(e.target.value) })}
+                      className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                      required
+                      min="0"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 justify-end mt-6">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteClass(editingClass.id)}
+                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded transition-colors"
+                  >
+                    Delete Class
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditingClass(null);
+                    }}
+                    className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
