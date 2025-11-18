@@ -6,12 +6,23 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Classes = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = day === 0 ? -6 : 1 - day; // Adjust to get Monday
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  });
   const [classes, setClasses] = useState([]);
+  const [cancelledClasses, setCancelledClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [classFilter, setClassFilter] = useState('All'); // New filter state
   const [editingClass, setEditingClass] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [selectedClassForCancel, setSelectedClassForCancel] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,12 +31,15 @@ const Classes = () => {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get(`${API}/classes`);
-      setClasses(response.data);
+      const [classesRes, cancelledRes] = await Promise.all([
+        axios.get(`${API}/classes`),
+        axios.get(`${API}/classes/cancelled`)
+      ]);
+      setClasses(classesRes.data);
+      setCancelledClasses(cancelledRes.data);
     } catch (error) {
       console.error('Error fetching classes:', error);
-      // Use default classes if API fails
-      setClasses(defaultClasses);
+      setClasses([]);
     } finally {
       setLoading(false);
     }
@@ -34,13 +48,21 @@ const Classes = () => {
   const defaultClasses = [];
 
   const currentClasses = classes;
-  
-  // Filter classes based on selected type
-  const filteredClasses = classFilter === 'All' 
-    ? currentClasses 
-    : currentClasses.filter(c => c.type === classFilter);
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
+  // Get dates for current week
+  const getWeekDates = () => {
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(currentWeekStart);
+      date.setDate(currentWeekStart.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  };
+
+  const weekDates = getWeekDates();
   
   // Time slots from 8 AM to 10 PM (14 hours)
   const timeSlots = [
@@ -48,6 +70,40 @@ const Classes = () => {
     '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
     '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'
   ];
+
+  const previousWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() - 7);
+    setCurrentWeekStart(newDate);
+  };
+
+  const nextWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() + 7);
+    setCurrentWeekStart(newDate);
+  };
+
+  const goToCurrentWeek = () => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diff);
+    monday.setHours(0, 0, 0, 0);
+    setCurrentWeekStart(monday);
+  };
+
+  const formatWeekRange = () => {
+    const start = weekDates[0];
+    const end = weekDates[6];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    if (start.getMonth() === end.getMonth()) {
+      return `${monthNames[start.getMonth()]} ${start.getDate()}-${end.getDate()}, ${start.getFullYear()}`;
+    } else {
+      return `${monthNames[start.getMonth()]} ${start.getDate()} - ${monthNames[end.getMonth()]} ${end.getDate()}, ${start.getFullYear()}`;
+    }
+  };
 
   // Helper function to parse time and get position
   const getTimePosition = (timeString) => {
@@ -136,6 +192,59 @@ const Classes = () => {
     }
   };
 
+  const isClassCancelled = (classId, date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return cancelledClasses.some(c => c.class_id === classId && c.cancelled_date === dateStr);
+  };
+
+  const handleCancelClass = async (classItem, date) => {
+    const reason = prompt('Reason for cancellation (optional):');
+    if (reason === null) return; // User clicked cancel
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = date.toISOString().split('T')[0];
+      
+      await axios.post(
+        `${API}/admin/classes/cancel`,
+        {
+          class_id: classItem.id,
+          cancelled_date: dateStr,
+          reason: reason || 'No reason provided'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      alert('Class cancelled successfully');
+    } catch (error) {
+      console.error('Error cancelling class:', error);
+      alert('Failed to cancel class. Please make sure you are logged in as admin.');
+    }
+  };
+
+  const handleUncancelClass = async (classId, date) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = date.toISOString().split('T')[0];
+      
+      // Find the cancellation
+      const cancellation = cancelledClasses.find(c => c.class_id === classId && c.cancelled_date === dateStr);
+      if (!cancellation) return;
+      
+      await axios.delete(
+        `${API}/admin/classes/cancel/${cancellation.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      alert('Class restored successfully');
+    } catch (error) {
+      console.error('Error restoring class:', error);
+      alert('Failed to restore class. Please make sure you are logged in as admin.');
+    }
+  };
+
   return (
     <div className="pt-28 pb-20 px-4" data-testid="classes-page">
       <div className="container mx-auto">
@@ -148,21 +257,56 @@ const Classes = () => {
         {/* Weekly Timetable View */}
         <div className="max-w-7xl mx-auto mb-12">
           <div className="bg-black border border-blue-500/20 rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Weekly Schedule</h2>
+            {/* Week Navigation */}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={previousWeek}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+              >
+                <ChevronLeft size={20} />
+                Previous Week
+              </button>
+              
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-1">Weekly Schedule</h2>
+                <p className="text-blue-400 font-semibold">{formatWeekRange()}</p>
+                <button
+                  onClick={goToCurrentWeek}
+                  className="mt-2 text-sm text-gray-400 hover:text-blue-400 transition-colors"
+                >
+                  Go to Current Week
+                </button>
+              </div>
+
+              <button
+                onClick={nextWeek}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+              >
+                Next Week
+                <ChevronRight size={20} />
+              </button>
+            </div>
             
             {loading ? (
               <div className="text-center text-gray-400 py-12">Loading schedule...</div>
             ) : (
               <div className="overflow-x-auto">
                 <div className="min-w-[800px]">
-                  {/* Header Row - Days of Week */}
+                  {/* Header Row - Days of Week with Dates */}
                   <div className="grid grid-cols-8 gap-1 mb-2">
                     <div className="text-gray-500 text-sm font-semibold p-2"></div>
-                    {daysOfWeek.map((day) => (
-                      <div key={day} className="text-center text-blue-400 font-bold text-sm p-2 border-b border-blue-500/20">
-                        {day}
-                      </div>
-                    ))}
+                    {daysOfWeek.map((day, index) => {
+                      const date = weekDates[index];
+                      const isToday = new Date().toDateString() === date.toDateString();
+                      return (
+                        <div key={day} className={`text-center font-bold text-sm p-2 border-b ${isToday ? 'bg-blue-500/20 border-blue-500' : 'border-blue-500/20'}`}>
+                          <div className="text-blue-400">{day}</div>
+                          <div className={`text-xs mt-1 ${isToday ? 'text-blue-300 font-bold' : 'text-gray-400'}`}>
+                            {date.getMonth() + 1}/{date.getDate()}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Time Slots */}
@@ -174,7 +318,7 @@ const Classes = () => {
                       </div>
 
                       {/* Day Columns */}
-                      {daysOfWeek.map((day) => {
+                      {daysOfWeek.map((day, dayIndex) => {
                         // Find classes for this day and time slot
                         const dayClasses = currentClasses.filter(c => {
                           if (c.day !== day) return false;
@@ -187,26 +331,41 @@ const Classes = () => {
                             {dayClasses.map((classItem, idx) => {
                               const duration = getDuration(classItem.time);
                               const heightMultiplier = duration;
+                              const date = weekDates[dayIndex];
+                              const isCancelled = isClassCancelled(classItem.id, date);
                               
                               return (
                                 <div
                                   key={idx}
                                   onClick={() => handleClassClick(classItem)}
-                                  className={`absolute left-1 right-1 rounded p-2 border ${getLevelColor(classItem.level)} hover:shadow-lg hover:scale-105 transition-all cursor-pointer z-10`}
+                                  onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    if (isCancelled) {
+                                      handleUncancelClass(classItem.id, date);
+                                    } else {
+                                      handleCancelClass(classItem, date);
+                                    }
+                                  }}
+                                  className={`absolute left-1 right-1 rounded p-2 border ${
+                                    isCancelled 
+                                      ? 'bg-red-900/50 border-red-500 opacity-60' 
+                                      : getLevelColor(classItem.level)
+                                  } hover:shadow-lg hover:scale-105 transition-all cursor-pointer z-10`}
                                   style={{ 
                                     height: `${heightMultiplier * 60 - 8}px`,
                                     top: '4px'
                                   }}
-                                  title="Click to edit"
+                                  title={isCancelled ? "Right-click to restore" : "Click to edit, Right-click to cancel"}
                                 >
-                                  <div className="text-xs font-bold text-white mb-1 leading-tight">
+                                  <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300 line-through' : 'text-white'}`}>
                                     {classItem.title}
+                                    {isCancelled && <span className="ml-1 text-red-400">❌</span>}
                                   </div>
-                                  <div className="text-xs text-gray-300 leading-tight">
+                                  <div className={`text-xs leading-tight ${isCancelled ? 'text-red-400 line-through' : 'text-gray-300'}`}>
                                     {classItem.time}
                                   </div>
-                                  <div className="text-xs text-gray-400 leading-tight mt-1">
-                                    {classItem.instructor}
+                                  <div className={`text-xs leading-tight mt-1 ${isCancelled ? 'text-red-500' : 'text-gray-400'}`}>
+                                    {isCancelled ? 'CANCELLED' : classItem.instructor}
                                   </div>
                                 </div>
                               );
@@ -228,12 +387,12 @@ const Classes = () => {
           
           {loading ? (
             <div className="text-center text-gray-400 py-12">Loading classes...</div>
-          ) : filteredClasses.length === 0 ? (
+          ) : currentClasses.length === 0 ? (
             <div className="text-center text-gray-400 py-12">No classes scheduled at this time.</div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {daysOfWeek.map((dayName) => {
-                const dayClasses = filteredClasses.filter(c => c.day === dayName);
+                const dayClasses = currentClasses.filter(c => c.day === dayName);
                 if (dayClasses.length === 0) return null;
                 
                 return (

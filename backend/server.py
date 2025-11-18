@@ -229,6 +229,15 @@ class ClassScheduleModel(BaseModel):
     description: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class CancelledClassModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    class_id: str  # Reference to the recurring class
+    cancelled_date: str  # Format: "YYYY-MM-DD" (the specific date this class is cancelled)
+    reason: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class NewsletterSubscriptionModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
@@ -649,6 +658,37 @@ async def delete_class(class_id: str, username: str = Depends(verify_token)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Class not found")
     return {"message": "Class deleted successfully"}
+
+# Cancelled Classes Management
+@api_router.post("/admin/classes/cancel", response_model=CancelledClassModel)
+async def cancel_class_instance(cancelled: CancelledClassModel, username: str = Depends(verify_token)):
+    doc = cancelled.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.cancelled_classes.insert_one(doc)
+    return cancelled
+
+@api_router.get("/admin/classes/cancelled", response_model=List[CancelledClassModel])
+async def get_cancelled_classes(username: str = Depends(verify_token)):
+    cancelled = await db.cancelled_classes.find({}, {"_id": 0}).to_list(1000)
+    for item in cancelled:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+    return cancelled
+
+@api_router.delete("/admin/classes/cancel/{cancel_id}")
+async def uncancel_class(cancel_id: str, username: str = Depends(verify_token)):
+    result = await db.cancelled_classes.delete_one({"id": cancel_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Cancellation not found")
+    return {"message": "Class uncancelled successfully"}
+
+@api_router.get("/classes/cancelled", response_model=List[CancelledClassModel])
+async def get_public_cancelled_classes():
+    cancelled = await db.cancelled_classes.find({}, {"_id": 0}).to_list(1000)
+    for item in cancelled:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+    return cancelled
 
 # Public API endpoints (no authentication required)
 @api_router.get("/success-stories", response_model=List[SuccessStoryModel])
