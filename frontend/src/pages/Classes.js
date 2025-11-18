@@ -631,13 +631,35 @@ const Classes = () => {
                   </div>
                 </div>
 
+                <div className="border-t border-blue-500/20 pt-4 mt-6">
+                  <p className="text-gray-400 text-sm mb-4">
+                    Individual Instance Actions (for {selectedDate?.toLocaleDateString()}):
+                  </p>
+                  <div className="flex gap-3 mb-4">
+                    <button
+                      type="button"
+                      onClick={handleCancelInstance}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded transition-colors"
+                    >
+                      Cancel This Instance
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRescheduleInstance}
+                      className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded transition-colors"
+                    >
+                      Reschedule This Instance
+                    </button>
+                  </div>
+                </div>
+
                 <div className="flex gap-4 justify-end mt-6">
                   <button
                     type="button"
                     onClick={() => handleDeleteClass(editingClass.id)}
-                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded transition-colors"
+                    className="px-6 py-3 bg-red-800 hover:bg-red-900 text-white font-semibold rounded transition-colors"
                   >
-                    Delete Class
+                    Delete Recurring Class
                   </button>
                   <button
                     type="button"
@@ -647,13 +669,13 @@ const Classes = () => {
                     }}
                     className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded transition-colors"
                   >
-                    Cancel
+                    Close
                   </button>
                   <button
                     type="submit"
                     className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
                   >
-                    Save Changes
+                    Save Recurring Class
                   </button>
                 </div>
               </form>
