@@ -14,14 +14,12 @@ import AdminEvents from '@/pages/admin/AdminEvents';
 import AdminTrainers from '@/pages/admin/AdminTrainers';
 import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
-import AdminGallery from '@/pages/admin/AdminGallery';
 import AdminCoaches from '@/pages/admin/AdminCoaches';
 import AdminSuccessStories from '@/pages/admin/AdminSuccessStories';
 import AdminEndorsements from '@/pages/admin/AdminEndorsements';
 import AdminTips from '@/pages/admin/AdminTips';
 import AdminClassSchedule from '@/pages/admin/AdminClassSchedule';
 import AdminNewsletterSubscriptions from '@/pages/admin/AdminNewsletterSubscriptions';
-import AdminMediaLibrary from '@/pages/admin/AdminMediaLibrary';
 
 function App() {
   return (
