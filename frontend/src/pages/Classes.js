@@ -362,7 +362,7 @@ const Classes = () => {
                               return (
                                 <div
                                   key={idx}
-                                  onClick={() => handleClassClick(classItem)}
+                                  onClick={() => handleClassClick(classItem, date)}
                                   onContextMenu={(e) => {
                                     e.preventDefault();
                                     if (isCancelled) {
