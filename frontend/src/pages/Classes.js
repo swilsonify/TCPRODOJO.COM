@@ -6,10 +6,17 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Classes = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = day === 0 ? -6 : 1 - day; // Adjust to get Monday
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  });
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [classFilter, setClassFilter] = useState('All'); // New filter state
   const [editingClass, setEditingClass] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
