@@ -229,6 +229,15 @@ class ClassScheduleModel(BaseModel):
     description: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class CancelledClassModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    class_id: str  # Reference to the recurring class
+    cancelled_date: str  # Format: "YYYY-MM-DD" (the specific date this class is cancelled)
+    reason: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class NewsletterSubscriptionModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
