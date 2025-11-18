@@ -11,7 +11,6 @@ import Contact from '@/pages/Contact';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import AdminEvents from '@/pages/admin/AdminEvents';
-import AdminTrainers from '@/pages/admin/AdminTrainers';
 import AdminTestimonials from '@/pages/admin/AdminTestimonials';
 import AdminContacts from '@/pages/admin/AdminContacts';
 import AdminCoaches from '@/pages/admin/AdminCoaches';
@@ -43,7 +42,6 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/events" element={<AdminEvents />} />
         <Route path="/admin/past-events" element={<AdminPastEvents />} />
-        <Route path="/admin/trainers" element={<AdminTrainers />} />
         <Route path="/admin/testimonials" element={<AdminTestimonials />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
         <Route path="/admin/coaches" element={<AdminCoaches />} />

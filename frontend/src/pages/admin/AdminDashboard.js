@@ -10,7 +10,6 @@ const AdminDashboard = () => {
   const [username, setUsername] = useState('');
   const [stats, setStats] = useState({
     events: 0,
-    trainers: 0,
     testimonials: 0,
     contacts: 0
   });
@@ -47,9 +46,8 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive] = await Promise.all([
+      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/trainers`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/coaches`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -82,7 +80,6 @@ const AdminDashboard = () => {
         upcomingEvents: upcomingEvents.length,
         pastEvents: pastEvents.length,
         pastEventsArchive: pastEventsArchive.data.length,
-        trainers: trainers.data.length,
         testimonials: testimonials.data.length,
         contacts: contacts.data.length,
         coaches: coaches.data.length,
@@ -119,13 +116,6 @@ const AdminDashboard = () => {
       count: stats.pastEventsArchive || 0,
       link: '/admin/past-events',
       description: 'Manage event history and archives'
-    },
-    {
-      title: 'Trainers',
-      icon: Users,
-      count: stats.trainers,
-      link: '/admin/trainers',
-      description: 'Edit trainer profiles and bios'
     },
     {
       title: 'Testimonials',
@@ -254,18 +244,18 @@ const AdminDashboard = () => {
               <div className="text-white font-semibold">Add New Event</div>
             </Link>
             <Link
-              to="/admin/trainers"
-              className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
-            >
-              <Users className="text-blue-400 mx-auto mb-3" size={32} />
-              <div className="text-white font-semibold">Add Trainer</div>
-            </Link>
-            <Link
               to="/admin/testimonials"
               className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
             >
               <MessageSquare className="text-blue-400 mx-auto mb-3" size={32} />
               <div className="text-white font-semibold">Add Testimonial</div>
+            </Link>
+            <Link
+              to="/admin/events"
+              className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
+            >
+              <Calendar className="text-blue-400 mx-auto mb-3" size={32} />
+              <div className="text-white font-semibold">Add Event</div>
             </Link>
           </div>
         </div>
