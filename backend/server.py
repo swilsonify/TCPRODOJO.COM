@@ -427,6 +427,37 @@ async def delete_event(event_id: str, username: str = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="Event not found")
     return {"message": "Event deleted successfully"}
 
+# Admin Past Events Management
+@api_router.get("/admin/past-events", response_model=List[PastEventModel])
+async def get_admin_past_events(username: str = Depends(verify_token)):
+    past_events = await db.past_events.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for event in past_events:
+        if isinstance(event.get('created_at'), str):
+            event['created_at'] = datetime.fromisoformat(event['created_at'])
+    return past_events
+
+@api_router.post("/admin/past-events", response_model=PastEventModel)
+async def create_past_event(past_event: PastEventModel, username: str = Depends(verify_token)):
+    doc = past_event.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.past_events.insert_one(doc)
+    return past_event
+
+@api_router.put("/admin/past-events/{event_id}", response_model=PastEventModel)
+async def update_past_event(event_id: str, past_event: PastEventModel, username: str = Depends(verify_token)):
+    doc = past_event.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    await db.past_events.update_one({"id": event_id}, {"$set": doc})
+    return past_event
+
+@api_router.delete("/admin/past-events/{event_id}")
+async def delete_past_event(event_id: str, username: str = Depends(verify_token)):
+    result = await db.past_events.delete_one({"id": event_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Past event not found")
+    return {"message": "Past event deleted successfully"}
+
 # Admin Trainer Management
 @api_router.get("/admin/trainers", response_model=List[TrainerModel])
 async def get_admin_trainers(username: str = Depends(verify_token)):
