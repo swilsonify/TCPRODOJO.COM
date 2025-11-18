@@ -119,13 +119,6 @@ const AdminDashboard = () => {
       description: 'Manage event history and archives'
     },
     {
-      title: 'Trainers',
-      icon: Users,
-      count: stats.trainers,
-      link: '/admin/trainers',
-      description: 'Edit trainer profiles and bios'
-    },
-    {
       title: 'Testimonials',
       icon: MessageSquare,
       count: stats.testimonials,
