@@ -99,76 +99,78 @@ const Classes = () => {
           <div className="gradient-border mx-auto w-24 mb-6"></div>
         </div>
 
-        {/* Calendar */}
-        <div className="max-w-4xl mx-auto mb-12">
+        {/* Weekly Timetable View */}
+        <div className="max-w-7xl mx-auto mb-12">
           <div className="bg-black border border-blue-500/20 rounded-lg p-6">
-            {/* Calendar Header */}
-            <div className="flex items-center justify-between mb-6">
-              <button
-                onClick={previousMonth}
-                className="p-2 hover:bg-blue-500/10 rounded transition-colors"
-                data-testid="prev-month-button"
-              >
-                <ChevronLeft className="text-blue-500" size={24} />
-              </button>
-              <h2 className="text-2xl font-bold text-white">
-                {months[selectedDate.getMonth()]} {selectedDate.getFullYear()}
-              </h2>
-              <button
-                onClick={nextMonth}
-                className="p-2 hover:bg-blue-500/10 rounded transition-colors"
-                data-testid="next-month-button"
-              >
-                <ChevronRight className="text-blue-500" size={24} />
-              </button>
-            </div>
-
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-2">
-              {/* Day Headers */}
-              {daysOfWeek.map((day) => (
-                <div key={day} className="text-center text-blue-400 font-semibold text-sm py-2">
-                  {day.slice(0, 3)}
-                </div>
-              ))}
-
-              {/* Empty cells for days before month starts */}
-              {[...Array(firstDay)].map((_, index) => (
-                <div key={`empty-${index}`} className="aspect-square"></div>
-              ))}
-
-              {/* Calendar Days */}
-              {[...Array(daysInMonth)].map((_, index) => {
-                const day = index + 1;
-                const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), day);
-                const dayName = daysOfWeek[date.getDay()];
-                const hasClasses = currentClasses.some(c => c.day === dayName);
-                const isToday = new Date().toDateString() === date.toDateString();
-
-                return (
-                  <div
-                    key={day}
-                    className={`aspect-square border rounded-lg flex items-center justify-center cursor-pointer calendar-day ${
-                      hasClasses ? 'border-blue-500/50 bg-blue-500/10' : 'border-gray-700'
-                    } ${
-                      isToday ? 'ring-2 ring-blue-500' : ''
-                    }`}
-                    data-testid={`calendar-day-${day}`}
-                  >
-                    <div className="text-center">
-                      <div className={`text-lg font-semibold ${
-                        hasClasses ? 'text-white' : 'text-gray-500'
-                      }`}>
+            <h2 className="text-2xl font-bold text-white mb-6">Weekly Schedule</h2>
+            
+            {loading ? (
+              <div className="text-center text-gray-400 py-12">Loading schedule...</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <div className="min-w-[800px]">
+                  {/* Header Row - Days of Week */}
+                  <div className="grid grid-cols-8 gap-1 mb-2">
+                    <div className="text-gray-500 text-sm font-semibold p-2"></div>
+                    {daysOfWeek.map((day) => (
+                      <div key={day} className="text-center text-blue-400 font-bold text-sm p-2 border-b border-blue-500/20">
                         {day}
                       </div>
-                      {hasClasses && (
-                        <div className="w-1 h-1 bg-blue-500 rounded-full mx-auto mt-1"></div>
-                      )}
-                    </div>
+                    ))}
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* Time Slots */}
+                  {timeSlots.map((timeSlot, slotIndex) => (
+                    <div key={timeSlot} className="grid grid-cols-8 gap-1 border-t border-gray-800">
+                      {/* Time Label */}
+                      <div className="text-gray-500 text-xs font-semibold p-2 flex items-start">
+                        {timeSlot}
+                      </div>
+
+                      {/* Day Columns */}
+                      {daysOfWeek.map((day) => {
+                        // Find classes for this day and time slot
+                        const dayClasses = currentClasses.filter(c => {
+                          if (c.day !== day) return false;
+                          const classSlot = getTimePosition(c.time);
+                          return classSlot === slotIndex;
+                        });
+
+                        return (
+                          <div key={`${day}-${slotIndex}`} className="min-h-[60px] p-1 relative">
+                            {dayClasses.map((classItem, idx) => {
+                              const duration = getDuration(classItem.time);
+                              const heightMultiplier = duration;
+                              
+                              return (
+                                <div
+                                  key={idx}
+                                  className={`absolute left-1 right-1 rounded p-2 border ${getLevelColor(classItem.level)} hover:shadow-lg transition-shadow cursor-pointer z-10`}
+                                  style={{ 
+                                    height: `${heightMultiplier * 60 - 8}px`,
+                                    top: '4px'
+                                  }}
+                                >
+                                  <div className="text-xs font-bold text-white mb-1 leading-tight">
+                                    {classItem.title}
+                                  </div>
+                                  <div className="text-xs text-gray-300 leading-tight">
+                                    {classItem.time}
+                                  </div>
+                                  <div className="text-xs text-gray-400 leading-tight mt-1">
+                                    {classItem.instructor}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
