@@ -240,13 +240,6 @@ const AdminDashboard = () => {
               <MessageSquare className="text-blue-400 mx-auto mb-3" size={32} />
               <div className="text-white font-semibold">Add Testimonial</div>
             </Link>
-            <Link
-              to="/admin/gallery"
-              className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
-            >
-              <Image className="text-blue-400 mx-auto mb-3" size={32} />
-              <div className="text-white font-semibold">Add Media</div>
-            </Link>
           </div>
         </div>
 
