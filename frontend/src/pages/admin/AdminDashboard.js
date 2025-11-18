@@ -47,9 +47,8 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive] = await Promise.all([
+      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/trainers`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/coaches`, { headers: { Authorization: `Bearer ${token}` } }),
