@@ -92,6 +92,50 @@ const Classes = () => {
     }
   };
 
+  const handleClassClick = (classItem) => {
+    setEditingClass(classItem);
+    setShowEditModal(true);
+  };
+
+  const handleUpdateClass = async (updatedClass) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.put(
+        `${API}/admin/classes/${updatedClass.id}`,
+        updatedClass,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Refresh classes
+      await fetchClasses();
+      setShowEditModal(false);
+      setEditingClass(null);
+    } catch (error) {
+      console.error('Error updating class:', error);
+      alert('Failed to update class. Please make sure you are logged in as admin.');
+    }
+  };
+
+  const handleDeleteClass = async (classId) => {
+    if (!window.confirm('Are you sure you want to delete this class?')) return;
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.delete(
+        `${API}/admin/classes/${classId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Refresh classes
+      await fetchClasses();
+      setShowEditModal(false);
+      setEditingClass(null);
+    } catch (error) {
+      console.error('Error deleting class:', error);
+      alert('Failed to delete class. Please make sure you are logged in as admin.');
+    }
+  };
+
   return (
     <div className="pt-28 pb-20 px-4" data-testid="classes-page">
       <div className="container mx-auto">
