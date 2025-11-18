@@ -10,6 +10,8 @@ const Classes = () => {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [classFilter, setClassFilter] = useState('All'); // New filter state
+  const [editingClass, setEditingClass] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
