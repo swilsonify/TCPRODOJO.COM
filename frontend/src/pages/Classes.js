@@ -41,11 +41,6 @@ const Classes = () => {
   const defaultClasses = [];
 
   const currentClasses = classes;
-  
-  // Filter classes based on selected type
-  const filteredClasses = classFilter === 'All' 
-    ? currentClasses 
-    : currentClasses.filter(c => c.type === classFilter);
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
