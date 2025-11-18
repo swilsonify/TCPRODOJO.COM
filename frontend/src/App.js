@@ -20,6 +20,7 @@ import AdminEndorsements from '@/pages/admin/AdminEndorsements';
 import AdminTips from '@/pages/admin/AdminTips';
 import AdminClassSchedule from '@/pages/admin/AdminClassSchedule';
 import AdminNewsletterSubscriptions from '@/pages/admin/AdminNewsletterSubscriptions';
+import AdminPastEvents from '@/pages/admin/AdminPastEvents';
 
 function App() {
   return (
