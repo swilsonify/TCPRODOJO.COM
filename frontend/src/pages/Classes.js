@@ -155,6 +155,9 @@ const Classes = () => {
   };
 
   const handleClassClick = (classItem) => {
+    if (!isAdmin()) {
+      return; // Only admins can edit
+    }
     setEditingClass(classItem);
     setShowEditModal(true);
   };
