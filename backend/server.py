@@ -138,7 +138,18 @@ class EventModel(BaseModel):
     posterUrl: str = ""
     promoVideoUrl: str = ""
     ticketLink: str = ""
-    section: str = "upcoming"  # "upcoming" or "past"
+    displayOrder: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PastEventModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    date: str
+    posterUrl: str = ""
+    youtubeUrl: str = ""
+    description: str
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
