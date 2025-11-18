@@ -207,6 +207,11 @@ const Classes = () => {
   };
 
   const handleCancelClass = async (classItem, date) => {
+    if (!isAdmin()) {
+      alert('Only administrators can cancel classes. Please log in to the admin panel.');
+      return;
+    }
+    
     const reason = prompt('Reason for cancellation (optional):');
     if (reason === null) return; // User clicked cancel
     
@@ -233,6 +238,11 @@ const Classes = () => {
   };
 
   const handleUncancelClass = async (classId, date) => {
+    if (!isAdmin()) {
+      alert('Only administrators can restore classes. Please log in to the admin panel.');
+      return;
+    }
+    
     try {
       const token = localStorage.getItem('adminToken');
       const dateStr = date.toISOString().split('T')[0];
