@@ -19,31 +19,13 @@ const Events = () => {
 
   const loadEvents = async () => {
     try {
-      const response = await axios.get(`${API}/api/events`);
-      const allEvents = response.data;
+      const [upcomingRes, pastRes] = await Promise.all([
+        axios.get(`${API}/api/events`),
+        axios.get(`${API}/api/past-events`)
+      ]);
       
-      // Get today's date at midnight for comparison
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      // Separate events into upcoming and past
-      const upcoming = [];
-      const past = [];
-      
-      allEvents.forEach(event => {
-        // Parse event date (format: "February 15, 2025" or "2025-02-15")
-        const eventDate = new Date(event.date);
-        eventDate.setHours(0, 0, 0, 0);
-        
-        if (eventDate >= today) {
-          upcoming.push(event);
-        } else {
-          past.push(event);
-        }
-      });
-      
-      setUpcomingEvents(upcoming);
-      setPastEvents(past);
+      setUpcomingEvents(upcomingRes.data);
+      setPastEvents(pastRes.data);
     } catch (error) {
       console.error('Error loading events:', error);
       setUpcomingEvents([]);
@@ -234,10 +216,10 @@ const Events = () => {
                 >
                   {/* Video/Poster - Square Frame */}
                   <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
-                    {event.promoVideoUrl ? (
+                    {event.youtubeUrl ? (
                       <iframe
                         className="w-full h-full"
-                        src={event.promoVideoUrl}
+                        src={event.youtubeUrl}
                         title={event.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -261,13 +243,7 @@ const Events = () => {
                   <div className="p-6">
                     <div className="text-blue-400 text-sm font-semibold mb-2">{event.date}</div>
                     <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
-                    <p className="text-gray-400 text-sm mb-3">{event.description}</p>
-                    {event.location && (
-                      <div className="flex items-center space-x-2 text-gray-400 text-sm">
-                        <MapPin size={14} />
-                        <span>{event.location}</span>
-                      </div>
-                    )}
+                    <p className="text-gray-400 text-sm">{event.description}</p>
                   </div>
                 </div>
               ))}

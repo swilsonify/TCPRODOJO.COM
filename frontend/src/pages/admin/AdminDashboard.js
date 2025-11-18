@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter] = await Promise.all([
+      const [events, trainers, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/trainers`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -57,7 +57,8 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/endorsements`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/tips`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/classes`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/newsletter-subscriptions`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/newsletter-subscriptions`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/past-events`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       // Separate events into upcoming and past
@@ -80,6 +81,7 @@ const AdminDashboard = () => {
         events: events.data.length,
         upcomingEvents: upcomingEvents.length,
         pastEvents: pastEvents.length,
+        pastEventsArchive: pastEventsArchive.data.length,
         trainers: trainers.data.length,
         testimonials: testimonials.data.length,
         contacts: contacts.data.length,
@@ -112,11 +114,11 @@ const AdminDashboard = () => {
       description: 'Manage future events and tickets'
     },
     {
-      title: 'Past Events',
+      title: 'Past Events Archive',
       icon: Calendar,
-      count: stats.pastEvents || 0,
-      link: '/admin/events',
-      description: 'View event history and archives'
+      count: stats.pastEventsArchive || 0,
+      link: '/admin/past-events',
+      description: 'Manage event history and archives'
     },
     {
       title: 'Trainers',

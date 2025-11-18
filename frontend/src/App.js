@@ -20,6 +20,7 @@ import AdminEndorsements from '@/pages/admin/AdminEndorsements';
 import AdminTips from '@/pages/admin/AdminTips';
 import AdminClassSchedule from '@/pages/admin/AdminClassSchedule';
 import AdminNewsletterSubscriptions from '@/pages/admin/AdminNewsletterSubscriptions';
+import AdminPastEvents from '@/pages/admin/AdminPastEvents';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/events" element={<AdminEvents />} />
+        <Route path="/admin/past-events" element={<AdminPastEvents />} />
         <Route path="/admin/trainers" element={<AdminTrainers />} />
         <Route path="/admin/testimonials" element={<AdminTestimonials />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
