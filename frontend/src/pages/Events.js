@@ -19,31 +19,13 @@ const Events = () => {
 
   const loadEvents = async () => {
     try {
-      const response = await axios.get(`${API}/api/events`);
-      const allEvents = response.data;
+      const [upcomingRes, pastRes] = await Promise.all([
+        axios.get(`${API}/api/events`),
+        axios.get(`${API}/api/past-events`)
+      ]);
       
-      // Get today's date at midnight for comparison
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      // Separate events into upcoming and past
-      const upcoming = [];
-      const past = [];
-      
-      allEvents.forEach(event => {
-        // Parse event date (format: "February 15, 2025" or "2025-02-15")
-        const eventDate = new Date(event.date);
-        eventDate.setHours(0, 0, 0, 0);
-        
-        if (eventDate >= today) {
-          upcoming.push(event);
-        } else {
-          past.push(event);
-        }
-      });
-      
-      setUpcomingEvents(upcoming);
-      setPastEvents(past);
+      setUpcomingEvents(upcomingRes.data);
+      setPastEvents(pastRes.data);
     } catch (error) {
       console.error('Error loading events:', error);
       setUpcomingEvents([]);
