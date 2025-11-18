@@ -114,11 +114,11 @@ const AdminDashboard = () => {
       description: 'Manage future events and tickets'
     },
     {
-      title: 'Past Events',
+      title: 'Past Events Archive',
       icon: Calendar,
-      count: stats.pastEvents || 0,
-      link: '/admin/events',
-      description: 'View event history and archives'
+      count: stats.pastEventsArchive || 0,
+      link: '/admin/past-events',
+      description: 'Manage event history and archives'
     },
     {
       title: 'Trainers',
