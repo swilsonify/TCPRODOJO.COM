@@ -265,6 +265,72 @@ const Classes = () => {
     }
   };
 
+  const handleCancelInstance = async () => {
+    if (!editingClass || !selectedDate) return;
+    
+    const reason = prompt('Reason for cancellation (optional):');
+    if (reason === null) return;
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      
+      await axios.post(
+        `${API}/admin/classes/cancel`,
+        {
+          class_id: editingClass.id,
+          cancelled_date: dateStr,
+          status: 'cancelled',
+          reason: reason || 'No reason provided'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      setShowEditModal(false);
+      setEditingClass(null);
+      alert('Class instance cancelled successfully');
+    } catch (error) {
+      console.error('Error cancelling class:', error);
+      alert('Failed to cancel class instance');
+    }
+  };
+
+  const handleRescheduleInstance = async () => {
+    if (!editingClass || !selectedDate) return;
+    
+    const newTime = prompt('Enter new time (e.g., "8:00 PM - 10:00 PM"):');
+    if (!newTime) return;
+    
+    const reason = prompt('Reason for rescheduling (optional):');
+    if (reason === null) return;
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      
+      await axios.post(
+        `${API}/admin/classes/cancel`,
+        {
+          class_id: editingClass.id,
+          cancelled_date: dateStr,
+          status: 'rescheduled',
+          rescheduled_time: newTime,
+          reason: reason || 'Rescheduled'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      setShowEditModal(false);
+      setEditingClass(null);
+      alert('Class instance rescheduled successfully');
+    } catch (error) {
+      console.error('Error rescheduling class:', error);
+      alert('Failed to reschedule class instance');
+    }
+  };
+
   return (
     <div className="pt-28 pb-20 px-4" data-testid="classes-page">
       <div className="container mx-auto">
