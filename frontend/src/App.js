@@ -42,7 +42,6 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/events" element={<AdminEvents />} />
         <Route path="/admin/past-events" element={<AdminPastEvents />} />
-        <Route path="/admin/trainers" element={<AdminTrainers />} />
         <Route path="/admin/testimonials" element={<AdminTestimonials />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
         <Route path="/admin/coaches" element={<AdminCoaches />} />
