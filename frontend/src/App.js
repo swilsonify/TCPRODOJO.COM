@@ -50,7 +50,6 @@ function App() {
         <Route path="/admin/tips" element={<AdminTips />} />
         <Route path="/admin/classes" element={<AdminClassSchedule />} />
         <Route path="/admin/newsletter" element={<AdminNewsletterSubscriptions />} />
-        <Route path="/admin/media" element={<AdminMediaLibrary />} />
       </Routes>
     </BrowserRouter>
   );
