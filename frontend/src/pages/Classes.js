@@ -237,14 +237,21 @@ const Classes = () => {
             ) : (
               <div className="overflow-x-auto">
                 <div className="min-w-[800px]">
-                  {/* Header Row - Days of Week */}
+                  {/* Header Row - Days of Week with Dates */}
                   <div className="grid grid-cols-8 gap-1 mb-2">
                     <div className="text-gray-500 text-sm font-semibold p-2"></div>
-                    {daysOfWeek.map((day) => (
-                      <div key={day} className="text-center text-blue-400 font-bold text-sm p-2 border-b border-blue-500/20">
-                        {day}
-                      </div>
-                    ))}
+                    {daysOfWeek.map((day, index) => {
+                      const date = weekDates[index];
+                      const isToday = new Date().toDateString() === date.toDateString();
+                      return (
+                        <div key={day} className={`text-center font-bold text-sm p-2 border-b ${isToday ? 'bg-blue-500/20 border-blue-500' : 'border-blue-500/20'}`}>
+                          <div className="text-blue-400">{day}</div>
+                          <div className={`text-xs mt-1 ${isToday ? 'text-blue-300 font-bold' : 'text-gray-400'}`}>
+                            {date.getMonth() + 1}/{date.getDate()}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Time Slots */}
