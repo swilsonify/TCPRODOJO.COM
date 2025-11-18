@@ -318,7 +318,7 @@ const Classes = () => {
                       </div>
 
                       {/* Day Columns */}
-                      {daysOfWeek.map((day) => {
+                      {daysOfWeek.map((day, dayIndex) => {
                         // Find classes for this day and time slot
                         const dayClasses = currentClasses.filter(c => {
                           if (c.day !== day) return false;
@@ -331,7 +331,7 @@ const Classes = () => {
                             {dayClasses.map((classItem, idx) => {
                               const duration = getDuration(classItem.time);
                               const heightMultiplier = duration;
-                              const date = weekDates[index];
+                              const date = weekDates[dayIndex];
                               const isCancelled = isClassCancelled(classItem.id, date);
                               
                               return (
