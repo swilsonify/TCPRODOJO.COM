@@ -354,6 +354,11 @@ const Classes = () => {
                               const date = weekDates[dayIndex];
                               const isCancelled = isClassCancelled(classItem.id, date);
                               
+                              const adminLoggedIn = isAdmin();
+                              const tooltip = adminLoggedIn 
+                                ? (isCancelled ? "Admin: Right-click to restore" : "Admin: Click to edit, Right-click to cancel")
+                                : (isCancelled ? "Class cancelled" : classItem.instructor);
+                              
                               return (
                                 <div
                                   key={idx}
@@ -370,12 +375,12 @@ const Classes = () => {
                                     isCancelled 
                                       ? 'bg-red-900/50 border-red-500 opacity-60' 
                                       : getLevelColor(classItem.level)
-                                  } hover:shadow-lg hover:scale-105 transition-all cursor-pointer z-10`}
+                                  } ${adminLoggedIn ? 'hover:shadow-lg hover:scale-105 cursor-pointer' : 'cursor-default'} transition-all z-10`}
                                   style={{ 
                                     height: `${heightMultiplier * 60 - 8}px`,
                                     top: '4px'
                                   }}
-                                  title={isCancelled ? "Right-click to restore" : "Click to edit, Right-click to cancel"}
+                                  title={tooltip}
                                 >
                                   <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300 line-through' : 'text-white'}`}>
                                     {classItem.title}
