@@ -23,6 +23,12 @@ const Classes = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedClassForCancel, setSelectedClassForCancel] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  
+  // Check if user is admin
+  const isAdmin = () => {
+    const token = localStorage.getItem('adminToken');
+    return token !== null && token !== '';
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -148,8 +154,12 @@ const Classes = () => {
     }
   };
 
-  const handleClassClick = (classItem) => {
+  const handleClassClick = (classItem, date) => {
+    if (!isAdmin()) {
+      return; // Only admins can edit
+    }
     setEditingClass(classItem);
+    setSelectedDate(date);
     setShowEditModal(true);
   };
 
@@ -198,6 +208,11 @@ const Classes = () => {
   };
 
   const handleCancelClass = async (classItem, date) => {
+    if (!isAdmin()) {
+      alert('Only administrators can cancel classes. Please log in to the admin panel.');
+      return;
+    }
+    
     const reason = prompt('Reason for cancellation (optional):');
     if (reason === null) return; // User clicked cancel
     
@@ -224,6 +239,11 @@ const Classes = () => {
   };
 
   const handleUncancelClass = async (classId, date) => {
+    if (!isAdmin()) {
+      alert('Only administrators can restore classes. Please log in to the admin panel.');
+      return;
+    }
+    
     try {
       const token = localStorage.getItem('adminToken');
       const dateStr = date.toISOString().split('T')[0];
@@ -242,6 +262,72 @@ const Classes = () => {
     } catch (error) {
       console.error('Error restoring class:', error);
       alert('Failed to restore class. Please make sure you are logged in as admin.');
+    }
+  };
+
+  const handleCancelInstance = async () => {
+    if (!editingClass || !selectedDate) return;
+    
+    const reason = prompt('Reason for cancellation (optional):');
+    if (reason === null) return;
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      
+      await axios.post(
+        `${API}/admin/classes/cancel`,
+        {
+          class_id: editingClass.id,
+          cancelled_date: dateStr,
+          status: 'cancelled',
+          reason: reason || 'No reason provided'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      setShowEditModal(false);
+      setEditingClass(null);
+      alert('Class instance cancelled successfully');
+    } catch (error) {
+      console.error('Error cancelling class:', error);
+      alert('Failed to cancel class instance');
+    }
+  };
+
+  const handleRescheduleInstance = async () => {
+    if (!editingClass || !selectedDate) return;
+    
+    const newTime = prompt('Enter new time (e.g., "8:00 PM - 10:00 PM"):');
+    if (!newTime) return;
+    
+    const reason = prompt('Reason for rescheduling (optional):');
+    if (reason === null) return;
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      
+      await axios.post(
+        `${API}/admin/classes/cancel`,
+        {
+          class_id: editingClass.id,
+          cancelled_date: dateStr,
+          status: 'rescheduled',
+          rescheduled_time: newTime,
+          reason: reason || 'Rescheduled'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      await fetchClasses();
+      setShowEditModal(false);
+      setEditingClass(null);
+      alert('Class instance rescheduled successfully');
+    } catch (error) {
+      console.error('Error rescheduling class:', error);
+      alert('Failed to reschedule class instance');
     }
   };
 
@@ -335,38 +421,52 @@ const Classes = () => {
                               const date = weekDates[dayIndex];
                               const isCancelled = isClassCancelled(classItem.id, date);
                               
+                              const adminLoggedIn = isAdmin();
+                              const cancellation = cancelledClasses.find(c => c.class_id === classItem.id && c.cancelled_date === date.toISOString().split('T')[0]);
+                              const isRescheduled = cancellation?.status === 'rescheduled';
+                              const tooltip = adminLoggedIn 
+                                ? (isCancelled ? "Admin: Right-click to restore" : "Admin: Click to edit")
+                                : (isCancelled ? (isRescheduled ? "Class rescheduled" : "Class cancelled") : classItem.instructor);
+                              
                               return (
                                 <div
                                   key={idx}
-                                  onClick={() => handleClassClick(classItem)}
+                                  onClick={() => handleClassClick(classItem, date)}
                                   onContextMenu={(e) => {
                                     e.preventDefault();
-                                    if (isCancelled) {
+                                    if (isCancelled && adminLoggedIn) {
                                       handleUncancelClass(classItem.id, date);
-                                    } else {
-                                      handleCancelClass(classItem, date);
                                     }
                                   }}
                                   className={`absolute left-1 right-1 rounded p-2 border ${
                                     isCancelled 
-                                      ? 'bg-red-900/50 border-red-500 opacity-60' 
+                                      ? (isRescheduled ? 'bg-orange-900/50 border-orange-500' : 'bg-red-900/50 border-red-500')
                                       : getLevelColor(classItem.level)
-                                  } hover:shadow-lg hover:scale-105 transition-all cursor-pointer z-10`}
+                                  } ${adminLoggedIn ? 'hover:shadow-lg hover:scale-105 cursor-pointer' : 'cursor-default'} transition-all z-10`}
                                   style={{ 
                                     height: `${heightMultiplier * 60 - 8}px`,
                                     top: '4px'
                                   }}
-                                  title={isCancelled ? "Right-click to restore" : "Click to edit, Right-click to cancel"}
+                                  title={tooltip}
                                 >
-                                  <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300 line-through' : 'text-white'}`}>
+                                  <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300' : 'text-white'}`}>
+                                    {isCancelled && (
+                                      <div className="text-xs font-bold mb-1">
+                                        {isRescheduled ? '🔄 RESCHEDULED' : '❌ CANCELLED'}
+                                      </div>
+                                    )}
                                     {classItem.title}
-                                    {isCancelled && <span className="ml-1 text-red-400">❌</span>}
                                   </div>
-                                  <div className={`text-xs leading-tight ${isCancelled ? 'text-red-400 line-through' : 'text-gray-300'}`}>
+                                  <div className={`text-xs leading-tight ${isCancelled && !isRescheduled ? 'line-through text-red-400' : 'text-gray-300'}`}>
                                     {classItem.time}
                                   </div>
-                                  <div className={`text-xs leading-tight mt-1 ${isCancelled ? 'text-red-500' : 'text-gray-400'}`}>
-                                    {isCancelled ? 'CANCELLED' : classItem.instructor}
+                                  {isRescheduled && cancellation?.rescheduled_time && (
+                                    <div className="text-xs leading-tight text-orange-300 font-semibold">
+                                      → {cancellation.rescheduled_time}
+                                    </div>
+                                  )}
+                                  <div className={`text-xs leading-tight mt-1 ${isCancelled ? (isRescheduled ? 'text-orange-400' : 'text-red-500') : 'text-gray-400'}`}>
+                                    {classItem.instructor}
                                   </div>
                                 </div>
                               );
@@ -540,13 +640,35 @@ const Classes = () => {
                   </div>
                 </div>
 
+                <div className="border-t border-blue-500/20 pt-4 mt-6">
+                  <p className="text-gray-400 text-sm mb-4">
+                    Individual Instance Actions (for {selectedDate?.toLocaleDateString()}):
+                  </p>
+                  <div className="flex gap-3 mb-4">
+                    <button
+                      type="button"
+                      onClick={handleCancelInstance}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded transition-colors"
+                    >
+                      Cancel This Instance
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRescheduleInstance}
+                      className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded transition-colors"
+                    >
+                      Reschedule This Instance
+                    </button>
+                  </div>
+                </div>
+
                 <div className="flex gap-4 justify-end mt-6">
                   <button
                     type="button"
                     onClick={() => handleDeleteClass(editingClass.id)}
-                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded transition-colors"
+                    className="px-6 py-3 bg-red-800 hover:bg-red-900 text-white font-semibold rounded transition-colors"
                   >
-                    Delete Class
+                    Delete Recurring Class
                   </button>
                   <button
                     type="button"
@@ -556,13 +678,13 @@ const Classes = () => {
                     }}
                     className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded transition-colors"
                   >
-                    Cancel
+                    Close
                   </button>
                   <button
                     type="submit"
                     className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
                   >
-                    Save Changes
+                    Save Recurring Class
                   </button>
                 </div>
               </form>

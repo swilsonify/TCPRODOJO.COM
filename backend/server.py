@@ -233,6 +233,8 @@ class CancelledClassModel(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     class_id: str  # Reference to the recurring class
     cancelled_date: str  # Format: "YYYY-MM-DD" (the specific date this class is cancelled)
+    status: str = "cancelled"  # "cancelled" or "rescheduled"
+    rescheduled_time: str = ""  # New time if rescheduled (e.g., "8:00 PM - 10:00 PM")
     reason: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
