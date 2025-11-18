@@ -323,7 +323,8 @@ const Classes = () => {
                         const dayClasses = currentClasses.filter(c => {
                           if (c.day !== day) return false;
                           const classSlot = getTimePosition(c.time);
-                          return classSlot === slotIndex;
+                          // Match if class starts in this hour (floor to nearest hour)
+                          return Math.floor(classSlot) === slotIndex;
                         });
 
                         return (
