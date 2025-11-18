@@ -49,12 +49,59 @@ const Classes = () => {
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
+  // Get dates for current week
+  const getWeekDates = () => {
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(currentWeekStart);
+      date.setDate(currentWeekStart.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  };
+
+  const weekDates = getWeekDates();
+  
   // Time slots from 8 AM to 10 PM (14 hours)
   const timeSlots = [
     '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
     '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
     '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'
   ];
+
+  const previousWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() - 7);
+    setCurrentWeekStart(newDate);
+  };
+
+  const nextWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() + 7);
+    setCurrentWeekStart(newDate);
+  };
+
+  const goToCurrentWeek = () => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diff);
+    monday.setHours(0, 0, 0, 0);
+    setCurrentWeekStart(monday);
+  };
+
+  const formatWeekRange = () => {
+    const start = weekDates[0];
+    const end = weekDates[6];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    if (start.getMonth() === end.getMonth()) {
+      return `${monthNames[start.getMonth()]} ${start.getDate()}-${end.getDate()}, ${start.getFullYear()}`;
+    } else {
+      return `${monthNames[start.getMonth()]} ${start.getDate()} - ${monthNames[end.getMonth()]} ${end.getDate()}, ${start.getFullYear()}`;
+    }
+  };
 
   // Helper function to parse time and get position
   const getTimePosition = (timeString) => {
