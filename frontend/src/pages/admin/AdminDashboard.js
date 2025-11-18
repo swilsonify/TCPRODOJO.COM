@@ -81,7 +81,6 @@ const AdminDashboard = () => {
         upcomingEvents: upcomingEvents.length,
         pastEvents: pastEvents.length,
         pastEventsArchive: pastEventsArchive.data.length,
-        trainers: trainers.data.length,
         testimonials: testimonials.data.length,
         contacts: contacts.data.length,
         coaches: coaches.data.length,
