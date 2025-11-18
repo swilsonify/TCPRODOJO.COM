@@ -789,6 +789,14 @@ async def get_public_events():
             event['created_at'] = datetime.fromisoformat(event['created_at'])
     return events
 
+@api_router.get("/past-events", response_model=List[PastEventModel])
+async def get_public_past_events():
+    past_events = await db.past_events.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for event in past_events:
+        if isinstance(event.get('created_at'), str):
+            event['created_at'] = datetime.fromisoformat(event['created_at'])
+    return past_events
+
 # Newsletter Subscription Endpoints
 @api_router.post("/newsletter/subscribe")
 async def subscribe_newsletter(email: str):
