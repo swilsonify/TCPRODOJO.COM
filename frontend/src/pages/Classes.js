@@ -331,26 +331,41 @@ const Classes = () => {
                             {dayClasses.map((classItem, idx) => {
                               const duration = getDuration(classItem.time);
                               const heightMultiplier = duration;
+                              const date = weekDates[index];
+                              const isCancelled = isClassCancelled(classItem.id, date);
                               
                               return (
                                 <div
                                   key={idx}
                                   onClick={() => handleClassClick(classItem)}
-                                  className={`absolute left-1 right-1 rounded p-2 border ${getLevelColor(classItem.level)} hover:shadow-lg hover:scale-105 transition-all cursor-pointer z-10`}
+                                  onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    if (isCancelled) {
+                                      handleUncancelClass(classItem.id, date);
+                                    } else {
+                                      handleCancelClass(classItem, date);
+                                    }
+                                  }}
+                                  className={`absolute left-1 right-1 rounded p-2 border ${
+                                    isCancelled 
+                                      ? 'bg-red-900/50 border-red-500 opacity-60' 
+                                      : getLevelColor(classItem.level)
+                                  } hover:shadow-lg hover:scale-105 transition-all cursor-pointer z-10`}
                                   style={{ 
                                     height: `${heightMultiplier * 60 - 8}px`,
                                     top: '4px'
                                   }}
-                                  title="Click to edit"
+                                  title={isCancelled ? "Right-click to restore" : "Click to edit, Right-click to cancel"}
                                 >
-                                  <div className="text-xs font-bold text-white mb-1 leading-tight">
+                                  <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300 line-through' : 'text-white'}`}>
                                     {classItem.title}
+                                    {isCancelled && <span className="ml-1 text-red-400">❌</span>}
                                   </div>
-                                  <div className="text-xs text-gray-300 leading-tight">
+                                  <div className={`text-xs leading-tight ${isCancelled ? 'text-red-400 line-through' : 'text-gray-300'}`}>
                                     {classItem.time}
                                   </div>
-                                  <div className="text-xs text-gray-400 leading-tight mt-1">
-                                    {classItem.instructor}
+                                  <div className={`text-xs leading-tight mt-1 ${isCancelled ? 'text-red-500' : 'text-gray-400'}`}>
+                                    {isCancelled ? 'CANCELLED' : classItem.instructor}
                                   </div>
                                 </div>
                               );
