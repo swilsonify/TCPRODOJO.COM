@@ -202,7 +202,35 @@ const Classes = () => {
         {/* Weekly Timetable View */}
         <div className="max-w-7xl mx-auto mb-12">
           <div className="bg-black border border-blue-500/20 rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Weekly Schedule</h2>
+            {/* Week Navigation */}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={previousWeek}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+              >
+                <ChevronLeft size={20} />
+                Previous Week
+              </button>
+              
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-1">Weekly Schedule</h2>
+                <p className="text-blue-400 font-semibold">{formatWeekRange()}</p>
+                <button
+                  onClick={goToCurrentWeek}
+                  className="mt-2 text-sm text-gray-400 hover:text-blue-400 transition-colors"
+                >
+                  Go to Current Week
+                </button>
+              </div>
+
+              <button
+                onClick={nextWeek}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+              >
+                Next Week
+                <ChevronRight size={20} />
+              </button>
+            </div>
             
             {loading ? (
               <div className="text-center text-gray-400 py-12">Loading schedule...</div>
