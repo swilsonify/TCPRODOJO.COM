@@ -245,18 +245,18 @@ const AdminDashboard = () => {
               <div className="text-white font-semibold">Add New Event</div>
             </Link>
             <Link
-              to="/admin/trainers"
-              className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
-            >
-              <Users className="text-blue-400 mx-auto mb-3" size={32} />
-              <div className="text-white font-semibold">Add Trainer</div>
-            </Link>
-            <Link
               to="/admin/testimonials"
               className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
             >
               <MessageSquare className="text-blue-400 mx-auto mb-3" size={32} />
               <div className="text-white font-semibold">Add Testimonial</div>
+            </Link>
+            <Link
+              to="/admin/events"
+              className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
+            >
+              <Calendar className="text-blue-400 mx-auto mb-3" size={32} />
+              <div className="text-white font-semibold">Add Event</div>
             </Link>
           </div>
         </div>
