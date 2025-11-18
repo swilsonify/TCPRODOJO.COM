@@ -105,11 +105,18 @@ const AdminDashboard = () => {
 
   const adminSections = [
     {
-      title: 'Events',
+      title: 'Upcoming Events',
       icon: Calendar,
-      count: stats.events,
+      count: stats.upcomingEvents || 0,
       link: '/admin/events',
-      description: 'Manage upcoming events and tickets'
+      description: 'Manage future events and tickets'
+    },
+    {
+      title: 'Past Events',
+      icon: Calendar,
+      count: stats.pastEvents || 0,
+      link: '/admin/events',
+      description: 'View event history and archives'
     },
     {
       title: 'Trainers',
