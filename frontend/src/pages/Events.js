@@ -216,10 +216,10 @@ const Events = () => {
                 >
                   {/* Video/Poster - Square Frame */}
                   <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
-                    {event.promoVideoUrl ? (
+                    {event.youtubeUrl ? (
                       <iframe
                         className="w-full h-full"
-                        src={event.promoVideoUrl}
+                        src={event.youtubeUrl}
                         title={event.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -243,13 +243,7 @@ const Events = () => {
                   <div className="p-6">
                     <div className="text-blue-400 text-sm font-semibold mb-2">{event.date}</div>
                     <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
-                    <p className="text-gray-400 text-sm mb-3">{event.description}</p>
-                    {event.location && (
-                      <div className="flex items-center space-x-2 text-gray-400 text-sm">
-                        <MapPin size={14} />
-                        <span>{event.location}</span>
-                      </div>
-                    )}
+                    <p className="text-gray-400 text-sm">{event.description}</p>
                   </div>
                 </div>
               ))}
