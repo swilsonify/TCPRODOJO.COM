@@ -92,43 +92,48 @@ const Events = () => {
             </div>
           ) : (
             <div className="space-y-8">
-              {upcomingEvents.map((event) => (
+              {upcomingEvents.map((event) => {
+                const hasMedia = event.posterUrl || event.promoVideoUrl;
+                
+                return (
               <div
                 key={event.id}
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`event-${event.id}`}
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left Side - Poster & Video */}
-                  <div className="space-y-4 p-6">
-                    {/* Event Poster */}
-                    {event.posterUrl && (
-                      <div className="rounded-lg overflow-hidden border-2 border-blue-500">
-                        <img 
-                          src={event.posterUrl} 
-                          alt={event.title}
-                          className="w-full h-auto object-cover"
-                        />
-                      </div>
-                    )}
-                    
-                    {/* Promotional Video */}
-                    {event.promoVideoUrl && (
-                      <div className="aspect-video bg-gradient-to-br from-blue-900 to-black rounded-lg overflow-hidden border-2 border-blue-500">
-                        <iframe
-                          className="w-full h-full"
-                          src={event.promoVideoUrl}
-                          title={`${event.title} Promo`}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    )}
-                  </div>
+                {hasMedia ? (
+                  // Two-column layout when poster or video exists
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Left Side - Poster & Video */}
+                    <div className="space-y-4 p-6">
+                      {/* Event Poster */}
+                      {event.posterUrl && (
+                        <div className="rounded-lg overflow-hidden border-2 border-blue-500">
+                          <img 
+                            src={event.posterUrl} 
+                            alt={event.title}
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
+                      )}
+                      
+                      {/* Promotional Video */}
+                      {event.promoVideoUrl && (
+                        <div className="aspect-video bg-gradient-to-br from-blue-900 to-black rounded-lg overflow-hidden border-2 border-blue-500">
+                          <iframe
+                            className="w-full h-full"
+                            src={event.promoVideoUrl}
+                            title={`${event.title} Promo`}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        </div>
+                      )}
+                    </div>
 
-                  {/* Right Side - Event Details */}
-                  <div className="p-6 flex flex-col justify-between">
+                    {/* Right Side - Event Details */}
+                    <div className="p-6 flex flex-col justify-between">
                     <div>
                       <h3 className="text-3xl font-bold text-white mb-4">{event.title}</h3>
                       
