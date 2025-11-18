@@ -422,9 +422,11 @@ const Classes = () => {
                               const isCancelled = isClassCancelled(classItem.id, date);
                               
                               const adminLoggedIn = isAdmin();
+                              const cancellation = cancelledClasses.find(c => c.class_id === classItem.id && c.cancelled_date === date.toISOString().split('T')[0]);
+                              const isRescheduled = cancellation?.status === 'rescheduled';
                               const tooltip = adminLoggedIn 
-                                ? (isCancelled ? "Admin: Right-click to restore" : "Admin: Click to edit, Right-click to cancel")
-                                : (isCancelled ? "Class cancelled" : classItem.instructor);
+                                ? (isCancelled ? "Admin: Right-click to restore" : "Admin: Click to edit")
+                                : (isCancelled ? (isRescheduled ? "Class rescheduled" : "Class cancelled") : classItem.instructor);
                               
                               return (
                                 <div
@@ -432,15 +434,13 @@ const Classes = () => {
                                   onClick={() => handleClassClick(classItem, date)}
                                   onContextMenu={(e) => {
                                     e.preventDefault();
-                                    if (isCancelled) {
+                                    if (isCancelled && adminLoggedIn) {
                                       handleUncancelClass(classItem.id, date);
-                                    } else {
-                                      handleCancelClass(classItem, date);
                                     }
                                   }}
                                   className={`absolute left-1 right-1 rounded p-2 border ${
                                     isCancelled 
-                                      ? 'bg-red-900/50 border-red-500 opacity-60' 
+                                      ? (isRescheduled ? 'bg-orange-900/50 border-orange-500' : 'bg-red-900/50 border-red-500')
                                       : getLevelColor(classItem.level)
                                   } ${adminLoggedIn ? 'hover:shadow-lg hover:scale-105 cursor-pointer' : 'cursor-default'} transition-all z-10`}
                                   style={{ 
@@ -449,15 +449,24 @@ const Classes = () => {
                                   }}
                                   title={tooltip}
                                 >
-                                  <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300 line-through' : 'text-white'}`}>
+                                  <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300' : 'text-white'}`}>
+                                    {isCancelled && (
+                                      <div className="text-xs font-bold mb-1">
+                                        {isRescheduled ? '🔄 RESCHEDULED' : '❌ CANCELLED'}
+                                      </div>
+                                    )}
                                     {classItem.title}
-                                    {isCancelled && <span className="ml-1 text-red-400">❌</span>}
                                   </div>
-                                  <div className={`text-xs leading-tight ${isCancelled ? 'text-red-400 line-through' : 'text-gray-300'}`}>
+                                  <div className={`text-xs leading-tight ${isCancelled && !isRescheduled ? 'line-through text-red-400' : 'text-gray-300'}`}>
                                     {classItem.time}
                                   </div>
-                                  <div className={`text-xs leading-tight mt-1 ${isCancelled ? 'text-red-500' : 'text-gray-400'}`}>
-                                    {isCancelled ? 'CANCELLED' : classItem.instructor}
+                                  {isRescheduled && cancellation?.rescheduled_time && (
+                                    <div className="text-xs leading-tight text-orange-300 font-semibold">
+                                      → {cancellation.rescheduled_time}
+                                    </div>
+                                  )}
+                                  <div className={`text-xs leading-tight mt-1 ${isCancelled ? (isRescheduled ? 'text-orange-400' : 'text-red-500') : 'text-gray-400'}`}>
+                                    {classItem.instructor}
                                   </div>
                                 </div>
                               );
