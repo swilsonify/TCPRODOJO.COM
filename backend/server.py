@@ -138,6 +138,7 @@ class EventModel(BaseModel):
     posterUrl: str = ""
     promoVideoUrl: str = ""
     ticketLink: str = ""
+    section: str = "upcoming"  # "upcoming" or "past"
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
