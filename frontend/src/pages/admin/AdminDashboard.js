@@ -10,7 +10,6 @@ const AdminDashboard = () => {
   const [username, setUsername] = useState('');
   const [stats, setStats] = useState({
     events: 0,
-    trainers: 0,
     testimonials: 0,
     contacts: 0
   });
