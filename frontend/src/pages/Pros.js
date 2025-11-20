@@ -212,20 +212,24 @@ const Pros = () => {
 
                   <p className="text-gray-300 mb-6">{trainer.bio}</p>
 
-                  <div>
-                    <div className="flex items-center space-x-2 text-blue-400 font-semibold mb-3">
-                      <Award size={20} />
-                      <span>Key Achievements</span>
+                  {trainer.achievements && trainer.achievements.filter(a => a && a.trim() !== '').length > 0 && (
+                    <div>
+                      <div className="flex items-center space-x-2 text-blue-400 font-semibold mb-3">
+                        <Award size={20} />
+                        <span>Key Achievements</span>
+                      </div>
+                      <ul className="space-y-2">
+                        {trainer.achievements
+                          .filter(achievement => achievement && achievement.trim() !== '')
+                          .map((achievement, aIndex) => (
+                            <li key={aIndex} className="text-gray-400 flex items-start space-x-2">
+                              <span className="text-blue-500 mt-1">•</span>
+                              <span>{achievement}</span>
+                            </li>
+                          ))}
+                      </ul>
                     </div>
-                    <ul className="space-y-2">
-                      {trainer.achievements.map((achievement, aIndex) => (
-                        <li key={aIndex} className="text-gray-400 flex items-start space-x-2">
-                          <span className="text-blue-500 mt-1">•</span>
-                          <span>{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  )}
                 </div>
               </div>
             ))}
