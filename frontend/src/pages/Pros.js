@@ -177,15 +177,23 @@ const Pros = () => {
                 className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift flex flex-col md:flex-row"
                 data-testid={`trainer-${index}`}
               >
-                {/* Image Placeholder */}
-                <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-900 to-black flex items-center justify-center p-12">
-                  <div className="text-center">
-                    <div className="w-32 h-32 mx-auto rounded-full bg-blue-500/20 border-4 border-blue-500 flex items-center justify-center mb-4">
-                      <UsersIcon size={64} className="text-blue-500" />
+                {/* Coach Photo */}
+                <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                  {trainer.photo_url ? (
+                    <img 
+                      src={trainer.photo_url} 
+                      alt={trainer.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center p-12">
+                      <div className="w-32 h-32 mx-auto rounded-full bg-blue-500/20 border-4 border-blue-500 flex items-center justify-center mb-4">
+                        <UsersIcon size={64} className="text-blue-500" />
+                      </div>
+                      <div className="text-blue-400 font-semibold">{trainer.experience}</div>
+                      <div className="text-gray-400 text-sm">Experience</div>
                     </div>
-                    <div className="text-blue-400 font-semibold">{trainer.experience}</div>
-                    <div className="text-gray-400 text-sm">Experience</div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Content */}
@@ -203,20 +211,24 @@ const Pros = () => {
 
                   <p className="text-gray-300 mb-6">{trainer.bio}</p>
 
-                  <div>
-                    <div className="flex items-center space-x-2 text-blue-400 font-semibold mb-3">
-                      <Award size={20} />
-                      <span>Key Achievements</span>
+                  {trainer.achievements && trainer.achievements.filter(a => a && a.trim() !== '').length > 0 && (
+                    <div>
+                      <div className="flex items-center space-x-2 text-blue-400 font-semibold mb-3">
+                        <Award size={20} />
+                        <span>Key Achievements</span>
+                      </div>
+                      <ul className="space-y-2">
+                        {trainer.achievements
+                          .filter(achievement => achievement && achievement.trim() !== '')
+                          .map((achievement, aIndex) => (
+                            <li key={aIndex} className="text-gray-400 flex items-start space-x-2">
+                              <span className="text-blue-500 mt-1">•</span>
+                              <span>{achievement}</span>
+                            </li>
+                          ))}
+                      </ul>
                     </div>
-                    <ul className="space-y-2">
-                      {trainer.achievements.map((achievement, aIndex) => (
-                        <li key={aIndex} className="text-gray-400 flex items-start space-x-2">
-                          <span className="text-blue-500 mt-1">•</span>
-                          <span>{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  )}
                 </div>
               </div>
             ))}
