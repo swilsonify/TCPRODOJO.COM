@@ -231,15 +231,14 @@ const AdminPastEvents = () => {
                   className="bg-black border border-blue-500/20 rounded-lg p-4 flex items-start justify-between hover:border-blue-500/40 transition-colors"
                 >
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white mb-1">{event.title}</h3>
-                    <p className="text-blue-400 text-sm mb-2">{event.date}</p>
+                    <h3 className="text-lg font-bold text-white mb-2">{event.title}</h3>
                     <p className="text-gray-400 text-sm mb-2">{event.description}</p>
-                    {event.posterUrl && (
-                      <span className="text-green-400 text-xs">📷 Poster</span>
-                    )}
-                    {event.youtubeUrl && (
-                      <span className="text-red-400 text-xs ml-3">🎥 Video</span>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {event.youtubeUrl && (
+                        <span className="text-red-400 text-xs">🎥 Video Attached</span>
+                      )}
+                      <span className="text-gray-500 text-xs">Order: {event.displayOrder}</span>
+                    </div>
                   </div>
                   <div className="flex gap-2 ml-4">
                     <button
