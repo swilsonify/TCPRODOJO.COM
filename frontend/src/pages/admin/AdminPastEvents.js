@@ -70,8 +70,6 @@ const AdminPastEvents = () => {
     setEditingEvent(event);
     setFormData({
       title: event.title,
-      date: event.date,
-      posterUrl: event.posterUrl || '',
       youtubeUrl: event.youtubeUrl || '',
       description: event.description,
       displayOrder: event.displayOrder || 0
