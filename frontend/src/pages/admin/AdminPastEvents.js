@@ -139,8 +139,8 @@ const AdminPastEvents = () => {
               {editingEvent ? 'Edit Past Event' : 'Add New Past Event'}
             </h2>
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div className="md:col-span-2">
+              <div className="space-y-4 mb-4">
+                <div>
                   <label className="block text-white font-semibold mb-2">Event Title</label>
                   <input
                     type="text"
@@ -153,12 +153,24 @@ const AdminPastEvents = () => {
                 </div>
 
                 <div>
-                  <label className="block text-white font-semibold mb-2">Event Date</label>
+                  <label className="block text-white font-semibold mb-2">YouTube Video URL</label>
                   <input
-                    type="text"
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    placeholder="June 15, 2024"
+                    type="url"
+                    value={formData.youtubeUrl}
+                    onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                    placeholder="https://www.youtube.com/embed/VIDEO_ID"
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">Embed URL for event highlights video</p>
+                </div>
+
+                <div>
+                  <label className="block text-white font-semibold mb-2">Description</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="An unforgettable night of wrestling action..."
+                    rows="4"
                     className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                     required
                   />
@@ -174,42 +186,7 @@ const AdminPastEvents = () => {
                     placeholder="0"
                     className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                   />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white font-semibold mb-2">Event Poster URL</label>
-                  <input
-                    type="url"
-                    value={formData.posterUrl}
-                    onChange={(e) => setFormData({ ...formData, posterUrl: e.target.value })}
-                    placeholder="https://i.imgur.com/poster.jpg"
-                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  />
-                  <p className="text-gray-400 text-xs mt-1">Upload image to Imgur/Cloudinary and paste URL</p>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white font-semibold mb-2">YouTube Video URL</label>
-                  <input
-                    type="url"
-                    value={formData.youtubeUrl}
-                    onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
-                    placeholder="https://www.youtube.com/embed/VIDEO_ID"
-                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  />
-                  <p className="text-gray-400 text-xs mt-1">Embed URL for event highlights video</p>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white font-semibold mb-2">Description</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="An unforgettable night of wrestling action..."
-                    rows="4"
-                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                    required
-                  />
+                  <p className="text-gray-400 text-xs mt-1">Lower numbers appear first</p>
                 </div>
               </div>
 
