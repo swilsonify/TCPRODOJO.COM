@@ -95,8 +95,6 @@ const AdminPastEvents = () => {
   const resetForm = () => {
     setFormData({
       title: '',
-      date: '',
-      posterUrl: '',
       youtubeUrl: '',
       description: '',
       displayOrder: 0
