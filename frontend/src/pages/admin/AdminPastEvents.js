@@ -14,8 +14,6 @@ const AdminPastEvents = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
-    date: '',
-    posterUrl: '',
     youtubeUrl: '',
     description: '',
     displayOrder: 0
