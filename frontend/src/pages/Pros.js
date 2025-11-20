@@ -178,15 +178,23 @@ const Pros = () => {
                 className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift flex flex-col md:flex-row"
                 data-testid={`trainer-${index}`}
               >
-                {/* Image Placeholder */}
-                <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-900 to-black flex items-center justify-center p-12">
-                  <div className="text-center">
-                    <div className="w-32 h-32 mx-auto rounded-full bg-blue-500/20 border-4 border-blue-500 flex items-center justify-center mb-4">
-                      <UsersIcon size={64} className="text-blue-500" />
+                {/* Coach Photo */}
+                <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                  {trainer.photo_url ? (
+                    <img 
+                      src={trainer.photo_url} 
+                      alt={trainer.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center p-12">
+                      <div className="w-32 h-32 mx-auto rounded-full bg-blue-500/20 border-4 border-blue-500 flex items-center justify-center mb-4">
+                        <UsersIcon size={64} className="text-blue-500" />
+                      </div>
+                      <div className="text-blue-400 font-semibold">{trainer.experience}</div>
+                      <div className="text-gray-400 text-sm">Experience</div>
                     </div>
-                    <div className="text-blue-400 font-semibold">{trainer.experience}</div>
-                    <div className="text-gray-400 text-sm">Experience</div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Content */}
