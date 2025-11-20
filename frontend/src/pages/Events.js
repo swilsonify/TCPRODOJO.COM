@@ -214,7 +214,7 @@ const Events = () => {
                   className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                   data-testid={`past-event-${index}`}
                 >
-                  {/* Video/Poster - Square Frame */}
+                  {/* Video - Square Frame */}
                   <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                     {event.youtubeUrl ? (
                       <iframe
@@ -225,12 +225,6 @@ const Events = () => {
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       ></iframe>
-                    ) : event.posterUrl ? (
-                      <img 
-                        src={event.posterUrl} 
-                        alt={event.title}
-                        className="w-full h-full object-cover"
-                      />
                     ) : (
                       <div className="text-center p-8">
                         <Calendar className="w-16 h-16 mx-auto mb-2 text-blue-500" />
@@ -241,8 +235,7 @@ const Events = () => {
 
                   {/* Content */}
                   <div className="p-6">
-                    <div className="text-blue-400 text-sm font-semibold mb-2">{event.date}</div>
-                    <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">{event.title}</h3>
                     <p className="text-gray-400 text-sm">{event.description}</p>
                   </div>
                 </div>

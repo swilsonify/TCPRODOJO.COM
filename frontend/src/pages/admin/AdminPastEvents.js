@@ -14,8 +14,6 @@ const AdminPastEvents = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
-    date: '',
-    posterUrl: '',
     youtubeUrl: '',
     description: '',
     displayOrder: 0
@@ -72,8 +70,6 @@ const AdminPastEvents = () => {
     setEditingEvent(event);
     setFormData({
       title: event.title,
-      date: event.date,
-      posterUrl: event.posterUrl || '',
       youtubeUrl: event.youtubeUrl || '',
       description: event.description,
       displayOrder: event.displayOrder || 0
@@ -99,8 +95,6 @@ const AdminPastEvents = () => {
   const resetForm = () => {
     setFormData({
       title: '',
-      date: '',
-      posterUrl: '',
       youtubeUrl: '',
       description: '',
       displayOrder: 0
@@ -145,8 +139,8 @@ const AdminPastEvents = () => {
               {editingEvent ? 'Edit Past Event' : 'Add New Past Event'}
             </h2>
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div className="md:col-span-2">
+              <div className="space-y-4 mb-4">
+                <div>
                   <label className="block text-white font-semibold mb-2">Event Title</label>
                   <input
                     type="text"
@@ -159,12 +153,24 @@ const AdminPastEvents = () => {
                 </div>
 
                 <div>
-                  <label className="block text-white font-semibold mb-2">Event Date</label>
+                  <label className="block text-white font-semibold mb-2">YouTube Video URL</label>
                   <input
-                    type="text"
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    placeholder="June 15, 2024"
+                    type="url"
+                    value={formData.youtubeUrl}
+                    onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                    placeholder="https://www.youtube.com/embed/VIDEO_ID"
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">Embed URL for event highlights video</p>
+                </div>
+
+                <div>
+                  <label className="block text-white font-semibold mb-2">Description</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="An unforgettable night of wrestling action..."
+                    rows="4"
                     className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                     required
                   />
@@ -180,42 +186,7 @@ const AdminPastEvents = () => {
                     placeholder="0"
                     className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                   />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white font-semibold mb-2">Event Poster URL</label>
-                  <input
-                    type="url"
-                    value={formData.posterUrl}
-                    onChange={(e) => setFormData({ ...formData, posterUrl: e.target.value })}
-                    placeholder="https://i.imgur.com/poster.jpg"
-                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  />
-                  <p className="text-gray-400 text-xs mt-1">Upload image to Imgur/Cloudinary and paste URL</p>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white font-semibold mb-2">YouTube Video URL</label>
-                  <input
-                    type="url"
-                    value={formData.youtubeUrl}
-                    onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
-                    placeholder="https://www.youtube.com/embed/VIDEO_ID"
-                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  />
-                  <p className="text-gray-400 text-xs mt-1">Embed URL for event highlights video</p>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white font-semibold mb-2">Description</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="An unforgettable night of wrestling action..."
-                    rows="4"
-                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                    required
-                  />
+                  <p className="text-gray-400 text-xs mt-1">Lower numbers appear first</p>
                 </div>
               </div>
 
@@ -260,15 +231,14 @@ const AdminPastEvents = () => {
                   className="bg-black border border-blue-500/20 rounded-lg p-4 flex items-start justify-between hover:border-blue-500/40 transition-colors"
                 >
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white mb-1">{event.title}</h3>
-                    <p className="text-blue-400 text-sm mb-2">{event.date}</p>
+                    <h3 className="text-lg font-bold text-white mb-2">{event.title}</h3>
                     <p className="text-gray-400 text-sm mb-2">{event.description}</p>
-                    {event.posterUrl && (
-                      <span className="text-green-400 text-xs">📷 Poster</span>
-                    )}
-                    {event.youtubeUrl && (
-                      <span className="text-red-400 text-xs ml-3">🎥 Video</span>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {event.youtubeUrl && (
+                        <span className="text-red-400 text-xs">🎥 Video Attached</span>
+                      )}
+                      <span className="text-gray-500 text-xs">Order: {event.displayOrder}</span>
+                    </div>
                   </div>
                   <div className="flex gap-2 ml-4">
                     <button

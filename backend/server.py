@@ -146,8 +146,6 @@ class PastEventModel(BaseModel):
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
-    date: str
-    posterUrl: str = ""
     youtubeUrl: str = ""
     description: str
     displayOrder: int = 0
