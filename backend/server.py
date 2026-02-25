@@ -243,6 +243,31 @@ class NewsletterSubscriptionModel(BaseModel):
     email: str
     subscribed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Media Model - for podcasts, videos, photos, articles
+class MediaModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str = ""
+    mediaType: str  # "podcast", "video", "photo", "article"
+    mediaUrl: str  # Cloudinary URL for image/video or external link
+    thumbnailUrl: str = ""  # Optional thumbnail for videos/podcasts
+    externalLink: str = ""  # External link for articles/podcasts
+    displayOrder: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Site Settings Model - for logos and branding
+class SiteSettingsModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    settingKey: str  # "homepage_logo", "circle_logo", "nav_tagline", etc.
+    settingValue: str  # URL or text value
+    settingType: str = "image"  # "image", "text", "link"
+    description: str = ""
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 
 # Helper functions for admin auth
 def create_access_token(data: dict):
@@ -784,6 +809,151 @@ async def delete_subscription(subscription_id: str, username: str = Depends(veri
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Subscription not found")
     return {"message": "Subscription deleted successfully"}
+
+
+# ==================== CLOUDINARY UPLOAD SIGNATURE ====================
+
+import time
+import cloudinary.utils
+
+@api_router.get("/admin/cloudinary/signature")
+async def generate_cloudinary_signature(
+    resource_type: str = "image",
+    folder: str = "tcprodojo",
+    username: str = Depends(verify_token)
+):
+    """Generate a signed upload signature for Cloudinary"""
+    ALLOWED_FOLDERS = ("tcprodojo", "tcprodojo/media", "tcprodojo/logos", "uploads")
+    
+    # Validate folder
+    if not any(folder.startswith(f) for f in ALLOWED_FOLDERS):
+        raise HTTPException(status_code=400, detail="Invalid folder path")
+    
+    # Validate resource type
+    if resource_type not in ["image", "video"]:
+        raise HTTPException(status_code=400, detail="Invalid resource type")
+    
+    timestamp = int(time.time())
+    params = {
+        "timestamp": timestamp,
+        "folder": folder
+    }
+    
+    signature = cloudinary.utils.api_sign_request(
+        params,
+        os.environ.get("CLOUDINARY_API_SECRET")
+    )
+    
+    return {
+        "signature": signature,
+        "timestamp": timestamp,
+        "cloud_name": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+        "api_key": os.environ.get("CLOUDINARY_API_KEY"),
+        "folder": folder,
+        "resource_type": resource_type
+    }
+
+
+# ==================== MEDIA MANAGEMENT ====================
+
+# Public Media Endpoints
+@api_router.get("/media", response_model=List[MediaModel])
+async def get_public_media():
+    media = await db.media.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for item in media:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+    return media
+
+# Admin Media Endpoints
+@api_router.get("/admin/media", response_model=List[MediaModel])
+async def get_admin_media(username: str = Depends(verify_token)):
+    media = await db.media.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for item in media:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+    return media
+
+@api_router.post("/admin/media", response_model=MediaModel)
+async def create_media(media: MediaModel, username: str = Depends(verify_token)):
+    doc = media.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.media.insert_one(doc)
+    return media
+
+@api_router.put("/admin/media/{media_id}", response_model=MediaModel)
+async def update_media(media_id: str, media: MediaModel, username: str = Depends(verify_token)):
+    doc = media.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    result = await db.media.update_one({"id": media_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Media not found")
+    return media
+
+@api_router.delete("/admin/media/{media_id}")
+async def delete_media(media_id: str, username: str = Depends(verify_token)):
+    result = await db.media.delete_one({"id": media_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Media not found")
+    return {"message": "Media deleted successfully"}
+
+
+# ==================== SITE SETTINGS MANAGEMENT ====================
+
+# Public Site Settings Endpoints
+@api_router.get("/site-settings")
+async def get_public_site_settings():
+    settings = await db.site_settings.find({}, {"_id": 0}).to_list(1000)
+    # Return as a dictionary for easy access
+    settings_dict = {}
+    for setting in settings:
+        settings_dict[setting['settingKey']] = setting['settingValue']
+    return settings_dict
+
+@api_router.get("/site-settings/{key}")
+async def get_site_setting_by_key(key: str):
+    setting = await db.site_settings.find_one({"settingKey": key}, {"_id": 0})
+    if not setting:
+        raise HTTPException(status_code=404, detail="Setting not found")
+    return setting
+
+# Admin Site Settings Endpoints
+@api_router.get("/admin/site-settings", response_model=List[SiteSettingsModel])
+async def get_admin_site_settings(username: str = Depends(verify_token)):
+    settings = await db.site_settings.find({}, {"_id": 0}).to_list(1000)
+    for setting in settings:
+        if isinstance(setting.get('updated_at'), str):
+            setting['updated_at'] = datetime.fromisoformat(setting['updated_at'])
+    return settings
+
+@api_router.post("/admin/site-settings", response_model=SiteSettingsModel)
+async def create_site_setting(setting: SiteSettingsModel, username: str = Depends(verify_token)):
+    # Check if setting with this key already exists
+    existing = await db.site_settings.find_one({"settingKey": setting.settingKey})
+    if existing:
+        raise HTTPException(status_code=400, detail="Setting with this key already exists. Use PUT to update.")
+    
+    doc = setting.model_dump()
+    doc['updated_at'] = doc['updated_at'].isoformat()
+    await db.site_settings.insert_one(doc)
+    return setting
+
+@api_router.put("/admin/site-settings/{setting_id}", response_model=SiteSettingsModel)
+async def update_site_setting(setting_id: str, setting: SiteSettingsModel, username: str = Depends(verify_token)):
+    doc = setting.model_dump()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    result = await db.site_settings.update_one({"id": setting_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Setting not found")
+    return setting
+
+@api_router.delete("/admin/site-settings/{setting_id}")
+async def delete_site_setting(setting_id: str, username: str = Depends(verify_token)):
+    result = await db.site_settings.delete_one({"id": setting_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Setting not found")
+    return {"message": "Setting deleted successfully"}
 
 
 # Include the router in the main app

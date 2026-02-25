@@ -1,10 +1,27 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import axios from 'axios';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [siteSettings, setSiteSettings] = useState({});
   const location = useLocation();
+
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
+  useEffect(() => {
+    loadSiteSettings();
+  }, []);
+
+  const loadSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/api/site-settings`);
+      setSiteSettings(response.data);
+    } catch (error) {
+      console.error('Error loading site settings:', error);
+    }
+  };
 
   const navLinks = [
     { name: 'HOME', path: '/' },
@@ -12,10 +29,16 @@ const Navigation = () => {
     { name: 'CLASSES', path: '/classes' },
     { name: 'EVENTS', path: '/events' },
     { name: 'SUCCESS', path: '/success' },
+    { name: 'MEDIA', path: '/media' },
     { name: 'SHOP', path: '/shop' },
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  // Use site settings if available, otherwise fallback to defaults
+  const circleLogo = siteSettings.circle_logo || '/images/circle-logo.jpg';
+  const navTagline = siteSettings.nav_tagline || 'TRAIN LIKE A CHAMPION';
+  const navTitle = siteSettings.nav_title || 'TORTURE CHAMBER';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-blue-500/20">
@@ -24,7 +47,7 @@ const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <img 
-              src="/images/circle-logo.jpg" 
+              src={circleLogo}
               alt="Torture Chamber Logo" 
               className="w-16 h-16 rounded-full object-cover"
               style={{ 
@@ -34,8 +57,8 @@ const Navigation = () => {
               }}
             />
             <div>
-              <div className="text-xs text-blue-400 font-semibold tracking-wider">TRAIN LIKE A CHAMPION</div>
-              <div className="text-white font-bold text-lg tracking-wide torture-text">TORTURE CHAMBER</div>
+              <div className="text-xs text-blue-400 font-semibold tracking-wider">{navTagline}</div>
+              <div className="text-white font-bold text-lg tracking-wide torture-text">{navTitle}</div>
             </div>
           </Link>
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image, Video, Mail } from 'lucide-react';
+import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image, Video, Mail, Settings } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive] = await Promise.all([
+      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive, media, siteSettings] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -56,7 +56,9 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/tips`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/classes`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/newsletter-subscriptions`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/past-events`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/past-events`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/media`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/site-settings`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       // Separate events into upcoming and past
@@ -87,7 +89,9 @@ const AdminDashboard = () => {
         endorsements: endorsements.data.length,
         tips: tips.data.length,
         classes: classes.data.length,
-        newsletter: newsletter.data.length
+        newsletter: newsletter.data.length,
+        media: media.data.length,
+        siteSettings: siteSettings.data.length
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -172,6 +176,20 @@ const AdminDashboard = () => {
       count: stats.newsletter || 0,
       link: '/admin/newsletter',
       description: 'View and download email list'
+    },
+    {
+      title: 'Media Gallery',
+      icon: Image,
+      count: stats.media || 0,
+      link: '/admin/media',
+      description: 'Manage photos, videos, podcasts & articles'
+    },
+    {
+      title: 'Site Settings',
+      icon: Settings,
+      count: stats.siteSettings || 0,
+      link: '/admin/site-settings',
+      description: 'Manage logos and branding'
     }
   ];
 

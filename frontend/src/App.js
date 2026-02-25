@@ -8,6 +8,7 @@ import Events from '@/pages/Events';
 import Pros from '@/pages/Pros';
 import Shop from '@/pages/Shop';
 import Contact from '@/pages/Contact';
+import Media from '@/pages/Media';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import AdminEvents from '@/pages/admin/AdminEvents';
@@ -20,6 +21,8 @@ import AdminTips from '@/pages/admin/AdminTips';
 import AdminClassSchedule from '@/pages/admin/AdminClassSchedule';
 import AdminNewsletterSubscriptions from '@/pages/admin/AdminNewsletterSubscriptions';
 import AdminPastEvents from '@/pages/admin/AdminPastEvents';
+import AdminMedia from '@/pages/admin/AdminMedia';
+import AdminSiteSettings from '@/pages/admin/AdminSiteSettings';
 
 function App() {
   return (
@@ -35,6 +38,7 @@ function App() {
           <Route path="pros" element={<Pros />} /> {/* Keep old URL for backwards compatibility */}
           <Route path="shop" element={<Shop />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="media" element={<Media />} />
         </Route>
 
         {/* Admin Routes (No Layout) */}
@@ -50,6 +54,8 @@ function App() {
         <Route path="/admin/tips" element={<AdminTips />} />
         <Route path="/admin/classes" element={<AdminClassSchedule />} />
         <Route path="/admin/newsletter" element={<AdminNewsletterSubscriptions />} />
+        <Route path="/admin/media" element={<AdminMedia />} />
+        <Route path="/admin/site-settings" element={<AdminSiteSettings />} />
       </Routes>
     </BrowserRouter>
   );

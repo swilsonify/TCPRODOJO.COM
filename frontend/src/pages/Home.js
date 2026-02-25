@@ -5,22 +5,26 @@ import axios from 'axios';
 
 const Home = () => {
   const [testimonials, setTestimonials] = useState([]);
+  const [siteSettings, setSiteSettings] = useState({});
   const [loading, setLoading] = useState(true);
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    loadTestimonials();
+    loadData();
   }, []);
 
-  const loadTestimonials = async () => {
+  const loadData = async () => {
     try {
-      const response = await axios.get(`${API}/api/testimonials`);
-      setTestimonials(response.data);
+      const [testimonialsRes, settingsRes] = await Promise.all([
+        axios.get(`${API}/api/testimonials`),
+        axios.get(`${API}/api/site-settings`)
+      ]);
+      setTestimonials(testimonialsRes.data);
+      setSiteSettings(settingsRes.data);
     } catch (error) {
-      console.error('Error loading testimonials:', error);
-      // Fallback to empty array if API fails
+      console.error('Error loading data:', error);
       setTestimonials([]);
     } finally {
       setLoading(false);
@@ -45,6 +49,9 @@ const Home = () => {
     }
   ];
 
+  // Use site settings if available, otherwise fallback to defaults
+  const homepageLogo = siteSettings.homepage_logo || '/images/homepage-logo.jpg';
+
   return (
     <div data-testid="home-page">
       {/* Hero Section */}
@@ -53,7 +60,7 @@ const Home = () => {
           {/* Complete Logo */}
           <div className="mb-8 animate-fade-in-up">
             <img 
-              src="/images/homepage-logo.jpg" 
+              src={homepageLogo}
               alt="Torture Chamber Pro Wrestling Dojo" 
               className="max-w-2xl mx-auto w-full px-4"
               style={{
