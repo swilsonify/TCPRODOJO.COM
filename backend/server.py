@@ -825,6 +825,61 @@ async def delete_subscription(subscription_id: str, username: str = Depends(veri
     return {"message": "Subscription deleted successfully"}
 
 
+# ==================== STUDENTS MANAGEMENT ====================
+
+@api_router.get("/admin/students", response_model=List[StudentModel])
+async def get_students(username: str = Depends(verify_token)):
+    students = await db.students.find({}, {"_id": 0}).sort("name", 1).to_list(10000)
+    for student in students:
+        if isinstance(student.get('created_at'), str):
+            student['created_at'] = datetime.fromisoformat(student['created_at'])
+    return students
+
+@api_router.post("/admin/students", response_model=StudentModel)
+async def create_student(student: StudentModel, username: str = Depends(verify_token)):
+    # Check if email already exists
+    existing = await db.students.find_one({"email": student.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="A student with this email already exists")
+    
+    doc = student.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.students.insert_one(doc)
+    return student
+
+@api_router.put("/admin/students/{student_id}", response_model=StudentModel)
+async def update_student(student_id: str, student: StudentModel, username: str = Depends(verify_token)):
+    doc = student.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    result = await db.students.update_one({"id": student_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return student
+
+@api_router.delete("/admin/students/{student_id}")
+async def delete_student(student_id: str, username: str = Depends(verify_token)):
+    result = await db.students.delete_one({"id": student_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return {"message": "Student deleted successfully"}
+
+@api_router.get("/admin/students/export")
+async def export_students_csv(username: str = Depends(verify_token)):
+    """Export all students with notify_class_changes=True as CSV for email notifications"""
+    students = await db.students.find(
+        {"active": True, "notify_class_changes": True}, 
+        {"_id": 0}
+    ).to_list(10000)
+    
+    # Return list of emails that can be used for class change notifications
+    return {
+        "count": len(students),
+        "emails": [s['email'] for s in students],
+        "students": [{"name": s['name'], "email": s['email']} for s in students]
+    }
+
+
 # ==================== CLOUDINARY UPLOAD SIGNATURE ====================
 
 import time
