@@ -78,6 +78,27 @@ const Training = () => {
           </div>
         </div>
 
+        {/* Photo Gallery Grid */}
+        {mediaPhotos.length > 0 && (
+          <div className="mb-16" data-testid="training-photo-grid">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {mediaPhotos.map((photo, index) => (
+                <div
+                  key={photo.id || index}
+                  className="aspect-square overflow-hidden rounded-lg border border-blue-500/20 group"
+                  data-testid={`training-grid-photo-${index}`}
+                >
+                  <img
+                    src={photo.mediaUrl}
+                    alt={photo.title || `Training photo ${index + 1}`}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* CTA Box with How It Works */}
         <div className="bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500 rounded-lg p-10 text-center mb-20">
           <h2 className="text-4xl font-bold text-white torture-text mb-6">HOW IT WORKS</h2>
