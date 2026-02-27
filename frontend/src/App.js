@@ -57,6 +57,7 @@ function App() {
         <Route path="/admin/newsletter" element={<AdminNewsletterSubscriptions />} />
         <Route path="/admin/media" element={<AdminMedia />} />
         <Route path="/admin/site-settings" element={<AdminSiteSettings />} />
+        <Route path="/admin/students" element={<AdminStudents />} />
       </Routes>
     </BrowserRouter>
   );
