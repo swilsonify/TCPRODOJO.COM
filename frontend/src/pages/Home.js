@@ -156,11 +156,11 @@ const Home = () => {
                 >
                   {/* Square Photo */}
                   {testimonial.photoUrl && (
-                    <div className="w-80 h-80 mx-auto mt-6">
+                    <div className="w-80 h-80 mx-auto mt-6 flex items-center justify-center bg-gray-900/50 rounded-lg">
                       <img 
                         src={testimonial.photoUrl} 
                         alt={testimonial.name}
-                        className="w-full h-full object-cover rounded-lg aspect-square"
+                        className="max-w-full max-h-full object-contain rounded-lg"
                       />
                     </div>
                   )}
