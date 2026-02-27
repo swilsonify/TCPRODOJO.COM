@@ -114,7 +114,9 @@ const AdminClassSchedule = () => {
       level: 'Beginner',
       spots: 10,
       type: 'Wrestling',
-      description: ''
+      description: '',
+      is_one_time: false,
+      one_time_date: ''
     });
     setEditingClass(null);
     setShowForm(false);
@@ -123,6 +125,17 @@ const AdminClassSchedule = () => {
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const levels = ['Beginner', 'Intermediate', 'Advanced', 'All Levels'];
   const types = ['Wrestling', 'Boxing', 'Fitness'];
+
+  // Separate recurring and one-time classes
+  const recurringClasses = classes.filter(c => !c.is_one_time);
+  const oneTimeClasses = classes.filter(c => c.is_one_time);
+
+  // Format date for display
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr + 'T12:00:00');
+    return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black py-12 px-4">
