@@ -92,7 +92,8 @@ const AdminDashboard = () => {
         classes: classes.data.length,
         newsletter: newsletter.data.length,
         media: media.data.length,
-        siteSettings: siteSettings.data.length
+        siteSettings: siteSettings.data.length,
+        students: students.data.length
       });
     } catch (error) {
       console.error('Error loading stats:', error);
