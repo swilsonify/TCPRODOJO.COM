@@ -875,6 +875,35 @@ async def subscribe_newsletter(email: str):
         "subscribed_at": datetime.now(timezone.utc).isoformat()
     }
     await db.newsletter_subscriptions.insert_one(subscription)
+    
+    # Get total subscriber count
+    total_count = await db.newsletter_subscriptions.count_documents({})
+    
+    # Send email notification
+    email_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">
+            New Newsletter Subscriber
+        </h2>
+        <div style="padding: 20px; background-color: #f3f4f6; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 18px;">
+                <strong>Email:</strong> 
+                <a href="mailto:{email}" style="color: #3b82f6;">{email}</a>
+            </p>
+        </div>
+        <p style="color: #4b5563;">
+            You now have <strong>{total_count}</strong> total newsletter subscribers.
+        </p>
+        <p style="margin-top: 20px; color: #9ca3af; font-size: 12px;">
+            This notification was sent from the TC Pro Dojo website.
+        </p>
+    </div>
+    """
+    await send_notification_email(
+        f"TC Pro Dojo: New Newsletter Subscriber",
+        email_html
+    )
+    
     return {"message": "Successfully subscribed", "success": True}
 
 @api_router.get("/admin/newsletter-subscriptions", response_model=List[NewsletterSubscriptionModel])
