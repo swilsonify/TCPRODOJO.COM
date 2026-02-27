@@ -174,7 +174,7 @@ const AdminMedia = () => {
               {editingMedia ? 'Edit Media' : 'Add New Media'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-gray-300 mb-2">Title *</label>
                   <input
@@ -199,6 +199,19 @@ const AdminMedia = () => {
                       <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <label className="block text-gray-300 mb-2">Category *</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full bg-gray-700 text-white rounded px-4 py-2"
+                    data-testid="media-category-select"
+                  >
+                    <option value="general">General</option>
+                    <option value="grid">Grid (Training Page)</option>
+                  </select>
+                  <p className="text-gray-400 text-xs mt-1">"Grid" photos appear on the Training page</p>
                 </div>
               </div>
 
