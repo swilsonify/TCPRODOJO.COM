@@ -29,7 +29,8 @@ const AdminSiteSettings = () => {
     { key: 'admin_logo', label: 'Admin Panel Logo', type: 'image', description: 'Logo shown in admin dashboard header' },
     { key: 'classes_photo', label: 'Classes Page Photo', type: 'image', description: 'Photo displayed below the class schedule calendar' },
     { key: 'classes_photo_caption', label: 'Classes Photo Caption', type: 'text', description: 'Optional caption text below the classes page photo' },
-    { key: 'coaches_page_photo', label: 'Coaches Page Photo', type: 'image', description: 'Photo displayed on the Success/Coaches page above the Start Training button' }
+    { key: 'coaches_page_photo', label: 'Coaches Page Photo', type: 'image', description: 'Photo displayed on the Success/Coaches page above the Start Training button' },
+    { key: 'classes_header_photo', label: 'Classes Header Photo', type: 'image', description: 'Photo displayed above the class schedule calendar' }
   ];
 
   const settingTypes = [
