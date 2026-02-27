@@ -182,10 +182,15 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Visit Us</h3>
-                    <p className="text-gray-400">
-                      9800 Rue Meilleur<br />
+                    <a 
+                      href="https://www.google.com/maps/search/?api=1&query=9800+Rue+Meilleur+Suite+200+Montreal+QC+H3L+3J4"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-blue-400 transition-colors"
+                    >
+                      9800 Rue Meilleur, Suite 200<br />
                       Montréal, QC H3L 3J4
-                    </p>
+                    </a>
                   </div>
                 </div>
 
