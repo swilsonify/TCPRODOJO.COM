@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, Calendar, Clock, CalendarDays, Repeat } from 'lucide-react';
 
 const AdminClassSchedule = () => {
   const navigate = useNavigate();
@@ -17,7 +17,9 @@ const AdminClassSchedule = () => {
     level: 'Beginner',
     spots: 10,
     type: 'Wrestling',
-    description: ''
+    description: '',
+    is_one_time: false,
+    one_time_date: ''
   });
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
