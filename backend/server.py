@@ -317,6 +317,27 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
+# Email notification helper
+async def send_notification_email(subject: str, html_content: str):
+    """Send email notification to the configured notification email"""
+    if not resend.api_key or resend.api_key == 're_your_api_key_here':
+        logging.warning("Resend API key not configured, skipping email notification")
+        return None
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [NOTIFICATION_EMAIL],
+            "subject": subject,
+            "html": html_content
+        }
+        email = await asyncio.to_thread(resend.Emails.send, params)
+        logging.info(f"Email notification sent: {email.get('id')}")
+        return email
+    except Exception as e:
+        logging.error(f"Failed to send email notification: {str(e)}")
+        return None
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
