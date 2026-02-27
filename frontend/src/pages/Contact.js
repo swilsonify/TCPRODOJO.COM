@@ -209,7 +209,7 @@ const Contact = () => {
 
             {/* FAQ */}
             <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Quick Questions?</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">FAQs</h2>
               
               <div className="space-y-4">
                 <div>
@@ -219,12 +219,12 @@ const Contact = () => {
 
                 <div>
                   <h3 className="text-white font-semibold mb-2">What should I bring?</h3>
-                  <p className="text-gray-400 text-sm">Athletic clothing, water bottle, and a positive attitude. We provide all training equipment.</p>
+                  <p className="text-gray-400 text-sm">Athletic clothing, water bottle, and a positive attitude.<br />Once you join the school a TCPW uniform is required.</p>
                 </div>
 
                 <div>
                   <h3 className="text-white font-semibold mb-2">Can I try a class first?</h3>
-                  <p className="text-gray-400 text-sm">Yes! Contact us to schedule a free trial class.</p>
+                  <p className="text-gray-400 text-sm">Yes! Contact us to schedule a trial class for $50.<br />When you join up, this is credited to your membership fee.</p>
                 </div>
               </div>
             </div>
