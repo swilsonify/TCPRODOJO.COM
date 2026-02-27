@@ -171,20 +171,65 @@ const AdminClassSchedule = () => {
             </h2>
             
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-white font-semibold mb-2">Day</label>
-                  <select
-                    value={formData.day}
-                    onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-                    required
-                    className="w-full px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+              {/* Class Type Toggle */}
+              <div className="mb-6">
+                <label className="block text-white font-semibold mb-3">Class Type</label>
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, is_one_time: false, one_time_date: '' })}
+                    className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-colors ${
+                      !formData.is_one_time 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
                   >
-                    {daysOfWeek.map((day) => (
-                      <option key={day} value={day}>{day}</option>
-                    ))}
-                  </select>
+                    <Repeat size={18} className="mr-2" />
+                    Recurring Weekly
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, is_one_time: true, day: '' })}
+                    className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-colors ${
+                      formData.is_one_time 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    <CalendarDays size={18} className="mr-2" />
+                    One-Time Special
+                  </button>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Day or Date selection based on class type */}
+                {formData.is_one_time ? (
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Date</label>
+                    <input
+                      type="date"
+                      value={formData.one_time_date}
+                      onChange={(e) => setFormData({ ...formData, one_time_date: e.target.value })}
+                      required
+                      className="w-full px-4 py-2 bg-gray-900 border border-purple-500/40 rounded text-white focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-white font-semibold mb-2">Day</label>
+                    <select
+                      value={formData.day}
+                      onChange={(e) => setFormData({ ...formData, day: e.target.value })}
+                      required
+                      className="w-full px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                    >
+                      {daysOfWeek.map((day) => (
+                        <option key={day} value={day}>{day}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-white font-semibold mb-2">Time</label>
