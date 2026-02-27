@@ -238,6 +238,17 @@ const Pros = () => {
           </div>
         </div>
 
+        {/* Coaches Page Photo */}
+        {siteSettings.coaches_page_photo && (
+          <div className="max-w-5xl mx-auto mt-16" data-testid="coaches-page-photo">
+            <img
+              src={siteSettings.coaches_page_photo}
+              alt="TC Pro Dojo Coaches"
+              className="w-full rounded-lg shadow-2xl"
+            />
+          </div>
+        )}
+
         {/* CTA Section */}
         <div className="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Join Them?</h2>
