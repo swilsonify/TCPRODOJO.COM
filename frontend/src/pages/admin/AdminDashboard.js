@@ -180,6 +180,13 @@ const AdminDashboard = () => {
       description: 'View and download email list'
     },
     {
+      title: 'Student Database',
+      icon: UserCheck,
+      count: stats.students || 0,
+      link: '/admin/students',
+      description: 'Manage students for class notifications'
+    },
+    {
       title: 'Media Gallery',
       icon: Image,
       count: stats.media || 0,
