@@ -6,6 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import asyncio
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
@@ -17,6 +18,7 @@ import shutil
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import resend
 
 
 ROOT_DIR = Path(__file__).parent
@@ -26,6 +28,11 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Resend configuration
+resend.api_key = os.environ.get('RESEND_API_KEY', '')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'druonyx@gmail.com')
 
 # Cloudinary configuration
 cloudinary.config(
