@@ -370,9 +370,16 @@ const AdminMedia = () => {
                     )}
                     
                     {/* Type Badge */}
-                    <div className="absolute top-2 left-2 bg-blue-600 px-2 py-1 rounded text-xs font-semibold text-white flex items-center space-x-1">
-                      <Icon size={12} />
-                      <span>{getMediaTypeLabel(item.mediaType)}</span>
+                    <div className="absolute top-2 left-2 flex items-center gap-1">
+                      <div className="bg-blue-600 px-2 py-1 rounded text-xs font-semibold text-white flex items-center space-x-1">
+                        <Icon size={12} />
+                        <span>{getMediaTypeLabel(item.mediaType)}</span>
+                      </div>
+                      {item.category === 'grid' && (
+                        <div className="bg-purple-600 px-2 py-1 rounded text-xs font-semibold text-white">
+                          Grid
+                        </div>
+                      )}
                     </div>
                   </div>
 
