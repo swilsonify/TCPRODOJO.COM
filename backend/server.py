@@ -924,6 +924,92 @@ async def delete_subscription(subscription_id: str, username: str = Depends(veri
     return {"message": "Subscription deleted successfully"}
 
 
+# Newsletter Send Endpoint
+class NewsletterSendRequest(BaseModel):
+    subject: str
+    content: str  # HTML content
+
+@api_router.post("/admin/newsletter/send")
+async def send_newsletter(request: NewsletterSendRequest, username: str = Depends(verify_token)):
+    """Send newsletter to all subscribers"""
+    if not resend.api_key or resend.api_key == 're_your_api_key_here':
+        raise HTTPException(status_code=500, detail="Email service not configured")
+    
+    # Get all subscribers
+    subscriptions = await db.newsletter_subscriptions.find({}, {"_id": 0}).to_list(10000)
+    
+    if not subscriptions:
+        raise HTTPException(status_code=400, detail="No subscribers to send to")
+    
+    emails = [sub['email'] for sub in subscriptions]
+    
+    # Build the email HTML with unsubscribe footer
+    full_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #111; color: #fff; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1 style="color: #3b82f6; margin: 0;">TC PRO DOJO</h1>
+            <p style="color: #9ca3af; font-size: 12px; margin: 5px 0 0 0;">TORTURE CHAMBER PRO WRESTLING</p>
+        </div>
+        <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #333;">
+            {request.content}
+        </div>
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #333; text-align: center;">
+            <p style="color: #6b7280; font-size: 12px; margin: 0;">
+                9800 Rue Meilleur, Suite 200, Montréal, QC H3L 3J4<br/>
+                <a href="https://tcprodojo.com" style="color: #3b82f6;">tcprodojo.com</a>
+            </p>
+        </div>
+    </div>
+    """
+    
+    successful = 0
+    failed = 0
+    errors = []
+    
+    # Send to each subscriber individually (Resend batch sending)
+    # For larger lists, you might want to use batch API
+    for email in emails:
+        try:
+            params = {
+                "from": SENDER_EMAIL,
+                "to": [email],
+                "subject": request.subject,
+                "html": full_html
+            }
+            await asyncio.to_thread(resend.Emails.send, params)
+            successful += 1
+        except Exception as e:
+            failed += 1
+            errors.append({"email": email, "error": str(e)})
+            logging.error(f"Failed to send newsletter to {email}: {str(e)}")
+    
+    # Log the newsletter send
+    newsletter_log = {
+        "id": str(uuid.uuid4()),
+        "subject": request.subject,
+        "sent_by": username,
+        "total_recipients": len(emails),
+        "successful": successful,
+        "failed": failed,
+        "sent_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.newsletter_logs.insert_one(newsletter_log)
+    
+    return {
+        "message": f"Newsletter sent to {successful} subscribers",
+        "successful": successful,
+        "failed": failed,
+        "total": len(emails),
+        "errors": errors[:5] if errors else []  # Return first 5 errors for debugging
+    }
+
+@api_router.get("/admin/newsletter/logs")
+async def get_newsletter_logs(username: str = Depends(verify_token)):
+    """Get history of sent newsletters"""
+    logs = await db.newsletter_logs.find({}, {"_id": 0}).sort("sent_at", -1).to_list(100)
+    return logs
+
+
 # ==================== STUDENTS MANAGEMENT ====================
 
 @api_router.get("/admin/students", response_model=List[StudentModel])
