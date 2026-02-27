@@ -379,9 +379,9 @@ const AdminMedia = () => {
                         <Icon size={12} />
                         <span>{getMediaTypeLabel(item.mediaType)}</span>
                       </div>
-                      {item.category === 'grid' && (
-                        <div className="bg-purple-600 px-2 py-1 rounded text-xs font-semibold text-white">
-                          Grid
+                      {item.category && item.category !== 'general' && (
+                        <div className="bg-purple-600 px-2 py-1 rounded text-xs font-semibold text-white capitalize">
+                          {item.category}
                         </div>
                       )}
                     </div>
