@@ -1,73 +1,72 @@
-# TC Pro Dojo Website - PRD
+# TC Pro Dojo - Product Requirements Document
 
 ## Original Problem Statement
-1. Add a Media page displaying podcasts, videos, photos, articles in a grid gallery layout
-2. Admin ability to change logos and headers from admin panel
-3. Store logo links like other Cloudinary assets
-4. Cloudinary upload widget for direct uploads from admin
-5. Add Newsletter Subscribers database management
-6. Add Student database for class change notifications
-7. Update address to include "Suite 200"
-8. Add Google Maps link to address
+Build and manage a full-stack website for "Torture Chamber Pro Wrestling Dojo" - a martial arts/pro wrestling training school. The site requires public-facing pages, an admin dashboard for content management, and integrations with Cloudinary (media), Resend (email), and MongoDB (data).
 
-## Architecture
+## Tech Stack
+- **Frontend:** React.js, Tailwind CSS
+- **Backend:** FastAPI (Python)
+- **Database:** MongoDB
+- **Integrations:** Cloudinary, Resend, Google Maps
+- **Deployment:** Render
 
-### Tech Stack
-- **Frontend**: React 18 + Tailwind CSS
-- **Backend**: FastAPI (Python)
-- **Database**: MongoDB
-- **Authentication**: JWT Bearer Tokens
-- **Image Storage**: Cloudinary (with direct upload widget)
+## Core Architecture
+```
+/app/backend/server.py          - All API endpoints
+/app/frontend/src/App.js        - Route definitions
+/app/frontend/src/pages/        - Public pages
+/app/frontend/src/pages/admin/  - Admin pages
+/app/frontend/src/components/   - Shared components
+```
 
-### Databases/Collections
-1. **newsletter_subscriptions** - Email subscribers for newsletter
-2. **students** - Student database for class change notifications
-3. **media** - Media gallery items (photos, videos, podcasts, articles)
-4. **site_settings** - Logo URLs and branding settings
+## Admin Credentials
+- Username: `admin` / Password: `tcprodojo2025`
 
-### New Components Added
+## What's Been Implemented
 
-1. **Public Media Page** (`/media`)
-   - Grid gallery with filter tabs (All, Photos, Videos, Podcasts, Articles)
+### Public Pages
+- Home (dynamic logos, testimonials, video)
+- Training (curriculum, tips, 12-photo grid from media gallery)
+- Classes (schedule with recurring + one-time classes, photo spot)
+- Events
+- Success/Coaches (success stories, endorsements, coaches, configurable photo spot)
+- Media (gallery of podcasts, videos, photos, articles)
+- Contact (FAQs, contact form with Resend notifications)
+- Shop
 
-2. **Admin Media Management** (`/admin/media`)
-   - CRUD with Cloudinary Upload Widget
+### Admin Dashboard Features
+- Coaches, Events, Pros/Success Stories, Endorsements, Testimonials, Tips management
+- Class Schedule (recurring + one-time special classes)
+- Media management (CRUD with Cloudinary uploads)
+- Site Settings (logos, branding, page photos - all configurable)
+- Student database with email list export
+- Newsletter subscribers + compose/send newsletters via Resend
+- Contact form submissions viewer
 
-3. **Admin Site Settings** (`/admin/site-settings`)
-   - Logo management with Cloudinary Upload Widget
-   - Quick Add presets
+### Key Features
+- Cloudinary Upload Widget for admin media uploads
+- Resend email integration (contact notifications, newsletter signups, newsletter sending)
+- Dynamic site settings for logos and page photos
+- Address with Google Maps link ("Suite 200" included)
+- One-time/special class scheduling
 
-4. **Admin Newsletter Subscribers** (`/admin/newsletter`) - Already existed
-   - View/delete subscribers
-   - Download CSV
-   - Copy all emails
+## Completed Tasks (Feb 2026)
+- [x] Media page (public + admin)
+- [x] Site Settings admin panel
+- [x] Cloudinary integration
+- [x] Student database + admin
+- [x] Address update with Google Maps link
+- [x] Resend email integration (contacts + signups)
+- [x] Newsletter compose/send feature
+- [x] One-time class scheduling
+- [x] Testimonial image cropping fix
+- [x] FAQ content update
+- [x] Classes page photo spot
+- [x] Coaches page photo spot (above CTA, via Site Settings)
+- [x] Training page 12-photo grid (from Media gallery, above "How It Works")
 
-5. **Admin Student Database** (`/admin/students`) - NEW
-   - CRUD for students
-   - Class enrollment tracking
-   - Notification preferences (notify_class_changes toggle)
-   - Copy Notify Emails button for class change notifications
-   - Download CSV export
+## Upcoming/Future Tasks
+- None specified by user
 
-6. **CloudinaryUploader Component**
-   - Drag & drop upload with progress
-   - Preview and auto-fill URL
-
-### Address Updates
-- Updated to: **9800 Rue Meilleur, Suite 200, Montréal, QC H3L 3J4**
-- Added Google Maps link (clickable in Footer and Contact page)
-
-## What's Been Implemented (Feb 2026)
-- [x] Media page with filter tabs
-- [x] Admin Media CRUD with Cloudinary upload
-- [x] Admin Site Settings for logos
-- [x] Cloudinary Upload Widget integration
-- [x] Student Database with class notification management
-- [x] Newsletter Subscribers (existing)
-- [x] Address updated to Suite 200
-- [x] Google Maps links added
-
-## Next Tasks
-1. Use "Save to Github" to push changes
-2. Add students to the database
-3. Test Cloudinary uploads for media/logos
+## Known Issues
+- Git history divergence when using "Save to Github" - advise user to create new branch if conflicts arise
