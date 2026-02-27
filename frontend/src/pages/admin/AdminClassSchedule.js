@@ -339,16 +339,19 @@ const AdminClassSchedule = () => {
         )}
 
         {/* Classes List */}
-        <div className="bg-black border border-blue-500/20 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Current Classes ({classes.length})</h2>
+        <div className="bg-black border border-blue-500/20 rounded-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <Repeat size={24} className="mr-3 text-blue-400" />
+            Recurring Weekly Classes ({recurringClasses.length})
+          </h2>
           
           {loading ? (
             <div className="text-center text-gray-400 py-8">Loading classes...</div>
-          ) : classes.length === 0 ? (
-            <div className="text-center text-gray-400 py-8">No classes added yet. Click "Add Class" to create one.</div>
+          ) : recurringClasses.length === 0 ? (
+            <div className="text-center text-gray-400 py-8">No recurring classes added yet.</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {classes.map((classItem) => (
+              {recurringClasses.map((classItem) => (
                 <div
                   key={classItem.id}
                   className="bg-gradient-to-br from-gray-900 to-black border border-blue-500/20 rounded-lg p-6 hover-lift"
@@ -411,6 +414,86 @@ const AdminClassSchedule = () => {
               ))}
             </div>
           )}
+        </div>
+
+        {/* One-Time Special Classes */}
+        <div className="bg-black border border-purple-500/30 rounded-lg p-8">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <CalendarDays size={24} className="mr-3 text-purple-400" />
+            One-Time Special Classes ({oneTimeClasses.length})
+          </h2>
+          
+          {oneTimeClasses.length === 0 ? (
+            <div className="text-center text-gray-400 py-8">No one-time special classes scheduled. Click "Add Class" and select "One-Time Special" to create one.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {oneTimeClasses.map((classItem) => (
+                <div
+                  key={classItem.id}
+                  className="bg-gradient-to-br from-purple-900/20 to-black border border-purple-500/30 rounded-lg p-6 hover-lift"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <span className="px-2 py-1 rounded text-xs font-semibold bg-purple-500/20 text-purple-400 mb-2 inline-block">
+                        SPECIAL CLASS
+                      </span>
+                      <h3 className="text-xl font-bold text-white mb-2">{classItem.title}</h3>
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                        classItem.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
+                        classItem.level === 'Advanced' ? 'bg-red-500/20 text-red-400' :
+                        'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {classItem.level}
+                      </span>
+                    </div>
+                    <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-700 text-gray-300">
+                      {classItem.type}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 mb-4 text-gray-300">
+                    <div className="flex items-center">
+                      <CalendarDays size={16} className="mr-2 text-purple-400" />
+                      <span className="text-purple-300 font-semibold">{formatDate(classItem.one_time_date)}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Clock size={16} className="mr-2 text-purple-400" />
+                      <span>{classItem.time}</span>
+                    </div>
+                    <div className="text-sm">
+                      <strong>Instructor:</strong> {classItem.instructor}
+                    </div>
+                    <div className="text-sm">
+                      <strong>Spots:</strong> {classItem.spots}
+                    </div>
+                    {classItem.description && (
+                      <div className="text-sm text-gray-400 mt-2">
+                        {classItem.description}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEdit(classItem)}
+                      className="flex-1 flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded transition-colors"
+                    >
+                      <Edit size={16} className="mr-2" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(classItem.id)}
+                      className="flex-1 flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
+                    >
+                      <Trash2 size={16} className="mr-2" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         </div>
       </div>
     </div>
