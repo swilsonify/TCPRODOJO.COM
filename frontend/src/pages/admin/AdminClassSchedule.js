@@ -494,7 +494,6 @@ const AdminClassSchedule = () => {
             </div>
           )}
         </div>
-        </div>
       </div>
     </div>
   );
