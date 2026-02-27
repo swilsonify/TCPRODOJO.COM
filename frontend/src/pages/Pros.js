@@ -37,15 +37,17 @@ const Pros = () => {
 
   const loadData = async () => {
     try {
-      const [storiesRes, endorsementsRes, coachesRes] = await Promise.all([
+      const [storiesRes, endorsementsRes, coachesRes, settingsRes] = await Promise.all([
         axios.get(`${API}/api/success-stories`),
         axios.get(`${API}/api/endorsements`),
-        axios.get(`${API}/api/coaches`)
+        axios.get(`${API}/api/coaches`),
+        axios.get(`${API}/api/site-settings`)
       ]);
       
       setSuccessStories(storiesRes.data);
       setEndorsements(endorsementsRes.data);
       setCoaches(coachesRes.data);
+      setSiteSettings(settingsRes.data);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
