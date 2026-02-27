@@ -21,8 +21,8 @@ const Training = () => {
         axios.get(`${API}/api/media`)
       ]);
       setTips(tipsRes.data);
-      // Filter for photos only and take up to 12
-      const photos = (mediaRes.data || []).filter(m => m.mediaType === 'photo').slice(0, 12);
+      // Filter for "grid" category photos and take up to 12
+      const photos = (mediaRes.data || []).filter(m => m.category === 'grid').slice(0, 12);
       setMediaPhotos(photos);
     } catch (error) {
       console.error('Error loading data:', error);
