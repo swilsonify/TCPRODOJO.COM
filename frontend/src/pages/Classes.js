@@ -405,9 +405,19 @@ const Classes = () => {
 
                       {/* Day Columns */}
                       {daysOfWeek.map((day, dayIndex) => {
+                        const currentDate = weekDates[dayIndex];
+                        const currentDateStr = currentDate.toISOString().split('T')[0];
+                        
                         // Find classes for this day and time slot
+                        // Include both recurring classes and one-time classes for this specific date
                         const dayClasses = currentClasses.filter(c => {
-                          if (c.day !== day) return false;
+                          // Check if it's a one-time class for this specific date
+                          if (c.is_one_time) {
+                            if (c.one_time_date !== currentDateStr) return false;
+                          } else {
+                            // Recurring class - match by day name
+                            if (c.day !== day) return false;
+                          }
                           const classSlot = getTimePosition(c.time);
                           // Match if class starts in this hour (floor to nearest hour)
                           return Math.floor(classSlot) === slotIndex;
