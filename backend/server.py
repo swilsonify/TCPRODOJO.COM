@@ -243,6 +243,20 @@ class NewsletterSubscriptionModel(BaseModel):
     email: str
     subscribed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Student Model - for class change notifications
+class StudentModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: str = ""
+    classes: List[str] = []  # List of class IDs the student is enrolled in
+    notes: str = ""
+    active: bool = True
+    notify_class_changes: bool = True  # Whether to notify about class schedule changes
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Media Model - for podcasts, videos, photos, articles
 class MediaModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
