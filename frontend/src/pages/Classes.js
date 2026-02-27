@@ -351,6 +351,17 @@ const Classes = () => {
           <div className="gradient-border mx-auto w-24 mb-6"></div>
         </div>
 
+        {/* Classes Header Photo */}
+        {siteSettings.classes_header_photo && (
+          <div className="max-w-5xl mx-auto mb-12" data-testid="classes-header-photo">
+            <img
+              src={siteSettings.classes_header_photo}
+              alt="TC Pro Dojo Classes"
+              className="w-full rounded-lg shadow-2xl"
+            />
+          </div>
+        )}
+
         {/* Weekly Timetable View */}
         <div className="max-w-7xl mx-auto mb-12">
           <div className="bg-black border border-blue-500/20 rounded-lg p-6">
