@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive, media, siteSettings] = await Promise.all([
+      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive, media, siteSettings, students] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -58,7 +58,8 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/newsletter-subscriptions`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/past-events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/media`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/site-settings`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/site-settings`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/students`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       // Separate events into upcoming and past
