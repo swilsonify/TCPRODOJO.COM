@@ -210,6 +210,10 @@ const AdminMedia = () => {
                   >
                     <option value="general">General</option>
                     <option value="grid">Grid (Training Page)</option>
+                    <option value="events">Events</option>
+                    <option value="coaches">Coaches</option>
+                    <option value="classes">Classes</option>
+                    <option value="home">Home</option>
                   </select>
                   <p className="text-gray-400 text-xs mt-1">"Grid" photos appear on the Training page</p>
                 </div>
