@@ -416,6 +416,46 @@ async def submit_contact(contact_data: ContactCreate):
     try:
         await db.contacts.insert_one(doc)
         logger.info(f"Contact form submitted: {contact.name} - {contact.subject}")
+        
+        # Send email notification
+        email_html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">
+                New Contact Form Submission
+            </h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; width: 120px;">Name:</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">{contact.name}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Email:</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                        <a href="mailto:{contact.email}" style="color: #3b82f6;">{contact.email}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Phone:</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">{contact.phone or 'Not provided'}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Subject:</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">{contact.subject}</td>
+                </tr>
+            </table>
+            <div style="margin-top: 20px; padding: 15px; background-color: #f3f4f6; border-radius: 8px;">
+                <h3 style="margin: 0 0 10px 0; color: #374151;">Message:</h3>
+                <p style="margin: 0; white-space: pre-wrap; color: #4b5563;">{contact.message}</p>
+            </div>
+            <p style="margin-top: 20px; color: #9ca3af; font-size: 12px;">
+                This message was sent from the TC Pro Dojo website contact form.
+            </p>
+        </div>
+        """
+        await send_notification_email(
+            f"TC Pro Dojo Contact: {contact.subject}",
+            email_html
+        )
     except Exception as e:
         logger.error(f"Error submitting contact form: {e}")
     
