@@ -222,7 +222,7 @@ class ClassScheduleModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    day: str
+    day: str  # For recurring: "Monday", "Tuesday", etc. For one-time: the specific date "2026-03-15"
     time: str
     title: str
     instructor: str
@@ -230,6 +230,8 @@ class ClassScheduleModel(BaseModel):
     spots: int
     type: str = "Wrestling"
     description: str = ""
+    is_one_time: bool = False  # True for one-time/special classes
+    one_time_date: str = ""  # Specific date for one-time classes (YYYY-MM-DD format)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class CancelledClassModel(BaseModel):
