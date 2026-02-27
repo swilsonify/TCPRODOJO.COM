@@ -92,6 +92,7 @@ const AdminMedia = () => {
       mediaUrl: item.mediaUrl || '',
       thumbnailUrl: item.thumbnailUrl || '',
       externalLink: item.externalLink || '',
+      category: item.category || 'general',
       displayOrder: item.displayOrder || 0
     });
     setShowForm(true);
