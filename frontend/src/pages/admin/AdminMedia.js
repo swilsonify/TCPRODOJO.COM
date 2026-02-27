@@ -123,6 +123,7 @@ const AdminMedia = () => {
       mediaUrl: '',
       thumbnailUrl: '',
       externalLink: '',
+      category: 'general',
       displayOrder: 0
     });
     setEditingMedia(null);
