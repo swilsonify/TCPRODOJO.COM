@@ -23,6 +23,7 @@ const Classes = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedClassForCancel, setSelectedClassForCancel] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [siteSettings, setSiteSettings] = useState({});
   
   // Check if user is admin
   const isAdmin = () => {
@@ -33,7 +34,17 @@ const Classes = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchClasses();
+    fetchSiteSettings();
   }, []);
+
+  const fetchSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/site-settings`);
+      setSiteSettings(response.data);
+    } catch (error) {
+      console.error('Error fetching site settings:', error);
+    }
+  };
 
   const fetchClasses = async () => {
     try {
