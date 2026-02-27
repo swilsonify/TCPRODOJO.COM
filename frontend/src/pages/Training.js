@@ -4,22 +4,30 @@ import axios from 'axios';
 
 const Training = () => {
   const [tips, setTips] = useState([]);
+  const [mediaPhotos, setMediaPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    loadTips();
+    loadData();
   }, []);
 
-  const loadTips = async () => {
+  const loadData = async () => {
     try {
-      const response = await axios.get(`${API}/api/tips`);
-      setTips(response.data);
+      const [tipsRes, mediaRes] = await Promise.all([
+        axios.get(`${API}/api/tips`),
+        axios.get(`${API}/api/media`)
+      ]);
+      setTips(tipsRes.data);
+      // Filter for photos only and take up to 12
+      const photos = (mediaRes.data || []).filter(m => m.mediaType === 'photo').slice(0, 12);
+      setMediaPhotos(photos);
     } catch (error) {
-      console.error('Error loading tips:', error);
+      console.error('Error loading data:', error);
       setTips([]);
+      setMediaPhotos([]);
     } finally {
       setLoading(false);
     }
