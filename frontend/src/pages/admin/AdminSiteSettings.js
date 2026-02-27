@@ -26,7 +26,9 @@ const AdminSiteSettings = () => {
     { key: 'nav_tagline', label: 'Navigation Tagline', type: 'text', description: 'Text shown above logo in nav (e.g., "TRAIN LIKE A CHAMPION")' },
     { key: 'nav_title', label: 'Navigation Title', type: 'text', description: 'Main title in navigation (e.g., "TORTURE CHAMBER")' },
     { key: 'footer_logo', label: 'Footer Logo', type: 'image', description: 'Logo displayed in the footer' },
-    { key: 'admin_logo', label: 'Admin Panel Logo', type: 'image', description: 'Logo shown in admin dashboard header' }
+    { key: 'admin_logo', label: 'Admin Panel Logo', type: 'image', description: 'Logo shown in admin dashboard header' },
+    { key: 'classes_photo', label: 'Classes Page Photo', type: 'image', description: 'Photo displayed below the class schedule calendar' },
+    { key: 'classes_photo_caption', label: 'Classes Photo Caption', type: 'text', description: 'Optional caption text below the classes page photo' }
   ];
 
   const settingTypes = [
