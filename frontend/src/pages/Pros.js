@@ -6,6 +6,7 @@ const Pros = () => {
   const [successStories, setSuccessStories] = useState([]);
   const [endorsements, setEndorsements] = useState([]);
   const [coaches, setCoaches] = useState([]);
+  const [siteSettings, setSiteSettings] = useState({});
   const [loading, setLoading] = useState(true);
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
