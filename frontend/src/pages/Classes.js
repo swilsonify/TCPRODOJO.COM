@@ -565,6 +565,24 @@ const Classes = () => {
           )}
         </div>
 
+        {/* Schedule Photo Section */}
+        {siteSettings.classes_photo && (
+          <div className="max-w-4xl mx-auto mt-12">
+            <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden">
+              <img 
+                src={siteSettings.classes_photo} 
+                alt="Training at TC Pro Dojo"
+                className="w-full h-auto object-contain"
+              />
+              {siteSettings.classes_photo_caption && (
+                <div className="p-4 text-center">
+                  <p className="text-gray-400 text-sm">{siteSettings.classes_photo_caption}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Edit Class Modal */}
         {showEditModal && editingClass && (
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
