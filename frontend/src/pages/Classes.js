@@ -451,7 +451,9 @@ const Classes = () => {
                                   className={`absolute left-1 right-1 rounded p-2 border ${
                                     isCancelled 
                                       ? (isRescheduled ? 'bg-orange-900/50 border-orange-500' : 'bg-red-900/50 border-red-500')
-                                      : getLevelColor(classItem.level)
+                                      : classItem.is_one_time 
+                                        ? 'bg-purple-500/30 text-purple-300 border-purple-500/70'
+                                        : getLevelColor(classItem.level)
                                   } ${adminLoggedIn ? 'hover:shadow-lg hover:scale-105 cursor-pointer' : 'cursor-default'} transition-all z-10`}
                                   style={{ 
                                     height: `${heightMultiplier * 60 - 8}px`,
@@ -459,6 +461,9 @@ const Classes = () => {
                                   }}
                                   title={tooltip}
                                 >
+                                  {classItem.is_one_time && !isCancelled && (
+                                    <div className="text-xs font-bold text-purple-300 mb-1">⭐ SPECIAL</div>
+                                  )}
                                   <div className={`text-xs font-bold mb-1 leading-tight ${isCancelled ? 'text-red-300' : 'text-white'}`}>
                                     {isCancelled && (
                                       <div className="text-xs font-bold mb-1">
