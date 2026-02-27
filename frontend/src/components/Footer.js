@@ -67,7 +67,14 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start space-x-2 text-gray-400 text-sm">
                 <MapPin size={16} className="mt-1 flex-shrink-0" />
-                <span>9800 Rue Meilleur<br />Montréal, QC H3L 3J4</span>
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=9800+Rue+Meilleur+Suite+200+Montreal+QC+H3L+3J4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  9800 Rue Meilleur, Suite 200<br />Montréal, QC H3L 3J4
+                </a>
               </li>
               <li>
                 <div className="flex items-start space-x-2 text-gray-400 text-sm">
