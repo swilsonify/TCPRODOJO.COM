@@ -277,6 +277,7 @@ class MediaModel(BaseModel):
     mediaUrl: str  # Cloudinary URL for image/video or external link
     thumbnailUrl: str = ""  # Optional thumbnail for videos/podcasts
     externalLink: str = ""  # External link for articles/podcasts
+    category: str = "general"  # "general", "grid", etc.
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
