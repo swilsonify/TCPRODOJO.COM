@@ -23,6 +23,7 @@ import AdminNewsletterSubscriptions from '@/pages/admin/AdminNewsletterSubscript
 import AdminPastEvents from '@/pages/admin/AdminPastEvents';
 import AdminMedia from '@/pages/admin/AdminMedia';
 import AdminSiteSettings from '@/pages/admin/AdminSiteSettings';
+import AdminStudents from '@/pages/admin/AdminStudents';
 
 function App() {
   return (
