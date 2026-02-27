@@ -61,9 +61,11 @@ Build and manage a full-stack website for "Torture Chamber Pro Wrestling Dojo" -
 - [x] One-time class scheduling
 - [x] Testimonial image cropping fix
 - [x] FAQ content update
-- [x] Classes page photo spot
+- [x] Classes page photo spot (below calendar)
 - [x] Coaches page photo spot (above CTA, via Site Settings)
-- [x] Training page 12-photo grid (from Media gallery, above "How It Works")
+- [x] Training page 12-photo grid (from Media gallery "grid" category, above "How It Works")
+- [x] Classes header photo (above calendar, via Site Settings `classes_header_photo`)
+- [x] Media category system ("general" vs "grid") to organize photos for different purposes
 
 ## Upcoming/Future Tasks
 - None specified by user
