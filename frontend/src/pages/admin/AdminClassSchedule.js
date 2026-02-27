@@ -83,7 +83,9 @@ const AdminClassSchedule = () => {
       level: classItem.level,
       spots: classItem.spots,
       type: classItem.type,
-      description: classItem.description || ''
+      description: classItem.description || '',
+      is_one_time: classItem.is_one_time || false,
+      one_time_date: classItem.one_time_date || ''
     });
     setShowForm(true);
   };
