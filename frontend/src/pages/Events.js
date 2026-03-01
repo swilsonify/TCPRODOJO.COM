@@ -225,7 +225,7 @@ const Events = () => {
                   className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                   data-testid={`past-event-${index}`}
                 >
-                  {/* Video - Square Frame */}
+                  {/* Video or Thumbnail - Square Frame */}
                   <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                     {event.youtubeUrl ? (
                       <iframe
@@ -236,6 +236,12 @@ const Events = () => {
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       ></iframe>
+                    ) : event.thumbnailUrl ? (
+                      <img
+                        src={event.thumbnailUrl}
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="text-center p-8">
                         <Calendar className="w-16 h-16 mx-auto mb-2 text-blue-500" />
