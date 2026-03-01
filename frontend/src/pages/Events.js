@@ -9,13 +9,24 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribeMessage, setSubscribeMessage] = useState('');
+  const [siteSettings, setSiteSettings] = useState({});
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
   useEffect(() => {
     window.scrollTo(0, 0);
     loadEvents();
+    loadSiteSettings();
   }, []);
+
+  const loadSiteSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/api/site-settings`);
+      setSiteSettings(response.data || {});
+    } catch (error) {
+      console.error('Error loading site settings:', error);
+    }
+  };
 
   const loadEvents = async () => {
     try {
