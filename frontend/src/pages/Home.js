@@ -167,7 +167,7 @@ const Home = () => {
                   
                   <div className="p-8">
                     <div className="text-blue-500 text-5xl mb-4">"</div>
-                    <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
+                    <p className="text-gray-300 mb-6 italic whitespace-pre-line">{testimonial.text}</p>
                     <div>
                       <div className="text-white font-bold">{testimonial.name}</div>
                       <div className="text-blue-400 text-sm">{testimonial.role}</div>
