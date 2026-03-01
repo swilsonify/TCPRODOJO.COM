@@ -261,6 +261,9 @@ const AdminPastEvents = () => {
                       {event.youtubeUrl && (
                         <span className="text-red-400 text-xs">🎥 Video Attached</span>
                       )}
+                      {event.thumbnailUrl && (
+                        <span className="text-blue-400 text-xs">🖼 Thumbnail</span>
+                      )}
                       <span className="text-gray-500 text-xs">Order: {event.displayOrder}</span>
                     </div>
                   </div>
