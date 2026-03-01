@@ -164,7 +164,7 @@ const Training = () => {
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-white mb-2">{tip.title}</h3>
                     {tip.description && (
-                      <p className="text-gray-400 text-sm">{tip.description}</p>
+                      <p className="text-gray-400 text-sm whitespace-pre-line">{tip.description}</p>
                     )}
                   </div>
                 </div>
