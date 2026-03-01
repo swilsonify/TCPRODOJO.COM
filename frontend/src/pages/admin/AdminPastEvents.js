@@ -256,7 +256,7 @@ const AdminPastEvents = () => {
                 >
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-white mb-2">{event.title}</h3>
-                    <p className="text-gray-400 text-sm mb-2">{event.description}</p>
+                    <p className="text-gray-400 text-sm mb-2 whitespace-pre-line">{event.description}</p>
                     <div className="flex items-center gap-3">
                       {event.youtubeUrl && (
                         <span className="text-red-400 text-xs">🎥 Video Attached</span>
