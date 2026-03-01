@@ -191,7 +191,7 @@ const Media = () => {
                       {item.title}
                     </h3>
                     {item.description && (
-                      <p className="text-gray-400 text-sm mb-4 line-clamp-3">{item.description}</p>
+                      <p className="text-gray-400 text-sm mb-4 line-clamp-3 whitespace-pre-line">{item.description}</p>
                     )}
                     
                     {/* External Link Button */}
