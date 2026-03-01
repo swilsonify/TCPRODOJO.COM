@@ -391,7 +391,7 @@ const AdminMedia = () => {
                   <div className="p-4">
                     <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{item.title}</h3>
                     {item.description && (
-                      <p className="text-gray-400 text-sm mb-3 line-clamp-2">{item.description}</p>
+                      <p className="text-gray-400 text-sm mb-3 line-clamp-2 whitespace-pre-line">{item.description}</p>
                     )}
                     
                     {/* Links */}
