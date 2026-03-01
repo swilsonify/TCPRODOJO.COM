@@ -169,6 +169,26 @@ const AdminPastEvents = () => {
                 </div>
 
                 <div>
+                  <label className="block text-white font-semibold mb-2">Thumbnail Photo</label>
+                  <CloudinaryUploader
+                    folder="tcprodojo/past-events"
+                    resourceType="image"
+                    accept="image/*"
+                    label="Upload Thumbnail"
+                    currentUrl={formData.thumbnailUrl}
+                    onUploadComplete={(url) => setFormData({ ...formData, thumbnailUrl: url })}
+                  />
+                  <input
+                    type="url"
+                    value={formData.thumbnailUrl}
+                    onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
+                    placeholder="https://res.cloudinary.com/..."
+                    className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500 mt-2"
+                  />
+                  <p className="text-gray-400 text-xs mt-1">Thumbnail image shown when no video is present</p>
+                </div>
+
+                <div>
                   <label className="block text-white font-semibold mb-2">Description</label>
                   <textarea
                     value={formData.description}
