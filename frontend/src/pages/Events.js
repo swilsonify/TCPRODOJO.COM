@@ -225,9 +225,20 @@ const Events = () => {
                   className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                   data-testid={`past-event-${index}`}
                 >
-                  {/* Video or Thumbnail - Square Frame */}
-                  <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
-                    {event.youtubeUrl ? (
+                  {/* Thumbnail */}
+                  {event.thumbnailUrl && (
+                    <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
+                      <img
+                        src={event.thumbnailUrl}
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Video */}
+                  {event.youtubeUrl && (
+                    <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                       <iframe
                         className="w-full h-full"
                         src={event.youtubeUrl}
@@ -236,19 +247,18 @@ const Events = () => {
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       ></iframe>
-                    ) : event.thumbnailUrl ? (
-                      <img
-                        src={event.thumbnailUrl}
-                        alt={event.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
+                    </div>
+                  )}
+
+                  {/* Fallback when no media */}
+                  {!event.thumbnailUrl && !event.youtubeUrl && (
+                    <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                       <div className="text-center p-8">
                         <Calendar className="w-16 h-16 mx-auto mb-2 text-blue-500" />
                         <span className="text-gray-500 text-sm">Event Archive</span>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Content */}
                   <div className="p-6">
