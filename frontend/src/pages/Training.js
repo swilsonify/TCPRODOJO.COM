@@ -33,7 +33,7 @@ const Training = () => {
 
   // Build grid photos array from site settings
   const gridPhotos = [];
-  for (let i = 1; i <= 12; i++) {
+  for (let i = 1; i <= 16; i++) {
     const url = siteSettings[`training_grid_photo_${i}`];
     if (url) gridPhotos.push({ url, index: i });
   }
