@@ -30,7 +30,19 @@ const AdminSiteSettings = () => {
     { key: 'classes_photo', label: 'Classes Page Photo', type: 'image', description: 'Photo displayed below the class schedule calendar' },
     { key: 'classes_photo_caption', label: 'Classes Photo Caption', type: 'text', description: 'Optional caption text below the classes page photo' },
     { key: 'coaches_page_photo', label: 'Coaches Page Photo', type: 'image', description: 'Photo displayed on the Success/Coaches page above the Start Training button' },
-    { key: 'classes_header_photo', label: 'Classes Header Photo', type: 'image', description: 'Photo displayed above the class schedule calendar' }
+    { key: 'classes_header_photo', label: 'Classes Header Photo', type: 'image', description: 'Photo displayed above the class schedule calendar' },
+    { key: 'training_grid_photo_1', label: 'Training Grid Photo 1', type: 'image', description: 'Training page grid photo #1' },
+    { key: 'training_grid_photo_2', label: 'Training Grid Photo 2', type: 'image', description: 'Training page grid photo #2' },
+    { key: 'training_grid_photo_3', label: 'Training Grid Photo 3', type: 'image', description: 'Training page grid photo #3' },
+    { key: 'training_grid_photo_4', label: 'Training Grid Photo 4', type: 'image', description: 'Training page grid photo #4' },
+    { key: 'training_grid_photo_5', label: 'Training Grid Photo 5', type: 'image', description: 'Training page grid photo #5' },
+    { key: 'training_grid_photo_6', label: 'Training Grid Photo 6', type: 'image', description: 'Training page grid photo #6' },
+    { key: 'training_grid_photo_7', label: 'Training Grid Photo 7', type: 'image', description: 'Training page grid photo #7' },
+    { key: 'training_grid_photo_8', label: 'Training Grid Photo 8', type: 'image', description: 'Training page grid photo #8' },
+    { key: 'training_grid_photo_9', label: 'Training Grid Photo 9', type: 'image', description: 'Training page grid photo #9' },
+    { key: 'training_grid_photo_10', label: 'Training Grid Photo 10', type: 'image', description: 'Training page grid photo #10' },
+    { key: 'training_grid_photo_11', label: 'Training Grid Photo 11', type: 'image', description: 'Training page grid photo #11' },
+    { key: 'training_grid_photo_12', label: 'Training Grid Photo 12', type: 'image', description: 'Training page grid photo #12' }
   ];
 
   const settingTypes = [
