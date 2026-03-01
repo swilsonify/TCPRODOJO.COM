@@ -212,7 +212,7 @@ const Pros = () => {
                     </div>
                   </div>
 
-                  <p className="text-gray-300 mb-6">{trainer.bio}</p>
+                  <p className="text-gray-300 mb-6 whitespace-pre-line">{trainer.bio}</p>
 
                   {trainer.achievements && trainer.achievements.filter(a => a && a.trim() !== '').length > 0 && (
                     <div>
