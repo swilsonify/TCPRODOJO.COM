@@ -135,7 +135,7 @@ const Shop = () => {
                 {/* Product Info */}
                 <div className="p-4">
                   <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">{item.name}</h3>
-                  <p className="text-gray-400 text-sm mb-3">{item.description}</p>
+                  <p className="text-gray-400 text-sm mb-3 whitespace-pre-line">{item.description}</p>
                   
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold text-blue-400">{item.price}</span>
