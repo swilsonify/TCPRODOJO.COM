@@ -16,6 +16,7 @@ const AdminPastEvents = () => {
   const [formData, setFormData] = useState({
     title: '',
     youtubeUrl: '',
+    thumbnailUrl: '',
     description: '',
     displayOrder: 0
   });
