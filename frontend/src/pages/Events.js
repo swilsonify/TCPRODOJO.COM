@@ -101,11 +101,11 @@ const Events = () => {
                     <div className="space-y-4 p-6">
                       {/* Event Poster */}
                       {event.posterUrl && (
-                        <div className="rounded-lg overflow-hidden border-2 border-blue-500">
+                        <div className="rounded-lg overflow-hidden border-2 border-blue-500 bg-black">
                           <img 
                             src={event.posterUrl} 
                             alt={event.title}
-                            className="w-full h-auto object-cover"
+                            className="w-full h-auto object-contain"
                           />
                         </div>
                       )}
