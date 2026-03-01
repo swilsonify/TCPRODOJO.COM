@@ -42,7 +42,11 @@ const AdminSiteSettings = () => {
     { key: 'training_grid_photo_9', label: 'Training Grid Photo 9', type: 'image', description: 'Training page grid photo #9' },
     { key: 'training_grid_photo_10', label: 'Training Grid Photo 10', type: 'image', description: 'Training page grid photo #10' },
     { key: 'training_grid_photo_11', label: 'Training Grid Photo 11', type: 'image', description: 'Training page grid photo #11' },
-    { key: 'training_grid_photo_12', label: 'Training Grid Photo 12', type: 'image', description: 'Training page grid photo #12' }
+    { key: 'training_grid_photo_12', label: 'Training Grid Photo 12', type: 'image', description: 'Training page grid photo #12' },
+    { key: 'events_photo_1', label: 'Events Page Photo 1', type: 'image', description: 'Events page photo row #1' },
+    { key: 'events_photo_2', label: 'Events Page Photo 2', type: 'image', description: 'Events page photo row #2' },
+    { key: 'events_photo_3', label: 'Events Page Photo 3', type: 'image', description: 'Events page photo row #3' },
+    { key: 'events_photo_4', label: 'Events Page Photo 4', type: 'image', description: 'Events page photo row #4' }
   ];
 
   const settingTypes = [
