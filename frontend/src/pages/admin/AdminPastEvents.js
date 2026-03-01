@@ -73,6 +73,7 @@ const AdminPastEvents = () => {
     setFormData({
       title: event.title,
       youtubeUrl: event.youtubeUrl || '',
+      thumbnailUrl: event.thumbnailUrl || '',
       description: event.description,
       displayOrder: event.displayOrder || 0
     });
