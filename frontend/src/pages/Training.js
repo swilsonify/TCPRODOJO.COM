@@ -83,18 +83,18 @@ const Training = () => {
         </div>
 
         {/* Photo Gallery Grid */}
-        {mediaPhotos.length > 0 && (
+        {gridPhotos.length > 0 && (
           <div className="mb-16" data-testid="training-photo-grid">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {mediaPhotos.map((photo, index) => (
+              {gridPhotos.map((photo) => (
                 <div
-                  key={photo.id || index}
+                  key={photo.index}
                   className="aspect-square overflow-hidden rounded-lg border border-blue-500/20 group"
-                  data-testid={`training-grid-photo-${index}`}
+                  data-testid={`training-grid-photo-${photo.index}`}
                 >
                   <img
-                    src={photo.mediaUrl}
-                    alt={photo.title || `Training photo ${index + 1}`}
+                    src={photo.url}
+                    alt={`Training photo ${photo.index}`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
