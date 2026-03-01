@@ -112,7 +112,7 @@ const Pros = () => {
                   <div className="text-blue-400 text-sm font-semibold mb-1">{graduate.promotion}</div>
                   <div className="text-gray-400 text-sm mb-3">{graduate.achievement}</div>
                   
-                  <p className="text-gray-300 text-sm">{graduate.bio}</p>
+                  <p className="text-gray-300 text-sm whitespace-pre-line">{graduate.bio}</p>
                 </div>
               </div>
             ))}
