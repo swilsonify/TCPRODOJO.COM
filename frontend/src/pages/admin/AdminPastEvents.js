@@ -99,6 +99,7 @@ const AdminPastEvents = () => {
     setFormData({
       title: '',
       youtubeUrl: '',
+      thumbnailUrl: '',
       description: '',
       displayOrder: 0
     });
