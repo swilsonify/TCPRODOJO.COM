@@ -25,7 +25,9 @@ const Media = () => {
   const loadMedia = async () => {
     try {
       const response = await axios.get(`${API}/api/media`);
-      setMedia(response.data);
+      // Hide grid category items from the public media page
+      const publicMedia = (response.data || []).filter(m => m.category !== 'grid');
+      setMedia(publicMedia);
     } catch (error) {
       console.error('Error loading media:', error);
       setMedia([]);
