@@ -286,6 +286,33 @@ const Events = () => {
             )}
           </form>
         </div>
+
+        {/* Events Photos Row */}
+        {(() => {
+          const eventPhotos = [1, 2, 3, 4]
+            .map(i => siteSettings[`events_photo_${i}`])
+            .filter(Boolean);
+          if (eventPhotos.length === 0) return null;
+          return (
+            <div className="max-w-5xl mx-auto mt-12" data-testid="events-photo-row">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {eventPhotos.map((url, index) => (
+                  <div
+                    key={index}
+                    className="aspect-square overflow-hidden rounded-lg border border-blue-500/20 group"
+                    data-testid={`events-photo-${index + 1}`}
+                  >
+                    <img
+                      src={url}
+                      alt={`Events photo ${index + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
