@@ -338,7 +338,7 @@ const AdminEvents = () => {
                     </button>
                   </div>
                 </div>
-                <p className="text-gray-300">{event.description}</p>
+                <p className="text-gray-300 whitespace-pre-line">{event.description}</p>
               </div>
             ))}
           </div>
