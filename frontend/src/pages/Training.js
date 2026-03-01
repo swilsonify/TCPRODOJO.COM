@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const Training = () => {
   const [tips, setTips] = useState([]);
-  const [mediaPhotos, setMediaPhotos] = useState([]);
+  const [siteSettings, setSiteSettings] = useState({});
   const [loading, setLoading] = useState(true);
   
   const API = process.env.REACT_APP_BACKEND_URL || '';
@@ -16,22 +16,26 @@ const Training = () => {
 
   const loadData = async () => {
     try {
-      const [tipsRes, mediaRes] = await Promise.all([
+      const [tipsRes, settingsRes] = await Promise.all([
         axios.get(`${API}/api/tips`),
-        axios.get(`${API}/api/media`)
+        axios.get(`${API}/api/site-settings`)
       ]);
       setTips(tipsRes.data);
-      // Filter for "grid" category photos and take up to 12
-      const photos = (mediaRes.data || []).filter(m => m.category === 'grid').slice(0, 12);
-      setMediaPhotos(photos);
+      setSiteSettings(settingsRes.data || {});
     } catch (error) {
       console.error('Error loading data:', error);
       setTips([]);
-      setMediaPhotos([]);
+      setSiteSettings({});
     } finally {
       setLoading(false);
     }
   };
+
+  // Build grid photos array from site settings
+  const gridPhotos = [];
+  for (let i = 1; i <= 12; i++) {
+    const url = siteSettings[`training_grid_photo_${i}`];
+    if (url) gridPhotos.push({ url, index: i });
 
   return (
     <div className="pt-28 pb-20 px-4" data-testid="training-page">
