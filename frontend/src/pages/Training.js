@@ -36,6 +36,7 @@ const Training = () => {
   for (let i = 1; i <= 12; i++) {
     const url = siteSettings[`training_grid_photo_${i}`];
     if (url) gridPhotos.push({ url, index: i });
+  }
 
   return (
     <div className="pt-28 pb-20 px-4" data-testid="training-page">
