@@ -76,7 +76,7 @@ const Home = () => {
             <p className="text-gray-300 text-lg leading-relaxed mb-12">
               Founded by coach, promoter and professional wrestler Dru Onyx, Torture Chamber Pro Wrestling Dojo delivers 
               a complete journey - from fundamentals to televised performance. Our top grads tour globally and work across radio, TV and film. 
-              In 2025, we celebrate our 21st anniversary and we're recruiting the next wave of professional wrestlers.
+              Since 2004, we have been recruiting the next wave of professional wrestlers. Join the team, live your dream.
             </p>
 
             {/* YouTube Video Embed */}
