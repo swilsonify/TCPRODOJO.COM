@@ -227,18 +227,18 @@ const Events = () => {
                 >
                   {/* Thumbnail */}
                   {event.thumbnailUrl && (
-                    <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
+                    <div className="bg-black flex items-center justify-center border-4 border-blue-500">
                       <img
                         src={event.thumbnailUrl}
                         alt={event.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-auto object-contain"
                       />
                     </div>
                   )}
 
                   {/* Video */}
                   {event.youtubeUrl && (
-                    <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
+                    <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                       <iframe
                         className="w-full h-full"
                         src={event.youtubeUrl}
@@ -252,7 +252,7 @@ const Events = () => {
 
                   {/* Fallback when no media */}
                   {!event.thumbnailUrl && !event.youtubeUrl && (
-                    <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
+                    <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                       <div className="text-center p-8">
                         <Calendar className="w-16 h-16 mx-auto mb-2 text-blue-500" />
                         <span className="text-gray-500 text-sm">Event Archive</span>
