@@ -145,7 +145,7 @@ const Events = () => {
                         </div>
                       </div>
 
-                      <p className="text-gray-300 mb-4 leading-relaxed">{event.description}</p>
+                      <p className="text-gray-300 mb-4 leading-relaxed whitespace-pre-line">{event.description}</p>
 
                       <div className="flex items-center space-x-2 text-gray-400 mb-6">
                         <Users size={18} />
@@ -186,7 +186,7 @@ const Events = () => {
                       </div>
                     </div>
 
-                    <p className="text-gray-300 mb-4 leading-relaxed">{event.description}</p>
+                    <p className="text-gray-300 mb-4 leading-relaxed whitespace-pre-line">{event.description}</p>
 
                     <div className="flex items-center space-x-2 text-gray-400 mb-6">
                       <Users size={18} />
