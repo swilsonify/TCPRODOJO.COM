@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, ArrowLeft, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Calendar, ArrowLeft, Plus, Edit2, Trash2, Save, X, Upload } from 'lucide-react';
 import axios from 'axios';
+import CloudinaryUploader from '../../components/CloudinaryUploader';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
