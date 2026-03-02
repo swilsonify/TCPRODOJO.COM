@@ -30,6 +30,7 @@ const AdminSiteSettings = () => {
     { key: 'classes_photo', label: 'Classes Page Photo', type: 'image', description: 'Photo displayed below the class schedule calendar' },
     { key: 'classes_photo_caption', label: 'Classes Photo Caption', type: 'text', description: 'Optional caption text below the classes page photo' },
     { key: 'coaches_page_photo', label: 'Coaches Page Photo', type: 'image', description: 'Photo displayed on the Success/Coaches page above the Start Training button' },
+    { key: 'coaches_page_photo_2', label: 'Coaches Page Photo 2', type: 'image', description: 'Second photo on the Success page, above the Join the Team button' },
     { key: 'classes_header_photo', label: 'Classes Header Photo', type: 'image', description: 'Photo displayed above the class schedule calendar' },
     { key: 'training_header_photo', label: 'Training Header Photo', type: 'image', description: 'Header banner image at the top of the Training page' },
     { key: 'training_featured_photo', label: 'Training Featured Photo', type: 'image', description: 'Large featured photo below the header on the Training page' },
