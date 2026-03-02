@@ -13,6 +13,14 @@ const Events = () => {
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
+  const convertToEmbedUrl = (url) => {
+    if (!url) return '';
+    if (url.includes('youtube.com/embed/')) return url;
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+    if (match && match[1]) return `https://www.youtube.com/embed/${match[1]}`;
+    return url;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     loadEvents();
