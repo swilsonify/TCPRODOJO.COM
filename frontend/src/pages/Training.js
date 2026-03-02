@@ -45,8 +45,8 @@ const Training = () => {
         <div className="text-center mb-16">
           <div className="mb-6">
             <img 
-              src="/images/your-excuses-v2.webp" 
-              alt="Your Excuses Are Your Own" 
+              src={siteSettings.training_header_photo || "/images/your-excuses-v2.webp"}
+              alt="Training Header" 
               className="max-w-4xl mx-auto w-full px-4"
             />
           </div>
@@ -55,7 +55,7 @@ const Training = () => {
         {/* Featured Photo */}
         <div className="mb-16">
           <img 
-            src="https://res.cloudinary.com/dpx8a9k7c/image/upload/v1763246788/WhatsApp_Image_2025-11-15_at_17.43.18_3_djziql.jpg" 
+            src={siteSettings.training_featured_photo || "https://res.cloudinary.com/dpx8a9k7c/image/upload/v1763246788/WhatsApp_Image_2025-11-15_at_17.43.18_3_djziql.jpg"}
             alt="TC Pro Dojo Training" 
             className="w-full rounded-lg shadow-2xl"
           />
