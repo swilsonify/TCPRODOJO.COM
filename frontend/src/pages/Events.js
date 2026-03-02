@@ -123,7 +123,7 @@ const Events = () => {
                         <div className="aspect-video bg-gradient-to-br from-blue-900 to-black rounded-lg overflow-hidden border-2 border-blue-500">
                           <iframe
                             className="w-full h-full"
-                            src={event.promoVideoUrl}
+                            src={convertToEmbedUrl(event.promoVideoUrl)}
                             title={`${event.title} Promo`}
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
