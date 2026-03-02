@@ -1161,11 +1161,10 @@ async def delete_media(media_id: str, username: str = Depends(verify_token)):
 @api_router.get("/site-settings")
 async def get_public_site_settings():
     settings = await db.site_settings.find({}, {"_id": 0}).to_list(1000)
-    # Return as a dictionary for easy access
     settings_dict = {}
     for setting in settings:
         settings_dict[setting['settingKey']] = setting['settingValue']
-    return settings_dict
+    return JSONResponse(content=settings_dict, headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
 @api_router.get("/site-settings/{key}")
 async def get_site_setting_by_key(key: str):
