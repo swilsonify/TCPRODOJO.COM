@@ -249,7 +249,7 @@ const Events = () => {
                     <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                       <iframe
                         className="w-full h-full"
-                        src={event.youtubeUrl}
+                        src={convertToEmbedUrl(event.youtubeUrl)}
                         title={event.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
