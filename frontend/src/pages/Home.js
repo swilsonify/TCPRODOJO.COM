@@ -195,6 +195,17 @@ const Home = () => {
             START YOUR JOURNEY
           </Link>
         </div>
+
+        {/* Home Bottom Photo */}
+        {siteSettings.home_bottom_photo && (
+          <div className="max-w-5xl mx-auto mt-12" data-testid="home-bottom-photo">
+            <img
+              src={siteSettings.home_bottom_photo}
+              alt="TC Pro Dojo"
+              className="w-full rounded-lg shadow-2xl"
+            />
+          </div>
+        )}
       </section>
     </div>
   );
