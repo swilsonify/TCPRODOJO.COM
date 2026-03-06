@@ -224,7 +224,8 @@ class ClassScheduleModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    day: str  # For recurring: "Monday", "Tuesday", etc. For one-time: the specific date "2026-03-15"
+    day: str = ""  # For recurring: "Monday", "Tuesday", etc. For one-time: the specific date "2026-03-15"
+    days: list = []  # Multiple days for recurring classes e.g. ["Monday", "Wednesday"]
     time: str
     title: str
     instructor: str

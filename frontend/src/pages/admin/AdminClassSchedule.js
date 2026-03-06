@@ -10,7 +10,7 @@ const AdminClassSchedule = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingClass, setEditingClass] = useState(null);
   const [formData, setFormData] = useState({
-    day: 'Monday',
+    days: ['Monday'],
     time: '',
     title: '',
     instructor: '',
@@ -54,13 +54,18 @@ const AdminClassSchedule = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminToken');
+      const payload = {
+        ...formData,
+        day: formData.days.length > 0 ? formData.days[0] : '',
+        days: formData.days
+      };
       
       if (editingClass) {
-        await axios.put(`${API}/api/admin/classes/${editingClass.id}`, formData, {
+        await axios.put(`${API}/api/admin/classes/${editingClass.id}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post(`${API}/api/admin/classes`, formData, {
+        await axios.post(`${API}/api/admin/classes`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -75,8 +80,12 @@ const AdminClassSchedule = () => {
 
   const handleEdit = (classItem) => {
     setEditingClass(classItem);
+    // Support both old single-day and new multi-day format
+    const classDays = classItem.days && classItem.days.length > 0 
+      ? classItem.days 
+      : classItem.day ? [classItem.day] : ['Monday'];
     setFormData({
-      day: classItem.day,
+      days: classDays,
       time: classItem.time,
       title: classItem.title,
       instructor: classItem.instructor,
@@ -107,7 +116,7 @@ const AdminClassSchedule = () => {
 
   const resetForm = () => {
     setFormData({
-      day: 'Monday',
+      days: ['Monday'],
       time: '',
       title: '',
       instructor: '',
@@ -216,18 +225,33 @@ const AdminClassSchedule = () => {
                     />
                   </div>
                 ) : (
-                  <div>
-                    <label className="block text-white font-semibold mb-2">Day</label>
-                    <select
-                      value={formData.day}
-                      onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-                      required
-                      className="w-full px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                    >
-                      {daysOfWeek.map((day) => (
-                        <option key={day} value={day}>{day}</option>
-                      ))}
-                    </select>
+                  <div className="md:col-span-2">
+                    <label className="block text-white font-semibold mb-2">Days</label>
+                    <div className="flex flex-wrap gap-2">
+                      {daysOfWeek.map((day) => {
+                        const selected = formData.days.includes(day);
+                        return (
+                          <button
+                            key={day}
+                            type="button"
+                            onClick={() => {
+                              const newDays = selected
+                                ? formData.days.filter(d => d !== day)
+                                : [...formData.days, day];
+                              setFormData({ ...formData, days: newDays });
+                            }}
+                            className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
+                              selected
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                            }`}
+                          >
+                            {day}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-gray-400 text-xs mt-2">Select one or more days</p>
                   </div>
                 )}
 
@@ -375,7 +399,7 @@ const AdminClassSchedule = () => {
                   <div className="space-y-2 mb-4 text-gray-300">
                     <div className="flex items-center">
                       <Calendar size={16} className="mr-2 text-blue-400" />
-                      <span>{classItem.day}</span>
+                      <span>{classItem.days && classItem.days.length > 0 ? classItem.days.join(', ') : classItem.day}</span>
                     </div>
                     <div className="flex items-center">
                       <Clock size={16} className="mr-2 text-blue-400" />

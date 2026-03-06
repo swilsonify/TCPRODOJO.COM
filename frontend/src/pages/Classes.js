@@ -530,7 +530,10 @@ const Classes = () => {
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {daysOfWeek.map((dayName) => {
-                const dayClasses = currentClasses.filter(c => c.day === dayName);
+                const dayClasses = currentClasses.filter(c => {
+                  if (c.days && c.days.length > 0) return c.days.includes(dayName);
+                  return c.day === dayName;
+                });
                 if (dayClasses.length === 0) return null;
                 
                 return (
