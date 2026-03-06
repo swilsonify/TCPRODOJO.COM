@@ -778,7 +778,200 @@ async def cancel_class_instance(cancelled: CancelledClassModel, username: str = 
     doc = cancelled.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.cancelled_classes.insert_one(doc)
+
+    # Send email notifications to enrolled students
+    asyncio.ensure_future(notify_students_of_class_change(cancelled))
+
     return cancelled
+
+
+async def notify_students_of_class_change(cancelled: CancelledClassModel):
+    """Send email notifications to students enrolled in the affected class."""
+    try:
+        # Find the class details
+        class_doc = await db.classes.find_one({"id": cancelled.class_id}, {"_id": 0})
+        if not class_doc:
+            logging.warning(f"Class {cancelled.class_id} not found for notification")
+            return
+
+        # Find enrolled students with notifications enabled
+        students = await db.students.find(
+            {"classes": cancelled.class_id, "active": True, "notify_class_changes": True},
+            {"_id": 0}
+        ).to_list(10000)
+
+        if not students:
+            logging.info(f"No students to notify for class {cancelled.class_id}")
+            return
+
+        class_title = class_doc.get('title', 'Unknown Class')
+        cancelled_date = cancelled.cancelled_date
+        is_rescheduled = cancelled.status == 'rescheduled'
+        reason = cancelled.reason or ''
+
+        # Format date for display
+        try:
+            date_obj = datetime.strptime(cancelled_date, '%Y-%m-%d')
+            formatted_date = date_obj.strftime('%A, %B %d, %Y')
+        except Exception:
+            formatted_date = cancelled_date
+
+        subject = f"Class Update: {class_title} - {formatted_date}"
+
+        email_html = build_class_notification_email(
+            class_title=class_title,
+            formatted_date=formatted_date,
+            is_rescheduled=is_rescheduled,
+            original_time=class_doc.get('time', ''),
+            rescheduled_time=cancelled.rescheduled_time if is_rescheduled else '',
+            reason=reason,
+            instructor=class_doc.get('instructor', '')
+        )
+
+        for student in students:
+            try:
+                params = {
+                    "from": SENDER_EMAIL,
+                    "to": [student['email']],
+                    "subject": subject,
+                    "html": email_html.replace('{{STUDENT_NAME}}', student.get('name', 'Student'))
+                }
+                await asyncio.to_thread(resend.Emails.send, params)
+                logging.info(f"Notification sent to {student['email']} for class {class_title}")
+            except Exception as e:
+                logging.error(f"Failed to notify {student['email']}: {str(e)}")
+
+    except Exception as e:
+        logging.error(f"Error in notify_students_of_class_change: {str(e)}")
+
+
+def build_class_notification_email(class_title, formatted_date, is_rescheduled, original_time, rescheduled_time, reason, instructor):
+    """Build the HTML email for class change notifications."""
+    status_color = '#f97316' if is_rescheduled else '#ef4444'
+    status_label = 'RESCHEDULED' if is_rescheduled else 'CANCELLED'
+    status_icon = '&#128260;' if is_rescheduled else '&#9888;&#65039;'
+
+    rescheduled_section = ''
+    if is_rescheduled and rescheduled_time:
+        rescheduled_section = f'''
+            <tr>
+                <td style="padding: 12px 16px; font-weight: bold; color: #9ca3af; width: 140px; vertical-align: top;">New Time:</td>
+                <td style="padding: 12px 16px; color: #f97316; font-weight: bold; font-size: 16px;">{rescheduled_time}</td>
+            </tr>
+        '''
+
+    reason_section = ''
+    if reason and reason != 'No reason provided':
+        reason_section = f'''
+            <tr>
+                <td style="padding: 12px 16px; font-weight: bold; color: #9ca3af; width: 140px; vertical-align: top;">Reason:</td>
+                <td style="padding: 12px 16px; color: #d1d5db;">{reason}</td>
+            </tr>
+        '''
+
+    return f'''
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #111827; color: #fff;">
+        <div style="background-color: #1e3a5f; padding: 24px; text-align: center;">
+            <h1 style="color: #3b82f6; margin: 0; font-size: 24px; letter-spacing: 2px;">TC PRO DOJO</h1>
+            <p style="color: #9ca3af; font-size: 11px; margin: 4px 0 0 0; letter-spacing: 1px;">TORTURE CHAMBER PRO WRESTLING</p>
+        </div>
+
+        <div style="padding: 32px 24px;">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="display: inline-block; background-color: {status_color}22; border: 2px solid {status_color}; border-radius: 8px; padding: 12px 24px;">
+                    <span style="font-size: 20px;">{status_icon}</span>
+                    <span style="font-size: 18px; font-weight: bold; color: {status_color}; margin-left: 8px;">{status_label}</span>
+                </div>
+            </div>
+
+            <p style="color: #d1d5db; font-size: 15px; text-align: center; margin-bottom: 24px;">
+                Hi {{{{STUDENT_NAME}}}},<br/>
+                A class you are enrolled in has been updated:
+            </p>
+
+            <table style="width: 100%; border-collapse: collapse; background-color: #1f2937; border-radius: 8px; overflow: hidden;">
+                <tr>
+                    <td style="padding: 12px 16px; font-weight: bold; color: #9ca3af; width: 140px; vertical-align: top;">Class:</td>
+                    <td style="padding: 12px 16px; color: #fff; font-weight: bold; font-size: 16px;">{class_title}</td>
+                </tr>
+                <tr style="border-top: 1px solid #374151;">
+                    <td style="padding: 12px 16px; font-weight: bold; color: #9ca3af; vertical-align: top;">Date:</td>
+                    <td style="padding: 12px 16px; color: #d1d5db;">{formatted_date}</td>
+                </tr>
+                <tr style="border-top: 1px solid #374151;">
+                    <td style="padding: 12px 16px; font-weight: bold; color: #9ca3af; vertical-align: top;">Original Time:</td>
+                    <td style="padding: 12px 16px; color: #d1d5db; {'text-decoration: line-through;' if is_rescheduled else ''}">{original_time}</td>
+                </tr>
+                {rescheduled_section}
+                <tr style="border-top: 1px solid #374151;">
+                    <td style="padding: 12px 16px; font-weight: bold; color: #9ca3af; vertical-align: top;">Instructor:</td>
+                    <td style="padding: 12px 16px; color: #d1d5db;">{instructor}</td>
+                </tr>
+                {reason_section}
+            </table>
+
+            <p style="color: #9ca3af; font-size: 13px; text-align: center; margin-top: 24px;">
+                If you have any questions, please contact us at <a href="https://tcprodojo.com/contact" style="color: #3b82f6;">tcprodojo.com/contact</a>
+            </p>
+        </div>
+
+        <div style="background-color: #0f172a; padding: 16px; text-align: center; border-top: 1px solid #1e293b;">
+            <p style="color: #6b7280; font-size: 11px; margin: 0;">
+                9800 Rue Meilleur, Suite 200, Montreal, QC H3L 3J4<br/>
+                <a href="https://tcprodojo.com" style="color: #3b82f6; text-decoration: none;">tcprodojo.com</a>
+            </p>
+        </div>
+    </div>
+    '''
+
+
+# Email preview endpoint for admin
+class EmailPreviewRequest(BaseModel):
+    class_id: str = ""
+    status: str = "cancelled"  # "cancelled" or "rescheduled"
+    date: str = ""
+    reason: str = ""
+    rescheduled_time: str = ""
+
+@api_router.post("/admin/classes/email-preview")
+async def preview_class_notification_email(req: EmailPreviewRequest, username: str = Depends(verify_token)):
+    """Preview what the class change notification email would look like."""
+    class_title = "Sample Class"
+    instructor = "Coach"
+    original_time = "6:00 PM - 8:00 PM"
+
+    if req.class_id:
+        class_doc = await db.classes.find_one({"id": req.class_id}, {"_id": 0})
+        if class_doc:
+            class_title = class_doc.get('title', class_title)
+            instructor = class_doc.get('instructor', instructor)
+            original_time = class_doc.get('time', original_time)
+
+    formatted_date = req.date or "Monday, March 10, 2026"
+    is_rescheduled = req.status == 'rescheduled'
+
+    html = build_class_notification_email(
+        class_title=class_title,
+        formatted_date=formatted_date,
+        is_rescheduled=is_rescheduled,
+        original_time=original_time,
+        rescheduled_time=req.rescheduled_time or ("8:00 PM - 10:00 PM" if is_rescheduled else ""),
+        reason=req.reason or ("Coach unavailable" if not is_rescheduled else "Venue change"),
+        instructor=instructor
+    ).replace('{{STUDENT_NAME}}', 'John Doe')
+
+    # Count students who would be notified
+    student_count = 0
+    if req.class_id:
+        student_count = await db.students.count_documents(
+            {"classes": req.class_id, "active": True, "notify_class_changes": True}
+        )
+
+    return {
+        "html": html,
+        "student_count": student_count,
+        "subject": f"Class Update: {class_title} - {formatted_date}"
+    }
 
 @api_router.get("/admin/classes/cancelled", response_model=List[CancelledClassModel])
 async def get_cancelled_classes(username: str = Depends(verify_token)):

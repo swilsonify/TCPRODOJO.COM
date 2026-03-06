@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Any, Optional
 
 # Configuration
-BACKEND_URL = "https://tc-pro-preview.preview.emergentagent.com"
+BACKEND_URL = "https://tc-pro-classes.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test credentials

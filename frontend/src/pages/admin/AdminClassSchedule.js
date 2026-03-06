@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, Calendar, Clock, CalendarDays, Repeat } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, Calendar, Clock, CalendarDays, Repeat, Mail, Eye } from 'lucide-react';
 
 const AdminClassSchedule = () => {
   const navigate = useNavigate();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showEmailPreview, setShowEmailPreview] = useState(false);
+  const [emailPreviewHtml, setEmailPreviewHtml] = useState({ cancelled: '', rescheduled: '' });
   const [editingClass, setEditingClass] = useState(null);
   const [formData, setFormData] = useState({
     schedule: [{ day: 'Monday', time: '' }],
@@ -143,6 +145,32 @@ const AdminClassSchedule = () => {
   const levels = ['Beginner', 'Intermediate', 'Advanced', 'All Levels'];
   const types = ['Wrestling', 'Boxing', 'Fitness'];
 
+  const loadEmailPreviews = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+      const sampleClassId = classes.length > 0 ? classes[0].id : '';
+      const [cancelledRes, rescheduledRes] = await Promise.all([
+        axios.post(`${API}/api/admin/classes/email-preview`, {
+          class_id: sampleClassId, status: 'cancelled', date: 'Monday, March 10, 2026', reason: 'Coach unavailable'
+        }, { headers }),
+        axios.post(`${API}/api/admin/classes/email-preview`, {
+          class_id: sampleClassId, status: 'rescheduled', date: 'Wednesday, March 12, 2026',
+          reason: 'Venue change', rescheduled_time: '8:00 PM - 10:00 PM'
+        }, { headers })
+      ]);
+      setEmailPreviewHtml({
+        cancelled: cancelledRes.data.html,
+        rescheduled: rescheduledRes.data.html,
+        studentCount: cancelledRes.data.student_count
+      });
+      setShowEmailPreview(true);
+    } catch (error) {
+      console.error('Error loading email preview:', error);
+      alert('Failed to load email preview.');
+    }
+  };
+
   // Separate recurring and one-time classes
   const recurringClasses = classes.filter(c => !c.is_one_time);
   const oneTimeClasses = classes.filter(c => c.is_one_time);
@@ -177,6 +205,15 @@ const AdminClassSchedule = () => {
           >
             <Plus size={20} className="mr-2" />
             Add Class
+          </button>
+          <button
+            onClick={loadEmailPreviews}
+            className="flex items-center px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded transition-colors ml-3"
+            data-testid="email-preview-btn"
+          >
+            <Mail size={18} className="mr-2" />
+            <Eye size={16} className="mr-1" />
+            Email Preview
           </button>
         </div>
 
@@ -560,6 +597,55 @@ const AdminClassSchedule = () => {
             </div>
           )}
         </div>
+
+        {/* Email Preview Modal */}
+        {showEmailPreview && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" data-testid="email-preview-modal">
+            <div className="bg-gray-900 border border-blue-500/20 rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center p-6 border-b border-gray-700 sticky top-0 bg-gray-900 z-10">
+                <div>
+                  <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                    <Mail size={20} className="text-blue-400" />
+                    Class Notification Email Preview
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-1">
+                    These emails are automatically sent to enrolled students when a class is cancelled or rescheduled.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowEmailPreview(false)}
+                  className="text-gray-400 hover:text-white text-2xl px-2"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm font-bold text-red-400 text-center mb-3 tracking-wide">CANCELLATION EMAIL</p>
+                  <div
+                    className="border border-gray-700 rounded-lg overflow-hidden"
+                    dangerouslySetInnerHTML={{ __html: emailPreviewHtml.cancelled }}
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-orange-400 text-center mb-3 tracking-wide">RESCHEDULE EMAIL</p>
+                  <div
+                    className="border border-gray-700 rounded-lg overflow-hidden"
+                    dangerouslySetInnerHTML={{ __html: emailPreviewHtml.rescheduled }}
+                  />
+                </div>
+              </div>
+              <div className="p-4 border-t border-gray-700 text-center">
+                <button
+                  onClick={() => setShowEmailPreview(false)}
+                  className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
