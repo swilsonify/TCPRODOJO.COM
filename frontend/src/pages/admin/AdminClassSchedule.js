@@ -10,8 +10,7 @@ const AdminClassSchedule = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingClass, setEditingClass] = useState(null);
   const [formData, setFormData] = useState({
-    days: ['Monday'],
-    time: '',
+    schedule: [{ day: 'Monday', time: '' }],
     title: '',
     instructor: '',
     level: 'Beginner',
@@ -19,7 +18,8 @@ const AdminClassSchedule = () => {
     type: 'Wrestling',
     description: '',
     is_one_time: false,
-    one_time_date: ''
+    one_time_date: '',
+    time: ''
   });
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
@@ -56,8 +56,11 @@ const AdminClassSchedule = () => {
       const token = localStorage.getItem('adminToken');
       const payload = {
         ...formData,
-        day: formData.days.length > 0 ? formData.days[0] : '',
-        days: formData.days
+        // Backward compat: set day/days/time from schedule
+        day: formData.schedule.length > 0 ? formData.schedule[0].day : '',
+        days: formData.schedule.map(s => s.day),
+        time: formData.is_one_time ? formData.time : (formData.schedule.length > 0 ? formData.schedule[0].time : ''),
+        schedule: formData.schedule
       };
       
       if (editingClass) {
@@ -80,13 +83,17 @@ const AdminClassSchedule = () => {
 
   const handleEdit = (classItem) => {
     setEditingClass(classItem);
-    // Support both old single-day and new multi-day format
-    const classDays = classItem.days && classItem.days.length > 0 
-      ? classItem.days 
-      : classItem.day ? [classItem.day] : ['Monday'];
+    // Build schedule from existing data
+    let schedule;
+    if (classItem.schedule && classItem.schedule.length > 0) {
+      schedule = classItem.schedule;
+    } else if (classItem.days && classItem.days.length > 0) {
+      schedule = classItem.days.map(d => ({ day: d, time: classItem.time || '' }));
+    } else {
+      schedule = [{ day: classItem.day || 'Monday', time: classItem.time || '' }];
+    }
     setFormData({
-      days: classDays,
-      time: classItem.time,
+      schedule,
       title: classItem.title,
       instructor: classItem.instructor,
       level: classItem.level,
@@ -94,7 +101,8 @@ const AdminClassSchedule = () => {
       type: classItem.type,
       description: classItem.description || '',
       is_one_time: classItem.is_one_time || false,
-      one_time_date: classItem.one_time_date || ''
+      one_time_date: classItem.one_time_date || '',
+      time: classItem.time || ''
     });
     setShowForm(true);
   };
@@ -116,8 +124,7 @@ const AdminClassSchedule = () => {
 
   const resetForm = () => {
     setFormData({
-      days: ['Monday'],
-      time: '',
+      schedule: [{ day: 'Monday', time: '' }],
       title: '',
       instructor: '',
       level: 'Beginner',
@@ -125,7 +132,8 @@ const AdminClassSchedule = () => {
       type: 'Wrestling',
       description: '',
       is_one_time: false,
-      one_time_date: ''
+      one_time_date: '',
+      time: ''
     });
     setEditingClass(null);
     setShowForm(false);
@@ -214,58 +222,83 @@ const AdminClassSchedule = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {/* Day or Date selection based on class type */}
                 {formData.is_one_time ? (
-                  <div>
-                    <label className="block text-white font-semibold mb-2">Date</label>
-                    <input
-                      type="date"
-                      value={formData.one_time_date}
-                      onChange={(e) => setFormData({ ...formData, one_time_date: e.target.value })}
-                      required
-                      className="w-full px-4 py-2 bg-gray-900 border border-purple-500/40 rounded text-white focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
+                  <>
+                    <div>
+                      <label className="block text-white font-semibold mb-2">Date</label>
+                      <input
+                        type="date"
+                        value={formData.one_time_date}
+                        onChange={(e) => setFormData({ ...formData, one_time_date: e.target.value })}
+                        required
+                        className="w-full px-4 py-2 bg-gray-900 border border-purple-500/40 rounded text-white focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white font-semibold mb-2">Time</label>
+                      <input
+                        type="text"
+                        value={formData.time}
+                        onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                        placeholder="6:00 PM - 8:00 PM"
+                        required
+                        className="w-full px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                  </>
                 ) : (
                   <div className="md:col-span-2">
-                    <label className="block text-white font-semibold mb-2">Days</label>
-                    <div className="flex flex-wrap gap-2">
-                      {daysOfWeek.map((day) => {
-                        const selected = formData.days.includes(day);
-                        return (
-                          <button
-                            key={day}
-                            type="button"
-                            onClick={() => {
-                              const newDays = selected
-                                ? formData.days.filter(d => d !== day)
-                                : [...formData.days, day];
-                              setFormData({ ...formData, days: newDays });
+                    <label className="block text-white font-semibold mb-2">Schedule (Day & Time)</label>
+                    <div className="space-y-3">
+                      {formData.schedule.map((entry, idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                          <select
+                            value={entry.day}
+                            onChange={(e) => {
+                              const newSchedule = [...formData.schedule];
+                              newSchedule[idx] = { ...entry, day: e.target.value };
+                              setFormData({ ...formData, schedule: newSchedule });
                             }}
-                            className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
-                              selected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                            }`}
+                            className="px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                           >
-                            {day}
-                          </button>
-                        );
-                      })}
+                            {daysOfWeek.map((day) => (
+                              <option key={day} value={day}>{day}</option>
+                            ))}
+                          </select>
+                          <input
+                            type="text"
+                            value={entry.time}
+                            onChange={(e) => {
+                              const newSchedule = [...formData.schedule];
+                              newSchedule[idx] = { ...entry, time: e.target.value };
+                              setFormData({ ...formData, schedule: newSchedule });
+                            }}
+                            placeholder="6:00 PM - 8:00 PM"
+                            className="flex-1 px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
+                          />
+                          {formData.schedule.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newSchedule = formData.schedule.filter((_, i) => i !== idx);
+                                setFormData({ ...formData, schedule: newSchedule });
+                              }}
+                              className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
+                            >
+                              &times;
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, schedule: [...formData.schedule, { day: 'Monday', time: '' }] })}
+                        className="text-blue-400 hover:text-blue-300 text-sm font-semibold"
+                      >
+                        + Add another day
+                      </button>
                     </div>
-                    <p className="text-gray-400 text-xs mt-2">Select one or more days</p>
                   </div>
                 )}
-
-                <div>
-                  <label className="block text-white font-semibold mb-2">Time</label>
-                  <input
-                    type="text"
-                    value={formData.time}
-                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    placeholder="6:00 PM - 8:00 PM"
-                    required
-                    className="w-full px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
 
                 <div>
                   <label className="block text-white font-semibold mb-2">Class Title</label>
@@ -399,12 +432,21 @@ const AdminClassSchedule = () => {
                   <div className="space-y-2 mb-4 text-gray-300">
                     <div className="flex items-center">
                       <Calendar size={16} className="mr-2 text-blue-400" />
-                      <span>{classItem.days && classItem.days.length > 0 ? classItem.days.join(', ') : classItem.day}</span>
+                      <span>
+                        {classItem.schedule && classItem.schedule.length > 0
+                          ? classItem.schedule.map(s => `${s.day} @ ${s.time}`).join(' | ')
+                          : classItem.days && classItem.days.length > 0
+                            ? classItem.days.join(', ')
+                            : classItem.day
+                        }
+                      </span>
                     </div>
-                    <div className="flex items-center">
-                      <Clock size={16} className="mr-2 text-blue-400" />
-                      <span>{classItem.time}</span>
-                    </div>
+                    {classItem.schedule && classItem.schedule.length > 0 ? null : (
+                      <div className="flex items-center">
+                        <Clock size={16} className="mr-2 text-blue-400" />
+                        <span>{classItem.time}</span>
+                      </div>
+                    )}
                     <div className="text-sm">
                       <strong>Instructor:</strong> {classItem.instructor}
                     </div>

@@ -531,8 +531,16 @@ const Classes = () => {
             <div className="grid grid-cols-1 gap-4">
               {daysOfWeek.map((dayName) => {
                 const dayClasses = currentClasses.filter(c => {
+                  if (c.schedule && c.schedule.length > 0) return c.schedule.some(s => s.day === dayName);
                   if (c.days && c.days.length > 0) return c.days.includes(dayName);
                   return c.day === dayName;
+                }).map(c => {
+                  // Get the correct time for this specific day
+                  if (c.schedule && c.schedule.length > 0) {
+                    const entry = c.schedule.find(s => s.day === dayName);
+                    if (entry) return { ...c, time: entry.time };
+                  }
+                  return c;
                 });
                 if (dayClasses.length === 0) return null;
                 
