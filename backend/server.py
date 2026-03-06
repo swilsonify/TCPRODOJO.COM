@@ -1410,6 +1410,20 @@ async def delete_site_setting(setting_id: str, username: str = Depends(verify_to
 # Include the router in the main app
 app.include_router(api_router)
 
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+
+class NoCacheMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        if request.url.path.startswith("/api"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+        return response
+
+app.add_middleware(NoCacheMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
