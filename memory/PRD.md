@@ -49,6 +49,9 @@ Build and manage a full-stack website for "Torture Chamber Pro Wrestling Dojo" -
 - Dynamic site settings for logos and page photos
 - Address with Google Maps link ("Suite 200" included)
 - One-time/special class scheduling
+- Multi-day/multi-time class scheduling (schedule array: [{day, time}])
+- Email notifications to enrolled students on class cancellation/reschedule
+- Admin email preview (cancellation + reschedule formats)
 
 ## Completed Tasks (Feb 2026)
 - [x] Media page (public + admin)
@@ -67,8 +70,19 @@ Build and manage a full-stack website for "Torture Chamber Pro Wrestling Dojo" -
 - [x] Classes header photo (above calendar, via Site Settings `classes_header_photo`)
 - [x] Media category system ("general" vs "grid") to organize photos for different purposes
 
+## Completed Tasks (Mar 2026)
+- [x] Multi-day/multi-time class scheduling (single class can be Mon@6PM, Wed@7:30PM)
+- [x] Classes page redesign: replaced 7x15 time grid with clean day-card layout, only showing active days
+- [x] Fixed same-time classes displaying side-by-side instead of overlapping
+- [x] Fixed multi-day schedule: all days now show correctly (was only using legacy `day` field)
+- [x] Email notification system: enrolled students notified on cancel/reschedule via Resend
+- [x] Admin email preview feature: cancellation + reschedule email formats viewable from admin panel
+- [x] Cache-busting headers for site settings API
+
 ## Upcoming/Future Tasks
-- None specified by user
+- Wire up media categories to respective pages (Events, Coaches, Classes, Home photo galleries)
+- Refactor AdminSiteSettings.js predefined settings into grouped structure
+- Create useSiteSettings() custom hook to reduce code duplication
 
 ## Known Issues
 - Git history divergence when using "Save to Github" - advise user to create new branch if conflicts arise
