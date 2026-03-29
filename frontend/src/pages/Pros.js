@@ -128,7 +128,7 @@ const Pros = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <div className={`grid grid-cols-1 gap-6 max-w-7xl mx-auto ${endorsements.length >= 9 ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 max-w-4xl'}`}>
             {endorsements.map((endorsement, index) => (
               <div
                 key={index}
