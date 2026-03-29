@@ -25,12 +25,17 @@ const AdminProducts = () => {
   const loadProducts = async () => {
     try {
       const token = localStorage.getItem('adminToken');
+      if (!token) { navigate('/admin/login'); return; }
       const res = await axios.get(`${API}/api/admin/products`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(res.data);
     } catch (e) {
-      console.error('Error loading products:', e);
+      if (e.response?.status === 401) {
+        navigate('/admin/login');
+      } else {
+        console.error('Error loading products:', e);
+      }
     } finally {
       setLoading(false);
     }
@@ -56,11 +61,16 @@ const AdminProducts = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
-      loadProducts();
       resetForm();
+      loadProducts();
     } catch (e) {
       console.error('Error saving product:', e);
-      alert('Error saving product.');
+      if (e.response?.status === 401) {
+        alert('Session expired. Please log in again.');
+        navigate('/admin/login');
+      } else {
+        alert('Error saving product: ' + (e.response?.data?.detail || e.message));
+      }
     }
   };
 
