@@ -20,6 +20,8 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import resend
+from starlette.requests import Request as StarletteRequest
+from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 
 
 ROOT_DIR = Path(__file__).parent
@@ -297,7 +299,93 @@ class SiteSettingsModel(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
-# Helper functions for admin auth
+# ==================== SHOP MODELS ====================
+
+class ProductModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str = ""
+    price: float  # in CAD
+    imageUrl: str = ""
+    sizes: List[str] = []  # e.g. ["S", "M", "L", "XL"]
+    category: str = "merch"
+    active: bool = True
+    displayOrder: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class OrderItemSchema(BaseModel):
+    product_id: str
+    name: str
+    price: float
+    size: str = ""
+    quantity: int = 1
+
+
+class ShippingAddressSchema(BaseModel):
+    street: str
+    city: str
+    province: str = ""
+    country: str
+    postal_code: str
+
+
+class OrderModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_name: str
+    customer_email: str
+    customer_phone: str = ""
+    items: List[dict] = []
+    shipping_address: dict = {}
+    shipping_zone: str = ""  # "quebec", "canada", "international"
+    shipping_cost: float = 0.0
+    subtotal: float = 0.0
+    total: float = 0.0
+    stripe_session_id: str = ""
+    payment_status: str = "pending"  # pending, paid, failed, expired
+    order_notes: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class CheckoutRequest(BaseModel):
+    customer_name: str
+    customer_email: str
+    customer_phone: str = ""
+    items: List[OrderItemSchema]
+    shipping_address: ShippingAddressSchema
+    order_notes: str = ""
+    origin_url: str
+
+
+# Shipping rates (CAD)
+SHIPPING_RATES = {
+    "quebec": 10.00,
+    "canada": 15.00,
+    "international": 25.00,
+}
+
+CANADA_PROVINCES = [
+    "AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT",
+    "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador",
+    "Nova Scotia", "Northwest Territories", "Nunavut", "Ontario", "Prince Edward Island",
+    "Quebec", "Saskatchewan", "Yukon"
+]
+
+SHOP_SENDER_EMAIL = os.environ.get('SHOP_SENDER_EMAIL', 'info@tcprodojo.com')
+
+
+def get_shipping_zone(country: str, province: str = "") -> str:
+    country_lower = country.strip().lower()
+    if country_lower in ("canada", "ca", "can"):
+        prov = province.strip().upper()
+        if prov in ("QC", "QUEBEC", "QUÉBEC", "MONTREAL", "MONTRÉAL"):
+            return "quebec"
+        return "canada"
+    return "international"
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -1407,14 +1495,353 @@ async def delete_site_setting(setting_id: str, username: str = Depends(verify_to
     return {"message": "Setting deleted successfully"}
 
 
+# ==================== SHOP / PRODUCTS ====================
+
+# Public product listing
+@api_router.get("/products")
+async def get_public_products():
+    products = await db.products.find({"active": True}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    return products
+
+# Admin product CRUD
+@api_router.get("/admin/products")
+async def get_admin_products(username: str = Depends(verify_token)):
+    products = await db.products.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    return products
+
+@api_router.post("/admin/products")
+async def create_product(product: ProductModel, username: str = Depends(verify_token)):
+    doc = product.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.products.insert_one(doc)
+    return {k: v for k, v in doc.items() if k != '_id'}
+
+@api_router.put("/admin/products/{product_id}")
+async def update_product(product_id: str, product: ProductModel, username: str = Depends(verify_token)):
+    doc = product.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+    result = await db.products.update_one({"id": product_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {k: v for k, v in doc.items() if k != '_id'}
+
+@api_router.delete("/admin/products/{product_id}")
+async def delete_product(product_id: str, username: str = Depends(verify_token)):
+    result = await db.products.delete_one({"id": product_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {"message": "Product deleted successfully"}
+
+
+# ==================== SHOP CHECKOUT ====================
+
+@api_router.get("/shop/shipping-rates")
+async def get_shipping_rates():
+    return {
+        "rates": SHIPPING_RATES,
+        "note": "Please allow 4 weeks for delivery."
+    }
+
+@api_router.post("/shop/checkout")
+async def shop_checkout(req: CheckoutRequest, http_request: StarletteRequest):
+    # Validate items exist and get server-side prices
+    items_for_order = []
+    subtotal = 0.0
+    for item in req.items:
+        product = await db.products.find_one({"id": item.product_id, "active": True}, {"_id": 0})
+        if not product:
+            raise HTTPException(status_code=400, detail=f"Product not found: {item.product_id}")
+        line_total = product['price'] * item.quantity
+        subtotal += line_total
+        items_for_order.append({
+            "product_id": item.product_id,
+            "name": product['name'],
+            "price": product['price'],
+            "size": item.size,
+            "quantity": item.quantity,
+            "line_total": line_total
+        })
+
+    # Calculate shipping
+    shipping_zone = get_shipping_zone(req.shipping_address.country, req.shipping_address.province)
+    shipping_cost = SHIPPING_RATES.get(shipping_zone, SHIPPING_RATES["international"])
+    total = subtotal + shipping_cost
+
+    # Create order record
+    order = OrderModel(
+        customer_name=req.customer_name,
+        customer_email=req.customer_email,
+        customer_phone=req.customer_phone,
+        items=items_for_order,
+        shipping_address=req.shipping_address.model_dump(),
+        shipping_zone=shipping_zone,
+        shipping_cost=shipping_cost,
+        subtotal=subtotal,
+        total=total,
+        payment_status="pending",
+        order_notes=req.order_notes
+    )
+
+    # Create Stripe checkout session
+    stripe_api_key = os.environ.get('STRIPE_API_KEY')
+    host_url = str(http_request.base_url).rstrip('/')
+    webhook_url = f"{host_url}/api/webhook/stripe"
+    stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
+
+    origin = req.origin_url.rstrip('/')
+    success_url = f"{origin}/shop?session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = f"{origin}/shop"
+
+    # Build item description for Stripe
+    item_desc = ", ".join([f"{i['name']} x{i['quantity']}" for i in items_for_order])
+
+    checkout_req = CheckoutSessionRequest(
+        amount=float(total),
+        currency="cad",
+        success_url=success_url,
+        cancel_url=cancel_url,
+        metadata={
+            "order_id": order.id,
+            "customer_email": req.customer_email,
+            "customer_name": req.customer_name,
+            "items": item_desc[:500]
+        }
+    )
+
+    session = await stripe_checkout.create_checkout_session(checkout_req)
+
+    # Save order with stripe session id
+    order.stripe_session_id = session.session_id
+    order_doc = order.model_dump()
+    order_doc['created_at'] = order_doc['created_at'].isoformat()
+    await db.orders.insert_one(order_doc)
+
+    # Also save to payment_transactions
+    await db.payment_transactions.insert_one({
+        "id": str(uuid.uuid4()),
+        "order_id": order.id,
+        "session_id": session.session_id,
+        "amount": total,
+        "currency": "cad",
+        "payment_status": "pending",
+        "metadata": {"order_id": order.id, "customer_email": req.customer_email},
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+
+    return {"checkout_url": session.url, "session_id": session.session_id, "order_id": order.id}
+
+
+@api_router.get("/shop/order-status/{session_id}")
+async def get_order_status(session_id: str):
+    stripe_api_key = os.environ.get('STRIPE_API_KEY')
+    stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url="")
+
+    checkout_status = await stripe_checkout.get_checkout_status(session_id)
+
+    # Update order and payment transaction
+    new_status = "paid" if checkout_status.payment_status == "paid" else (
+        "expired" if checkout_status.status == "expired" else "pending"
+    )
+
+    order = await db.orders.find_one({"stripe_session_id": session_id}, {"_id": 0})
+    if order and order.get('payment_status') != 'paid':
+        await db.orders.update_one(
+            {"stripe_session_id": session_id},
+            {"$set": {"payment_status": new_status}}
+        )
+        await db.payment_transactions.update_one(
+            {"session_id": session_id},
+            {"$set": {"payment_status": new_status}}
+        )
+
+        # Send emails on successful payment (only once)
+        if new_status == "paid" and order.get('payment_status') != 'paid':
+            asyncio.ensure_future(send_order_emails(order))
+
+    return {
+        "status": checkout_status.status,
+        "payment_status": checkout_status.payment_status,
+        "amount_total": checkout_status.amount_total,
+        "currency": checkout_status.currency
+    }
+
+
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: StarletteRequest):
+    body = await request.body()
+    signature = request.headers.get("Stripe-Signature", "")
+    stripe_api_key = os.environ.get('STRIPE_API_KEY')
+    host_url = str(request.base_url).rstrip('/')
+    webhook_url = f"{host_url}/api/webhook/stripe"
+    stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
+
+    try:
+        webhook_response = await stripe_checkout.handle_webhook(body, signature)
+        if webhook_response.payment_status == "paid":
+            order = await db.orders.find_one(
+                {"stripe_session_id": webhook_response.session_id}, {"_id": 0}
+            )
+            if order and order.get('payment_status') != 'paid':
+                await db.orders.update_one(
+                    {"stripe_session_id": webhook_response.session_id},
+                    {"$set": {"payment_status": "paid"}}
+                )
+                await db.payment_transactions.update_one(
+                    {"session_id": webhook_response.session_id},
+                    {"$set": {"payment_status": "paid"}}
+                )
+                asyncio.ensure_future(send_order_emails(order))
+        return {"status": "ok"}
+    except Exception as e:
+        logging.error(f"Webhook error: {str(e)}")
+        return {"status": "error", "detail": str(e)}
+
+
+# Admin orders
+@api_router.get("/admin/orders")
+async def get_admin_orders(username: str = Depends(verify_token)):
+    orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return orders
+
+
+async def send_order_emails(order: dict):
+    """Send private notification to admin and confirmation to customer."""
+    try:
+        items_html = ""
+        for item in order.get('items', []):
+            size_str = f" (Size: {item['size']})" if item.get('size') else ""
+            items_html += f"""
+            <tr>
+                <td style="padding:8px 12px;border-bottom:1px solid #374151;color:#d1d5db;">{item['name']}{size_str}</td>
+                <td style="padding:8px 12px;border-bottom:1px solid #374151;color:#d1d5db;text-align:center;">{item['quantity']}</td>
+                <td style="padding:8px 12px;border-bottom:1px solid #374151;color:#d1d5db;text-align:right;">${item['price']:.2f}</td>
+                <td style="padding:8px 12px;border-bottom:1px solid #374151;color:#d1d5db;text-align:right;">${item.get('line_total', item['price'] * item['quantity']):.2f}</td>
+            </tr>
+            """
+
+        addr = order.get('shipping_address', {})
+        address_str = f"{addr.get('street','')}, {addr.get('city','')}, {addr.get('province','')} {addr.get('postal_code','')}, {addr.get('country','')}"
+
+        shipping_label = {"quebec": "Montreal / Quebec", "canada": "Canada", "international": "International"}.get(
+            order.get('shipping_zone', ''), order.get('shipping_zone', '')
+        )
+
+        # ===== PRIVATE EMAIL TO ADMIN =====
+        admin_html = f"""
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#111827;color:#fff;">
+            <div style="background:#1e3a5f;padding:20px;text-align:center;">
+                <h1 style="color:#3b82f6;margin:0;font-size:22px;">NEW ORDER RECEIVED</h1>
+                <p style="color:#9ca3af;font-size:11px;margin:4px 0 0;">TC Pro Dojo Shop</p>
+            </div>
+            <div style="padding:24px;">
+                <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+                    <tr><td style="padding:6px 0;color:#9ca3af;width:130px;">Order ID:</td><td style="color:#fff;font-weight:bold;">{order['id'][:8]}...</td></tr>
+                    <tr><td style="padding:6px 0;color:#9ca3af;">Customer:</td><td style="color:#fff;">{order['customer_name']}</td></tr>
+                    <tr><td style="padding:6px 0;color:#9ca3af;">Email:</td><td><a href="mailto:{order['customer_email']}" style="color:#3b82f6;">{order['customer_email']}</a></td></tr>
+                    <tr><td style="padding:6px 0;color:#9ca3af;">Phone:</td><td style="color:#fff;">{order.get('customer_phone','N/A')}</td></tr>
+                    <tr><td style="padding:6px 0;color:#9ca3af;">Shipping To:</td><td style="color:#fff;">{address_str}</td></tr>
+                    <tr><td style="padding:6px 0;color:#9ca3af;">Shipping Zone:</td><td style="color:#fff;">{shipping_label}</td></tr>
+                </table>
+                <table style="width:100%;border-collapse:collapse;background:#1f2937;border-radius:8px;overflow:hidden;">
+                    <thead><tr style="background:#374151;">
+                        <th style="padding:10px 12px;text-align:left;color:#9ca3af;font-size:12px;">Item</th>
+                        <th style="padding:10px 12px;text-align:center;color:#9ca3af;font-size:12px;">Qty</th>
+                        <th style="padding:10px 12px;text-align:right;color:#9ca3af;font-size:12px;">Price</th>
+                        <th style="padding:10px 12px;text-align:right;color:#9ca3af;font-size:12px;">Total</th>
+                    </tr></thead>
+                    <tbody>{items_html}</tbody>
+                </table>
+                <table style="width:100%;margin-top:12px;">
+                    <tr><td style="padding:4px 12px;color:#9ca3af;text-align:right;">Subtotal:</td><td style="padding:4px 12px;color:#fff;text-align:right;width:100px;">${order['subtotal']:.2f}</td></tr>
+                    <tr><td style="padding:4px 12px;color:#9ca3af;text-align:right;">Shipping ({shipping_label}):</td><td style="padding:4px 12px;color:#fff;text-align:right;">${order['shipping_cost']:.2f}</td></tr>
+                    <tr><td style="padding:4px 12px;color:#3b82f6;font-weight:bold;text-align:right;font-size:16px;">Total:</td><td style="padding:4px 12px;color:#3b82f6;font-weight:bold;text-align:right;font-size:16px;">${order['total']:.2f} CAD</td></tr>
+                </table>
+                {f'<p style="margin-top:16px;padding:12px;background:#1f2937;border-radius:8px;color:#d1d5db;font-size:13px;"><strong>Order Notes:</strong> {order.get("order_notes","")}</p>' if order.get('order_notes') else ''}
+            </div>
+        </div>
+        """
+
+        # Send private email to admin
+        await asyncio.to_thread(resend.Emails.send, {
+            "from": SHOP_SENDER_EMAIL,
+            "to": [NOTIFICATION_EMAIL],
+            "subject": f"New Order: {order['customer_name']} - ${order['total']:.2f} CAD",
+            "html": admin_html
+        })
+
+        # ===== CONFIRMATION EMAIL TO CUSTOMER =====
+        customer_html = f"""
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#111827;color:#fff;">
+            <div style="background:#1e3a5f;padding:24px;text-align:center;">
+                <h1 style="color:#3b82f6;margin:0;font-size:24px;letter-spacing:2px;">TC PRO DOJO</h1>
+                <p style="color:#9ca3af;font-size:11px;margin:4px 0 0;letter-spacing:1px;">TORTURE CHAMBER PRO WRESTLING</p>
+            </div>
+            <div style="padding:32px 24px;">
+                <div style="text-align:center;margin-bottom:24px;">
+                    <div style="display:inline-block;background:#22c55e22;border:2px solid #22c55e;border-radius:8px;padding:12px 24px;">
+                        <span style="font-size:18px;font-weight:bold;color:#22c55e;">ORDER CONFIRMED</span>
+                    </div>
+                </div>
+                <p style="color:#d1d5db;text-align:center;margin-bottom:24px;">
+                    Thank you for your order, {order['customer_name']}!<br/>
+                    Your payment has been received and your order is being prepared.
+                </p>
+                <table style="width:100%;border-collapse:collapse;background:#1f2937;border-radius:8px;overflow:hidden;">
+                    <thead><tr style="background:#374151;">
+                        <th style="padding:10px 12px;text-align:left;color:#9ca3af;font-size:12px;">Item</th>
+                        <th style="padding:10px 12px;text-align:center;color:#9ca3af;font-size:12px;">Qty</th>
+                        <th style="padding:10px 12px;text-align:right;color:#9ca3af;font-size:12px;">Price</th>
+                    </tr></thead>
+                    <tbody>{"".join(f'<tr><td style="padding:8px 12px;border-bottom:1px solid #374151;color:#d1d5db;">{i["name"]}{" ("+i["size"]+")" if i.get("size") else ""}</td><td style="padding:8px 12px;border-bottom:1px solid #374151;color:#d1d5db;text-align:center;">{i["quantity"]}</td><td style="padding:8px 12px;border-bottom:1px solid #374151;color:#d1d5db;text-align:right;">${i["price"]:.2f}</td></tr>' for i in order.get('items',[]))}</tbody>
+                </table>
+                <table style="width:100%;margin-top:12px;">
+                    <tr><td style="padding:4px 12px;color:#9ca3af;text-align:right;">Subtotal:</td><td style="padding:4px 12px;color:#fff;text-align:right;width:100px;">${order['subtotal']:.2f}</td></tr>
+                    <tr><td style="padding:4px 12px;color:#9ca3af;text-align:right;">Shipping:</td><td style="padding:4px 12px;color:#fff;text-align:right;">${order['shipping_cost']:.2f}</td></tr>
+                    <tr><td style="padding:4px 12px;color:#22c55e;font-weight:bold;text-align:right;font-size:16px;">Total:</td><td style="padding:4px 12px;color:#22c55e;font-weight:bold;text-align:right;font-size:16px;">${order['total']:.2f} CAD</td></tr>
+                </table>
+                <div style="margin-top:24px;padding:16px;background:#1f2937;border-radius:8px;">
+                    <p style="color:#9ca3af;font-size:13px;margin:0 0 8px;">
+                        <strong style="color:#fff;">Shipping to:</strong> {address_str}
+                    </p>
+                    <p style="color:#f59e0b;font-size:13px;margin:0;font-weight:bold;">
+                        Please allow 4 weeks for delivery.
+                    </p>
+                </div>
+                <p style="color:#9ca3af;font-size:13px;text-align:center;margin-top:24px;">
+                    If you have any questions about your order, contact us at
+                    <a href="mailto:info@tcprodojo.com" style="color:#3b82f6;">info@tcprodojo.com</a>
+                </p>
+            </div>
+            <div style="background:#0f172a;padding:16px;text-align:center;border-top:1px solid #1e293b;">
+                <p style="color:#6b7280;font-size:11px;margin:0;">
+                    9800 Rue Meilleur, Suite 200, Montreal, QC H3L 3J4<br/>
+                    <a href="https://tcprodojo.com" style="color:#3b82f6;text-decoration:none;">tcprodojo.com</a>
+                </p>
+            </div>
+        </div>
+        """
+
+        await asyncio.to_thread(resend.Emails.send, {
+            "from": SHOP_SENDER_EMAIL,
+            "to": [order['customer_email']],
+            "subject": f"Order Confirmation - TC Pro Dojo #{order['id'][:8]}",
+            "html": customer_html
+        })
+
+        logging.info(f"Order emails sent for order {order['id']}")
+
+    except Exception as e:
+        logging.error(f"Failed to send order emails: {str(e)}")
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
 
 class NoCacheMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request, call_next):
         response = await call_next(request)
         if request.url.path.startswith("/api"):
             response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"

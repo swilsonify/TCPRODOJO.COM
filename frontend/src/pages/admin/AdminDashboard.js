@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image, Video, Mail, Settings, UserCheck } from 'lucide-react';
+import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image, Video, Mail, Settings, UserCheck, ShoppingBag } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive, media, siteSettings, students] = await Promise.all([
+      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive, media, siteSettings, students, products] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -59,7 +59,8 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/past-events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/media`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/site-settings`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/students`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/students`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/products`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       // Separate events into upcoming and past
@@ -93,7 +94,8 @@ const AdminDashboard = () => {
         newsletter: newsletter.data.length,
         media: media.data.length,
         siteSettings: siteSettings.data.length,
-        students: students.data.length
+        students: students.data.length,
+        products: products.data.length
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -199,6 +201,13 @@ const AdminDashboard = () => {
       count: stats.siteSettings || 0,
       link: '/admin/site-settings',
       description: 'Manage logos and branding'
+    },
+    {
+      title: 'Shop Products',
+      icon: ShoppingBag,
+      count: stats.products || 0,
+      link: '/admin/products',
+      description: 'Manage shop merchandise'
     }
   ];
 

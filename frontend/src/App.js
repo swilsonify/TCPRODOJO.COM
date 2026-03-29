@@ -24,6 +24,7 @@ import AdminPastEvents from '@/pages/admin/AdminPastEvents';
 import AdminMedia from '@/pages/admin/AdminMedia';
 import AdminSiteSettings from '@/pages/admin/AdminSiteSettings';
 import AdminStudents from '@/pages/admin/AdminStudents';
+import AdminProducts from '@/pages/admin/AdminProducts';
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
         <Route path="/admin/media" element={<AdminMedia />} />
         <Route path="/admin/site-settings" element={<AdminSiteSettings />} />
         <Route path="/admin/students" element={<AdminStudents />} />
+        <Route path="/admin/products" element={<AdminProducts />} />
       </Routes>
     </BrowserRouter>
   );
