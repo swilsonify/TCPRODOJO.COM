@@ -78,6 +78,17 @@ Build and manage a full-stack website for "Torture Chamber Pro Wrestling Dojo" -
 - [x] Email notification system: enrolled students notified on cancel/reschedule via Resend
 - [x] Admin email preview feature: cancellation + reschedule email formats viewable from admin panel
 - [x] Cache-busting headers for site settings API
+- [x] Global no-cache middleware on ALL /api endpoints + axios interceptor for cache-busting
+- [x] **Shop page complete rebuild** with Stripe payment integration:
+  - Admin-managed products (CRUD via /admin/products)
+  - Public shop with product grid, size selectors, cart drawer
+  - Checkout form with shipping address
+  - Stripe checkout redirect for payment
+  - Shipping rates: Montreal/QC $10, Canada $15, International $25
+  - "Allow 4 weeks for delivery" note
+  - Private order notification email to druonyx@gmail.com
+  - Customer confirmation email from info@tcprodojo.com
+  - Admin order viewing via /admin/orders endpoint
 
 ## Upcoming/Future Tasks
 - Wire up media categories to respective pages (Events, Coaches, Classes, Home photo galleries)
