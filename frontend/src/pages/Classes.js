@@ -529,7 +529,6 @@ const Classes = () => {
                                   <span className={`text-xs px-2 py-0.5 rounded font-semibold ${getLevelBadge(classItem.level)}`}>
                                     {getTranslatedLevel(classItem.level)}
                                   </span>
-                                  <span className="text-xs text-gray-500">{classItem.spots} {t('classes.spots')}</span>
                                 </div>
                               )}
 
@@ -646,18 +645,6 @@ const Classes = () => {
                       <option value="Advanced">{t('classes.level_advanced')}</option>
                       <option value="All Levels">{t('classes.level_all')}</option>
                     </select>
-                  </div>
-                  <div>
-                    <label className="block text-white font-semibold mb-2 text-sm">{t('classes.spots_label')}</label>
-                    <input
-                      type="number"
-                      value={editingClass.spots}
-                      onChange={(e) => setEditingClass({ ...editingClass, spots: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 bg-black border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                      required
-                      min="0"
-                      data-testid="edit-class-spots"
-                    />
                   </div>
                 </div>
 

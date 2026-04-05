@@ -73,7 +73,6 @@ class WrestlingClass(BaseModel):
     title: str
     instructor: str
     level: str
-    spots: int
 
 # Booking Models
 class BookingCreate(BaseModel):
@@ -242,7 +241,6 @@ class ClassScheduleModel(BaseModel):
     title: str
     instructor: str
     level: str
-    spots: int
     type: str = "Wrestling"
     description: str = ""
     is_one_time: bool = False  # True for one-time/special classes

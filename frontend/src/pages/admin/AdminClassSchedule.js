@@ -16,7 +16,6 @@ const AdminClassSchedule = () => {
     title: '',
     instructor: '',
     level: 'Beginner',
-    spots: 10,
     type: 'Wrestling',
     description: '',
     is_one_time: false,
@@ -99,7 +98,6 @@ const AdminClassSchedule = () => {
       title: classItem.title,
       instructor: classItem.instructor,
       level: classItem.level,
-      spots: classItem.spots,
       type: classItem.type,
       description: classItem.description || '',
       is_one_time: classItem.is_one_time || false,
@@ -130,8 +128,7 @@ const AdminClassSchedule = () => {
       title: '',
       instructor: '',
       level: 'Beginner',
-      spots: 10,
-      type: 'Wrestling',
+        type: 'Wrestling',
       description: '',
       is_one_time: false,
       one_time_date: '',
@@ -389,17 +386,6 @@ const AdminClassSchedule = () => {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-white font-semibold mb-2">Available Spots</label>
-                  <input
-                    type="number"
-                    value={formData.spots}
-                    onChange={(e) => setFormData({ ...formData, spots: parseInt(e.target.value) })}
-                    min="1"
-                    required
-                    className="w-full px-4 py-2 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
               </div>
 
               <div className="mb-6">
@@ -487,9 +473,6 @@ const AdminClassSchedule = () => {
                     <div className="text-sm">
                       <strong>Instructor:</strong> {classItem.instructor}
                     </div>
-                    <div className="text-sm">
-                      <strong>Spots:</strong> {classItem.spots}
-                    </div>
                     {classItem.description && (
                       <div className="text-sm text-gray-400 mt-2">
                         {classItem.description}
@@ -565,9 +548,6 @@ const AdminClassSchedule = () => {
                     </div>
                     <div className="text-sm">
                       <strong>Instructor:</strong> {classItem.instructor}
-                    </div>
-                    <div className="text-sm">
-                      <strong>Spots:</strong> {classItem.spots}
                     </div>
                     {classItem.description && (
                       <div className="text-sm text-gray-400 mt-2">

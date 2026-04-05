@@ -65,7 +65,6 @@
     "cancelled": "Annulé",
     "rescheduled": "Reprogrammé",
     "reason": "Raison :",
-    "spots": "places",
     "classes_count": "cours",
     "class_count": "cours",
     "level_beginner": "Débutant",
@@ -81,7 +80,6 @@
     "class_title_label": "Titre du cours",
     "instructor_label": "Instructeur",
     "level_label": "Niveau",
-    "spots_label": "Places disponibles",
     "actions_for": "Actions pour"
   },
   "events": {

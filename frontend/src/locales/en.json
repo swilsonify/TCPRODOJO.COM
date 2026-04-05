@@ -65,7 +65,6 @@
     "cancelled": "Cancelled",
     "rescheduled": "Rescheduled",
     "reason": "Reason:",
-    "spots": "spots",
     "classes_count": "classes",
     "class_count": "class",
     "level_beginner": "Beginner",
@@ -81,7 +80,6 @@
     "class_title_label": "Class Title",
     "instructor_label": "Instructor",
     "level_label": "Level",
-    "spots_label": "Available Spots",
     "actions_for": "Actions for"
   },
   "events": {
