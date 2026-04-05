@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Mail, MapPin, Send } from 'lucide-react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -57,26 +59,26 @@ const Contact = () => {
     <div className="pt-28 pb-20 px-4" data-testid="contact-page">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">CONTACT US</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">{t('contact.title')}</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Ready to start your journey? Get in touch with us today.
+            {t('contact.subtitle')}
           </p>
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="bg-black border border-blue-500/20 rounded-lg p-8">
-            <h2 className="text-2xl font-bold text-white mb-6">Send Us A Message</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">{t('contact.form_title')}</h2>
 
             {submitted && (
               <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded text-green-400">
-                Message sent successfully! We will get back to you soon.
+                {t('contact.success_message')}
               </div>
             )}
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-white font-semibold mb-2">Name *</label>
+                <label className="block text-white font-semibold mb-2">{t('contact.name_label')}</label>
                 <input
                   type="text"
                   name="name"
@@ -84,13 +86,13 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  placeholder="Your full name"
+                  placeholder={t('contact.name_placeholder')}
                   data-testid="contact-name-input"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-white font-semibold mb-2">Email *</label>
+                <label className="block text-white font-semibold mb-2">{t('contact.email_label')}</label>
                 <input
                   type="email"
                   name="email"
@@ -98,26 +100,26 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  placeholder="your.email@example.com"
+                  placeholder={t('contact.email_placeholder')}
                   data-testid="contact-email-input"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-white font-semibold mb-2">Phone</label>
+                <label className="block text-white font-semibold mb-2">{t('contact.phone_label')}</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
-                  placeholder="(555) 123-4567"
+                  placeholder={t('contact.phone_placeholder')}
                   data-testid="contact-phone-input"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-white font-semibold mb-2">Subject *</label>
+                <label className="block text-white font-semibold mb-2">{t('contact.subject_label')}</label>
                 <select
                   name="subject"
                   value={formData.subject}
@@ -126,17 +128,17 @@ const Contact = () => {
                   className="w-full px-4 py-3 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500"
                   data-testid="contact-subject-select"
                 >
-                  <option>General Inquiry</option>
-                  <option>Training Program Information</option>
-                  <option>Class Schedule Question</option>
-                  <option>Event Registration</option>
-                  <option>Partnership Opportunity</option>
-                  <option>Other</option>
+                  <option>{t('contact.subject_general')}</option>
+                  <option>{t('contact.subject_training')}</option>
+                  <option>{t('contact.subject_schedule')}</option>
+                  <option>{t('contact.subject_event')}</option>
+                  <option>{t('contact.subject_partner')}</option>
+                  <option>{t('contact.subject_other')}</option>
                 </select>
               </div>
 
               <div className="mb-6">
-                <label className="block text-white font-semibold mb-2">Message *</label>
+                <label className="block text-white font-semibold mb-2">{t('contact.message_label')}</label>
                 <textarea
                   name="message"
                   value={formData.message}
@@ -144,7 +146,7 @@ const Contact = () => {
                   required
                   rows="5"
                   className="w-full px-4 py-3 bg-gray-900 border border-blue-500/20 rounded text-white focus:outline-none focus:border-blue-500 resize-none"
-                  placeholder="Tell us more about your inquiry..."
+                  placeholder={t('contact.message_placeholder')}
                   data-testid="contact-message-textarea"
                 ></textarea>
               </div>
@@ -156,21 +158,21 @@ const Contact = () => {
                 data-testid="submit-contact-button"
               >
                 <Send size={20} />
-                <span>{submitting ? 'SENDING...' : 'SEND MESSAGE'}</span>
+                <span>{submitting ? t('contact.sending_button') : t('contact.send_button')}</span>
               </button>
             </form>
           </div>
 
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Get In Touch</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">{t('contact.get_in_touch')}</h2>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="text-white" size={24} />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold mb-1">Visit Us</h3>
+                    <h3 className="text-white font-semibold mb-1">{t('contact.visit_title')}</h3>
                     <a
                       href="https://www.google.com/maps/search/?api=1&query=9800+Rue+Meilleur+Suite+200+Montreal+QC+H3L+3J4"
                       target="_blank"
@@ -178,7 +180,7 @@ const Contact = () => {
                       className="text-gray-400 hover:text-blue-400 transition-colors"
                     >
                       9800 Rue Meilleur, Suite 200<br />
-                      Montreal, QC H3L 3J4
+                      Montréal, QC H3L 3J4
                     </a>
                   </div>
                 </div>
@@ -188,16 +190,16 @@ const Contact = () => {
                     <Mail className="text-white" size={24} />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold mb-1">Email Us</h3>
+                    <h3 className="text-white font-semibold mb-1">{t('contact.email_title')}</h3>
                     <p className="text-gray-400">info@tcprodojo.com</p>
-                    <p className="text-gray-400 text-sm">General Inquiries and Private Classes</p>
+                    <p className="text-gray-400 text-sm">{t('contact.email_note')}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">FAQs</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">{t('contact.faq_title')}</h2>
               <div className="space-y-4">
                 {faqs.length > 0 ? (
                   faqs.map((faq) => (
