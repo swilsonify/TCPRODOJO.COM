@@ -2,6 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart } from 'lucide-react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,6 +11,8 @@ const Navigation = () => {
   const [cartCount, setCartCount] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [currentLang, setCurrentLang] = useState(i18n.language || 'en');
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -16,7 +20,6 @@ const Navigation = () => {
     loadSiteSettings();
   }, []);
 
-  // Read cart count from localStorage and listen for updates
   useEffect(() => {
     const updateCartCount = () => {
       try {
@@ -50,22 +53,27 @@ const Navigation = () => {
 
   const handleCartClick = () => {
     if (location.pathname === '/shop') {
-      // Already on shop — dispatch event to open cart drawer
       window.dispatchEvent(new Event('open-cart'));
     } else {
-      // Navigate to shop with cart=open param
       navigate('/shop?cart=open');
     }
   };
 
+  const toggleLanguage = () => {
+    const newLang = currentLang === 'en' ? 'fr' : 'en';
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('tcprodojo_lang', newLang);
+    setCurrentLang(newLang);
+  };
+
   const navLinks = [
-    { name: 'HOME', path: '/' },
-    { name: 'TRAINING', path: '/training' },
-    { name: 'CLASSES', path: '/classes' },
-    { name: 'EVENTS', path: '/events' },
-    { name: 'SUCCESS', path: '/success' },
-    { name: 'MEDIA', path: '/media' },
-    { name: 'SHOP', path: '/shop' },
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.training'), path: '/training' },
+    { name: t('nav.classes'), path: '/classes' },
+    { name: t('nav.events'), path: '/events' },
+    { name: t('nav.success'), path: '/success' },
+    { name: t('nav.media'), path: '/media' },
+    { name: t('nav.shop'), path: '/shop' },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -126,17 +134,37 @@ const Navigation = () => {
               )}
             </button>
 
+            {/* Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center space-x-1 text-sm font-bold tracking-wider text-gray-300 hover:text-blue-400 transition-colors border border-gray-700 hover:border-blue-400 rounded px-2 py-1"
+              aria-label="Toggle language"
+            >
+              <span className={currentLang === 'en' ? 'text-blue-400' : 'text-gray-500'}>FR</span>
+              <span className="text-gray-600">|</span>
+              <span className={currentLang === 'fr' ? 'text-blue-400' : 'text-gray-500'}>EN</span>
+            </button>
+
             <Link
               to="/contact"
               className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
               data-testid="contact-nav-button"
             >
-              CONTACT
+              {t('nav.contact')}
             </Link>
           </div>
 
-          {/* Mobile: Cart + Menu */}
-          <div className="md:hidden flex items-center gap-4">
+          {/* Mobile: Lang + Cart + Menu */}
+          <div className="md:hidden flex items-center gap-3">
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center space-x-1 text-xs font-bold text-gray-300 hover:text-blue-400 border border-gray-700 rounded px-2 py-1"
+            >
+              <span className={currentLang === 'en' ? 'text-blue-400' : 'text-gray-500'}>FR</span>
+              <span className="text-gray-600">|</span>
+              <span className={currentLang === 'fr' ? 'text-blue-400' : 'text-gray-500'}>EN</span>
+            </button>
+
             <button
               onClick={handleCartClick}
               className="relative text-gray-300 hover:text-blue-400 transition-colors"
@@ -149,6 +177,7 @@ const Navigation = () => {
                 </span>
               )}
             </button>
+
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-white p-2"
@@ -181,7 +210,7 @@ const Navigation = () => {
               onClick={() => setIsOpen(false)}
               className="block mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded text-center transition-colors"
             >
-              CONTACT
+              {t('nav.contact')}
             </Link>
           </div>
         )}
