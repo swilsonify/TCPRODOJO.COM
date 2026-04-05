@@ -3,6 +3,7 @@ import { Calendar, MapPin, Clock, Users, ZoomIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ImageLightbox from '../components/ImageLightbox';
+import { useTranslation } from 'react-i18next';
 
 const Events = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -14,6 +15,7 @@ const Events = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lightboxImages, setLightboxImages] = useState([]);
+  const { t } = useTranslation();
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -46,7 +48,6 @@ const Events = () => {
         axios.get(`${API}/api/events`),
         axios.get(`${API}/api/past-events`)
       ]);
-      
       setUpcomingEvents(upcomingRes.data);
       setPastEvents(pastRes.data);
     } catch (error) {
@@ -61,13 +62,13 @@ const Events = () => {
   const handleNewsletterSubscribe = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API}/api/newsletter/subscribe?email=${encodeURIComponent(newsletterEmail)}`);
-      setSubscribeMessage('✅ Successfully subscribed to our newsletter!');
+      await axios.post(`${API}/api/newsletter/subscribe?email=${encodeURIComponent(newsletterEmail)}`);
+      setSubscribeMessage(t('events.subscribe_success'));
       setNewsletterEmail('');
       setTimeout(() => setSubscribeMessage(''), 5000);
     } catch (error) {
       console.error('Error subscribing:', error);
-      setSubscribeMessage('❌ Error subscribing. Please try again.');
+      setSubscribeMessage(t('events.subscribe_error'));
       setTimeout(() => setSubscribeMessage(''), 5000);
     }
   };
@@ -83,157 +84,150 @@ const Events = () => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">EVENTS</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">{t('events.title')}</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Join us for showcases, workshops, and special events. Be part of the Torture Chamber community.
+            {t('events.subtitle')}
           </p>
         </div>
 
         {/* Upcoming Events */}
         <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-white torture-text mb-8">UPCOMING EVENTS</h2>
-          
+          <h2 className="text-3xl font-bold text-white torture-text mb-8">{t('events.upcoming_title')}</h2>
+
           {loading ? (
-            <div className="text-center text-gray-400 py-12">Loading events...</div>
+            <div className="text-center text-gray-400 py-12">{t('events.loading')}</div>
           ) : upcomingEvents.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-400 text-lg">No upcoming events at this time.</p>
-              <p className="text-gray-500 text-sm mt-2">Check back soon for announcements!</p>
+              <p className="text-gray-400 text-lg">{t('events.no_upcoming')}</p>
+              <p className="text-gray-500 text-sm mt-2">{t('events.no_upcoming_sub')}</p>
             </div>
           ) : (
             <div className="space-y-8">
               {upcomingEvents.map((event) => {
                 const hasMedia = event.posterUrl || event.promoVideoUrl;
-                
+
                 return (
-              <div
-                key={event.id}
-                className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
-                data-testid={`event-${event.id}`}
-              >
-                {hasMedia ? (
-                  // Two-column layout when poster or video exists
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Left Side - Poster & Video */}
-                    <div className="space-y-4 p-6">
-                      {/* Event Poster */}
-                      {event.posterUrl && (
-                        <div 
-                          className="rounded-lg overflow-hidden border-2 border-blue-500 bg-black relative cursor-pointer group"
-                          onClick={() => openImageLightbox([{ url: event.posterUrl, alt: event.title, title: event.title }])}
-                          data-testid={`event-poster-${event.id}`}
-                        >
-                          <img 
-                            src={event.posterUrl} 
-                            alt={event.title}
-                            className="w-full h-auto object-contain transition-all duration-300 group-hover:opacity-90"
-                          />
-                          {/* Hover overlay with expand icon */}
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                            <ZoomIn className="text-white" size={40} />
+                  <div
+                    key={event.id}
+                    className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
+                    data-testid={`event-${event.id}`}
+                  >
+                    {hasMedia ? (
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="space-y-4 p-6">
+                          {event.posterUrl && (
+                            <div
+                              className="rounded-lg overflow-hidden border-2 border-blue-500 bg-black relative cursor-pointer group"
+                              onClick={() => openImageLightbox([{ url: event.posterUrl, alt: event.title, title: event.title }])}
+                              data-testid={`event-poster-${event.id}`}
+                            >
+                              <img
+                                src={event.posterUrl}
+                                alt={event.title}
+                                className="w-full h-auto object-contain transition-all duration-300 group-hover:opacity-90"
+                              />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                <ZoomIn className="text-white" size={40} />
+                              </div>
+                            </div>
+                          )}
+
+                          {event.promoVideoUrl && (
+                            <div className="aspect-video bg-gradient-to-br from-blue-900 to-black rounded-lg overflow-hidden border-2 border-blue-500">
+                              <iframe
+                                className="w-full h-full"
+                                src={convertToEmbedUrl(event.promoVideoUrl)}
+                                title={`${event.title} Promo`}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              ></iframe>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="p-6 flex flex-col justify-between">
+                          <div>
+                            <h3 className="text-3xl font-bold text-white mb-4">{event.title}</h3>
+
+                            <div className="flex flex-wrap gap-4 text-gray-400 mb-6">
+                              <div className="flex items-center space-x-2">
+                                <Calendar size={18} />
+                                <span className="font-semibold">{event.date}</span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Clock size={18} />
+                                <span>{event.time}</span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <MapPin size={18} />
+                                <span>{event.location}</span>
+                              </div>
+                            </div>
+
+                            <p className="text-gray-300 mb-4 leading-relaxed whitespace-pre-line">{event.description}</p>
+
+                            <div className="flex items-center space-x-2 text-gray-400 mb-6">
+                              <Users size={18} />
+                              <span>{event.attendees} {t('events.expected_attendees')}</span>
+                            </div>
+                          </div>
+
+                          {event.ticketLink && (
+                            <a
+                              href={event.ticketLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded transition-colors text-center block"
+                              data-testid={`buy-tickets-${event.id}-button`}
+                            >
+                              {t('events.buy_tickets')}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-6">
+                        <h3 className="text-3xl font-bold text-white mb-4">{event.title}</h3>
+
+                        <div className="flex flex-wrap gap-4 text-gray-400 mb-6">
+                          <div className="flex items-center space-x-2">
+                            <Calendar size={18} />
+                            <span className="font-semibold">{event.date}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Clock size={18} />
+                            <span>{event.time}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <MapPin size={18} />
+                            <span>{event.location}</span>
                           </div>
                         </div>
-                      )}
-                      
-                      {/* Promotional Video */}
-                      {event.promoVideoUrl && (
-                        <div className="aspect-video bg-gradient-to-br from-blue-900 to-black rounded-lg overflow-hidden border-2 border-blue-500">
-                          <iframe
-                            className="w-full h-full"
-                            src={convertToEmbedUrl(event.promoVideoUrl)}
-                            title={`${event.title} Promo`}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          ></iframe>
-                        </div>
-                      )}
-                    </div>
 
-                    {/* Right Side - Event Details */}
-                    <div className="p-6 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-3xl font-bold text-white mb-4">{event.title}</h3>
-                      
-                      <div className="flex flex-wrap gap-4 text-gray-400 mb-6">
-                        <div className="flex items-center space-x-2">
-                          <Calendar size={18} />
-                          <span className="font-semibold">{event.date}</span>
+                        <p className="text-gray-300 mb-4 leading-relaxed whitespace-pre-line">{event.description}</p>
+
+                        <div className="flex items-center space-x-2 text-gray-400 mb-6">
+                          <Users size={18} />
+                          <span>{event.attendees} {t('events.expected_attendees')}</span>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Clock size={18} />
-                          <span>{event.time}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <MapPin size={18} />
-                          <span>{event.location}</span>
-                        </div>
+
+                        {event.ticketLink && (
+                          <a
+                            href={event.ticketLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded transition-colors text-center"
+                            data-testid={`buy-tickets-${event.id}-button`}
+                          >
+                            {t('events.buy_tickets')}
+                          </a>
+                        )}
                       </div>
-
-                      <p className="text-gray-300 mb-4 leading-relaxed whitespace-pre-line">{event.description}</p>
-
-                      <div className="flex items-center space-x-2 text-gray-400 mb-6">
-                        <Users size={18} />
-                        <span>{event.attendees} expected attendees</span>
-                      </div>
-                    </div>
-
-                    {event.ticketLink && (
-                      <a
-                        href={event.ticketLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded transition-colors text-center block"
-                        data-testid={`buy-tickets-${event.id}-button`}
-                      >
-                        BUY TICKETS
-                      </a>
                     )}
                   </div>
-                </div>
-                ) : (
-                  // Single column layout when no media
-                  <div className="p-6">
-                    <h3 className="text-3xl font-bold text-white mb-4">{event.title}</h3>
-                    
-                    <div className="flex flex-wrap gap-4 text-gray-400 mb-6">
-                      <div className="flex items-center space-x-2">
-                        <Calendar size={18} />
-                        <span className="font-semibold">{event.date}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Clock size={18} />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <MapPin size={18} />
-                        <span>{event.location}</span>
-                      </div>
-                    </div>
-
-                    <p className="text-gray-300 mb-4 leading-relaxed whitespace-pre-line">{event.description}</p>
-
-                    <div className="flex items-center space-x-2 text-gray-400 mb-6">
-                      <Users size={18} />
-                      <span>{event.attendees} expected attendees</span>
-                    </div>
-
-                    {event.ticketLink && (
-                      <a
-                        href={event.ticketLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded transition-colors text-center"
-                        data-testid={`buy-tickets-${event.id}-button`}
-                      >
-                        BUY TICKETS
-                      </a>
-                    )}
-                  </div>
-                )}
-              </div>
-              );
+                );
               })}
             </div>
           )}
@@ -242,8 +236,8 @@ const Events = () => {
         {/* Past Events */}
         {pastEvents.length > 0 && (
           <div className="max-w-6xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-white torture-text mb-8">PAST EVENTS</h2>
-            
+            <h2 className="text-3xl font-bold text-white torture-text mb-8">{t('events.past_title')}</h2>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pastEvents.map((event, index) => (
                 <div
@@ -251,9 +245,8 @@ const Events = () => {
                   className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                   data-testid={`past-event-${index}`}
                 >
-                  {/* Thumbnail */}
                   {event.thumbnailUrl && (
-                    <div 
+                    <div
                       className="bg-black flex items-center justify-center border-4 border-blue-500 relative cursor-pointer group"
                       onClick={() => openImageLightbox([{ url: event.thumbnailUrl, alt: event.title, title: event.title }])}
                       data-testid={`past-event-thumbnail-${index}`}
@@ -263,14 +256,12 @@ const Events = () => {
                         alt={event.title}
                         className="w-full h-auto object-contain transition-all duration-300 group-hover:opacity-90"
                       />
-                      {/* Hover overlay with expand icon */}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <ZoomIn className="text-white" size={40} />
                       </div>
                     </div>
                   )}
 
-                  {/* Video */}
                   {event.youtubeUrl && (
                     <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                       <iframe
@@ -284,17 +275,15 @@ const Events = () => {
                     </div>
                   )}
 
-                  {/* Fallback when no media */}
                   {!event.thumbnailUrl && !event.youtubeUrl && (
                     <div className="aspect-video bg-gradient-to-br from-blue-900 to-black flex items-center justify-center border-4 border-blue-500">
                       <div className="text-center p-8">
                         <Calendar className="w-16 h-16 mx-auto mb-2 text-blue-500" />
-                        <span className="text-gray-500 text-sm">Event Archive</span>
+                        <span className="text-gray-500 text-sm">{t('events.event_archive')}</span>
                       </div>
                     </div>
                   )}
 
-                  {/* Content */}
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-white mb-3">{event.title}</h3>
                     <p className="text-gray-400 text-sm whitespace-pre-line">{event.description}</p>
@@ -305,20 +294,18 @@ const Events = () => {
           </div>
         )}
 
-        {/* CTA Section */}
+        {/* Newsletter CTA */}
         <div className="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Stay Updated</h2>
-          <p className="text-blue-100 mb-6">
-            Don't miss out on our events. Get added to our mailing list.
-          </p>
-          
+          <h2 className="text-3xl font-bold text-white mb-4">{t('events.stay_updated')}</h2>
+          <p className="text-blue-100 mb-6">{t('events.newsletter_sub')}</p>
+
           <form onSubmit={handleNewsletterSubscribe} className="max-w-md mx-auto">
             <div className="flex gap-3">
               <input
                 type="email"
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Enter your email address"
+                placeholder={t('events.email_placeholder')}
                 required
                 className="flex-1 px-4 py-3 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
                 data-testid="newsletter-email-input"
@@ -328,7 +315,7 @@ const Events = () => {
                 className="px-8 py-3 bg-white text-blue-600 font-bold rounded hover:bg-gray-100 transition-colors"
                 data-testid="subscribe-button"
               >
-                Subscribe
+                {t('events.subscribe')}
               </button>
             </div>
             {subscribeMessage && (
@@ -343,13 +330,13 @@ const Events = () => {
             .map(i => siteSettings[`events_photo_${i}`])
             .filter(Boolean);
           if (eventPhotos.length === 0) return null;
-          
+
           const eventPhotoImages = eventPhotos.map((url, idx) => ({
-            url, 
-            alt: `Events photo ${idx + 1}`, 
+            url,
+            alt: `Events photo ${idx + 1}`,
             title: `Events photo ${idx + 1}`
           }));
-          
+
           return (
             <div className="max-w-5xl mx-auto mt-12" data-testid="events-photo-row">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -365,7 +352,6 @@ const Events = () => {
                       alt={`Events photo ${index + 1}`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    {/* Hover overlay with expand icon */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <ZoomIn className="text-white" size={32} />
                     </div>
@@ -376,7 +362,6 @@ const Events = () => {
           );
         })()}
 
-        {/* Image Lightbox */}
         <ImageLightbox
           images={lightboxImages}
           currentIndex={lightboxIndex}
