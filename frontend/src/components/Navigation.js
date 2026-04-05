@@ -1,17 +1,42 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
 import axios from 'axios';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [siteSettings, setSiteSettings] = useState({});
+  const [cartCount, setCartCount] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
   useEffect(() => {
     loadSiteSettings();
+  }, []);
+
+  // Read cart count from localStorage and listen for updates
+  useEffect(() => {
+    const updateCartCount = () => {
+      try {
+        const saved = localStorage.getItem('tcprodojo_cart');
+        const cart = saved ? JSON.parse(saved) : [];
+        const count = cart.reduce((sum, i) => sum + i.quantity, 0);
+        setCartCount(count);
+      } catch {
+        setCartCount(0);
+      }
+    };
+
+    updateCartCount();
+    window.addEventListener('cart-updated', updateCartCount);
+    window.addEventListener('storage', updateCartCount);
+
+    return () => {
+      window.removeEventListener('cart-updated', updateCartCount);
+      window.removeEventListener('storage', updateCartCount);
+    };
   }, []);
 
   const loadSiteSettings = async () => {
@@ -20,6 +45,16 @@ const Navigation = () => {
       setSiteSettings(response.data);
     } catch (error) {
       console.error('Error loading site settings:', error);
+    }
+  };
+
+  const handleCartClick = () => {
+    if (location.pathname === '/shop') {
+      // Already on shop — dispatch event to open cart drawer
+      window.dispatchEvent(new Event('open-cart'));
+    } else {
+      // Navigate to shop with cart=open param
+      navigate('/shop?cart=open');
     }
   };
 
@@ -35,7 +70,6 @@ const Navigation = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  // Use site settings if available, otherwise fallback to defaults
   const circleLogo = siteSettings.circle_logo || '/images/circle-logo.jpg';
   const navTagline = siteSettings.nav_tagline || 'TRAIN LIKE A CHAMPION';
   const navTitle = siteSettings.nav_title || 'TORTURE CHAMBER';
@@ -46,11 +80,11 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <img 
+            <img
               src={circleLogo}
-              alt="Torture Chamber Logo" 
+              alt="Torture Chamber Logo"
               className="w-16 h-16 rounded-full object-cover"
-              style={{ 
+              style={{
                 aspectRatio: '1/1',
                 mixBlendMode: 'lighten',
                 opacity: 0.95
@@ -77,6 +111,21 @@ const Navigation = () => {
                 {link.name}
               </Link>
             ))}
+
+            {/* Cart Icon */}
+            <button
+              onClick={handleCartClick}
+              className="relative text-gray-300 hover:text-blue-400 transition-colors"
+              aria-label="Shopping cart"
+            >
+              <ShoppingCart size={22} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 w-5 h-5 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
             <Link
               to="/contact"
               className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors"
@@ -86,14 +135,28 @@ const Navigation = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white p-2"
-            data-testid="mobile-menu-button"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile: Cart + Menu */}
+          <div className="md:hidden flex items-center gap-4">
+            <button
+              onClick={handleCartClick}
+              className="relative text-gray-300 hover:text-blue-400 transition-colors"
+              aria-label="Shopping cart"
+            >
+              <ShoppingCart size={22} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 w-5 h-5 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-white p-2"
+              data-testid="mobile-menu-button"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
