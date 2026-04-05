@@ -212,6 +212,15 @@ class EndorsementModel(BaseModel):
     displayOrder: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class FAQModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    question: str
+    answer: str
+    displayOrder: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class TipModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
@@ -826,6 +835,36 @@ async def delete_tip(tip_id: str, username: str = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="Tip not found")
     return {"message": "Tip deleted successfully"}
 
+# Admin FAQ Management
+@api_router.get("/admin/faqs", response_model=List[FAQModel])
+async def get_admin_faqs(username: str = Depends(verify_token)):
+    faqs = await db.faqs.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for faq in faqs:
+        if isinstance(faq.get('created_at'), str):
+            faq['created_at'] = datetime.fromisoformat(faq['created_at'])
+    return faqs
+
+@api_router.post("/admin/faqs", response_model=FAQModel)
+async def create_faq(faq: FAQModel, username: str = Depends(verify_token)):
+    doc = faq.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.faqs.insert_one(doc)
+    return faq
+
+@api_router.put("/admin/faqs/{faq_id}", response_model=FAQModel)
+async def update_faq(faq_id: str, faq: FAQModel, username: str = Depends(verify_token)):
+    doc = faq.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.faqs.update_one({"id": faq_id}, {"$set": doc})
+    return faq
+
+@api_router.delete("/admin/faqs/{faq_id}")
+async def delete_faq(faq_id: str, username: str = Depends(verify_token)):
+    result = await db.faqs.delete_one({"id": faq_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="FAQ not found")
+    return {"message": "FAQ deleted successfully"}
+
 # Admin Class Schedule Management
 @api_router.get("/admin/classes", response_model=List[ClassScheduleModel])
 async def get_admin_classes(username: str = Depends(verify_token)):
@@ -1117,6 +1156,14 @@ async def get_public_testimonials():
             testimonial['created_at'] = datetime.fromisoformat(testimonial['created_at'])
     return testimonials
 
+@api_router.get("/faqs", response_model=List[FAQModel])
+async def get_public_faqs():
+    faqs = await db.faqs.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
+    for faq in faqs:
+        if isinstance(faq.get('created_at'), str):
+            faq['created_at'] = datetime.fromisoformat(faq['created_at'])
+    return faqs
+
 @api_router.get("/tips", response_model=List[TipModel])
 async def get_public_tips():
     tips = await db.tips.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
@@ -1252,8 +1299,6 @@ async def send_newsletter(request: NewsletterSendRequest, username: str = Depend
     failed = 0
     errors = []
     
-    # Send to each subscriber individually (Resend batch sending)
-    # For larger lists, you might want to use batch API
     for email in emails:
         try:
             params = {
@@ -1286,7 +1331,7 @@ async def send_newsletter(request: NewsletterSendRequest, username: str = Depend
         "successful": successful,
         "failed": failed,
         "total": len(emails),
-        "errors": errors[:5] if errors else []  # Return first 5 errors for debugging
+        "errors": errors[:5] if errors else []
     }
 
 @api_router.get("/admin/newsletter/logs")
@@ -1343,7 +1388,6 @@ async def export_students_csv(username: str = Depends(verify_token)):
         {"_id": 0}
     ).to_list(10000)
     
-    # Return list of emails that can be used for class change notifications
     return {
         "count": len(students),
         "emails": [s['email'] for s in students],
@@ -1365,11 +1409,9 @@ async def generate_cloudinary_signature(
     """Generate a signed upload signature for Cloudinary"""
     ALLOWED_FOLDERS = ("tcprodojo", "tcprodojo/media", "tcprodojo/logos", "uploads")
     
-    # Validate folder
     if not any(folder.startswith(f) for f in ALLOWED_FOLDERS):
         raise HTTPException(status_code=400, detail="Invalid folder path")
     
-    # Validate resource type
     if resource_type not in ["image", "video"]:
         raise HTTPException(status_code=400, detail="Invalid resource type")
     
@@ -1396,7 +1438,6 @@ async def generate_cloudinary_signature(
 
 # ==================== MEDIA MANAGEMENT ====================
 
-# Public Media Endpoints
 @api_router.get("/media", response_model=List[MediaModel])
 async def get_public_media():
     media = await db.media.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
@@ -1405,7 +1446,6 @@ async def get_public_media():
             item['created_at'] = datetime.fromisoformat(item['created_at'])
     return media
 
-# Admin Media Endpoints
 @api_router.get("/admin/media", response_model=List[MediaModel])
 async def get_admin_media(username: str = Depends(verify_token)):
     media = await db.media.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
@@ -1441,7 +1481,6 @@ async def delete_media(media_id: str, username: str = Depends(verify_token)):
 
 # ==================== SITE SETTINGS MANAGEMENT ====================
 
-# Public Site Settings Endpoints
 @api_router.get("/site-settings")
 async def get_public_site_settings():
     settings = await db.site_settings.find({}, {"_id": 0}).to_list(1000)
@@ -1457,7 +1496,6 @@ async def get_site_setting_by_key(key: str):
         raise HTTPException(status_code=404, detail="Setting not found")
     return setting
 
-# Admin Site Settings Endpoints
 @api_router.get("/admin/site-settings", response_model=List[SiteSettingsModel])
 async def get_admin_site_settings(username: str = Depends(verify_token)):
     settings = await db.site_settings.find({}, {"_id": 0}).to_list(1000)
@@ -1468,7 +1506,6 @@ async def get_admin_site_settings(username: str = Depends(verify_token)):
 
 @api_router.post("/admin/site-settings", response_model=SiteSettingsModel)
 async def create_site_setting(setting: SiteSettingsModel, username: str = Depends(verify_token)):
-    # Check if setting with this key already exists
     existing = await db.site_settings.find_one({"settingKey": setting.settingKey})
     if existing:
         raise HTTPException(status_code=400, detail="Setting with this key already exists. Use PUT to update.")
@@ -1497,13 +1534,11 @@ async def delete_site_setting(setting_id: str, username: str = Depends(verify_to
 
 # ==================== SHOP / PRODUCTS ====================
 
-# Public product listing
 @api_router.get("/products")
 async def get_public_products():
     products = await db.products.find({"active": True}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
     return products
 
-# Admin product CRUD
 @api_router.get("/admin/products")
 async def get_admin_products(username: str = Depends(verify_token)):
     products = await db.products.find({}, {"_id": 0}).sort("displayOrder", 1).to_list(1000)
@@ -1545,7 +1580,6 @@ async def get_shipping_rates():
 
 @api_router.post("/shop/checkout")
 async def shop_checkout(req: CheckoutRequest, http_request: StarletteRequest):
-    # Validate items exist and get server-side prices
     items_for_order = []
     subtotal = 0.0
     for item in req.items:
@@ -1563,12 +1597,10 @@ async def shop_checkout(req: CheckoutRequest, http_request: StarletteRequest):
             "line_total": line_total
         })
 
-    # Calculate shipping
     shipping_zone = get_shipping_zone(req.shipping_address.country, req.shipping_address.province)
     shipping_cost = SHIPPING_RATES.get(shipping_zone, SHIPPING_RATES["international"])
     total = subtotal + shipping_cost
 
-    # Create order record
     order = OrderModel(
         customer_name=req.customer_name,
         customer_email=req.customer_email,
@@ -1583,7 +1615,6 @@ async def shop_checkout(req: CheckoutRequest, http_request: StarletteRequest):
         order_notes=req.order_notes
     )
 
-    # Create Stripe checkout session
     stripe_api_key = os.environ.get('STRIPE_API_KEY')
     host_url = str(http_request.base_url).rstrip('/')
     webhook_url = f"{host_url}/api/webhook/stripe"
@@ -1593,7 +1624,6 @@ async def shop_checkout(req: CheckoutRequest, http_request: StarletteRequest):
     success_url = f"{origin}/shop?session_id={{CHECKOUT_SESSION_ID}}"
     cancel_url = f"{origin}/shop"
 
-    # Build item description for Stripe
     item_desc = ", ".join([f"{i['name']} x{i['quantity']}" for i in items_for_order])
 
     checkout_req = CheckoutSessionRequest(
@@ -1611,13 +1641,11 @@ async def shop_checkout(req: CheckoutRequest, http_request: StarletteRequest):
 
     session = await stripe_checkout.create_checkout_session(checkout_req)
 
-    # Save order with stripe session id
     order.stripe_session_id = session.session_id
     order_doc = order.model_dump()
     order_doc['created_at'] = order_doc['created_at'].isoformat()
     await db.orders.insert_one(order_doc)
 
-    # Also save to payment_transactions
     await db.payment_transactions.insert_one({
         "id": str(uuid.uuid4()),
         "order_id": order.id,
@@ -1639,7 +1667,6 @@ async def get_order_status(session_id: str):
 
     checkout_status = await stripe_checkout.get_checkout_status(session_id)
 
-    # Update order and payment transaction
     new_status = "paid" if checkout_status.payment_status == "paid" else (
         "expired" if checkout_status.status == "expired" else "pending"
     )
@@ -1655,7 +1682,6 @@ async def get_order_status(session_id: str):
             {"$set": {"payment_status": new_status}}
         )
 
-        # Send emails on successful payment (only once)
         if new_status == "paid" and order.get('payment_status') != 'paid':
             asyncio.ensure_future(send_order_emails(order))
 
@@ -1698,7 +1724,6 @@ async def stripe_webhook(request: StarletteRequest):
         return {"status": "error", "detail": str(e)}
 
 
-# Admin orders
 @api_router.get("/admin/orders")
 async def get_admin_orders(username: str = Depends(verify_token)):
     orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
@@ -1727,7 +1752,6 @@ async def send_order_emails(order: dict):
             order.get('shipping_zone', ''), order.get('shipping_zone', '')
         )
 
-        # ===== PRIVATE EMAIL TO ADMIN =====
         admin_html = f"""
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#111827;color:#fff;">
             <div style="background:#1e3a5f;padding:20px;text-align:center;">
@@ -1762,7 +1786,6 @@ async def send_order_emails(order: dict):
         </div>
         """
 
-        # Send private email to admin
         await asyncio.to_thread(resend.Emails.send, {
             "from": SHOP_SENDER_EMAIL,
             "to": [NOTIFICATION_EMAIL],
@@ -1770,7 +1793,6 @@ async def send_order_emails(order: dict):
             "html": admin_html
         })
 
-        # ===== CONFIRMATION EMAIL TO CUSTOMER =====
         customer_html = f"""
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#111827;color:#fff;">
             <div style="background:#1e3a5f;padding:24px;text-align:center;">
