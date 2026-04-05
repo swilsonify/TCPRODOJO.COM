@@ -82,7 +82,5 @@ android-sdk/
 .env
 *.env
 *.env.*
--e 
-# Environment files
-*.env
-*.env.*
+
+# Emergent integration (auto-generated, should not
