@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image, Video, Mail, Settings, UserCheck, ShoppingBag } from 'lucide-react';
+import { Calendar, Users, Trophy, MessageSquare, LogOut, LayoutDashboard, Image, Video, Mail, Settings, UserCheck, ShoppingBag, HelpCircle } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive, media, siteSettings, students, products] = await Promise.all([
+      const [events, testimonials, contacts, coaches, successStories, endorsements, tips, classes, newsletter, pastEventsArchive, media, siteSettings, students, products, faqs] = await Promise.all([
         axios.get(`${API}/admin/events`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/testimonials`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/contacts`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -60,10 +60,10 @@ const AdminDashboard = () => {
         axios.get(`${API}/admin/media`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/site-settings`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API}/admin/students`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/products`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/products`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/faqs`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
-      // Separate events into upcoming and past
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
@@ -95,7 +95,8 @@ const AdminDashboard = () => {
         media: media.data.length,
         siteSettings: siteSettings.data.length,
         students: students.data.length,
-        products: products.data.length
+        products: products.data.length,
+        faqs: faqs.data.length
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -196,6 +197,13 @@ const AdminDashboard = () => {
       description: 'Manage photos, videos, podcasts & articles'
     },
     {
+      title: 'FAQ',
+      icon: HelpCircle,
+      count: stats.faqs || 0,
+      link: '/admin/faq',
+      description: 'Manage frequently asked questions'
+    },
+    {
       title: 'Site Settings',
       icon: Settings,
       count: stats.siteSettings || 0,
@@ -287,11 +295,11 @@ const AdminDashboard = () => {
               <div className="text-white font-semibold">Add Testimonial</div>
             </Link>
             <Link
-              to="/admin/events"
+              to="/admin/faq"
               className="bg-gray-900 border border-blue-500/20 rounded-lg p-6 hover:border-blue-500 transition-colors text-center"
             >
-              <Calendar className="text-blue-400 mx-auto mb-3" size={32} />
-              <div className="text-white font-semibold">Add Event</div>
+              <HelpCircle className="text-blue-400 mx-auto mb-3" size={32} />
+              <div className="text-white font-semibold">Manage FAQs</div>
             </Link>
           </div>
         </div>
