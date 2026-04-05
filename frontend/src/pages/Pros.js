@@ -135,7 +135,7 @@ const Pros = () => {
         {/* TC ENDORSEMENTS SECTION */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">{t('success.endorsements_title')}</h2>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">{t('media.endorsements_title')}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
