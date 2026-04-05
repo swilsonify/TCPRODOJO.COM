@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import axios from "axios";
 import "@/index.css";
 import App from "@/App";
+import "./i18n";
 
 // Bust browser/CDN cache on all API GET requests
 axios.interceptors.request.use((config) => {
