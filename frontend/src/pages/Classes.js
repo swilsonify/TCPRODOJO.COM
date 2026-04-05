@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Clock, Users, ChevronLeft, ChevronRight, X, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Clock, Users, ChevronLeft, ChevronRight, X, AlertTriangle, RefreshCw, ZoomIn } from 'lucide-react';
 import axios from 'axios';
+import ImageLightbox from '../components/ImageLightbox';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -23,6 +24,7 @@ const Classes = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDayName, setSelectedDayName] = useState(null);
   const [siteSettings, setSiteSettings] = useState({});
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const isAdmin = () => {
     const token = localStorage.getItem('adminToken');
@@ -357,12 +359,20 @@ const Classes = () => {
 
         {/* Classes Header Photo */}
         {siteSettings.classes_header_photo && (
-          <div className="max-w-4xl mx-auto mb-10" data-testid="classes-header-photo">
+          <div 
+            className="max-w-4xl mx-auto mb-10 relative cursor-pointer group" 
+            data-testid="classes-header-photo"
+            onClick={() => setLightboxOpen(true)}
+          >
             <img
               src={siteSettings.classes_header_photo}
               alt="TC Pro Dojo Classes"
-              className="w-full rounded-lg shadow-2xl"
+              className="w-full rounded-lg shadow-2xl transition-all duration-300 group-hover:opacity-90"
             />
+            {/* Hover overlay with expand icon */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+              <ZoomIn className="text-white" size={48} />
+            </div>
           </div>
         )}
 
@@ -549,12 +559,19 @@ const Classes = () => {
         {/* Schedule Photo Section */}
         {siteSettings.classes_photo && (
           <div className="max-w-4xl mx-auto mt-12" data-testid="classes-photo-section">
-            <div className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden">
+            <div 
+              className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden relative cursor-pointer group"
+              onClick={() => setLightboxOpen(true)}
+            >
               <img
                 src={siteSettings.classes_photo}
                 alt="Training at TC Pro Dojo"
-                className="w-full h-auto object-contain"
+                className="w-full h-auto object-contain transition-all duration-300 group-hover:opacity-90"
               />
+              {/* Hover overlay with expand icon */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <ZoomIn className="text-white" size={48} />
+              </div>
               {siteSettings.classes_photo_caption && (
                 <div className="p-4 text-center">
                   <p className="text-gray-400 text-sm">{siteSettings.classes_photo_caption}</p>
@@ -563,6 +580,17 @@ const Classes = () => {
             </div>
           </div>
         )}
+
+        {/* Classes Header Photo Lightbox */}
+        <ImageLightbox
+          images={[
+            ...(siteSettings.classes_header_photo ? [{ url: siteSettings.classes_header_photo, alt: 'TC Pro Dojo Classes', title: 'TC Pro Dojo Classes' }] : []),
+            ...(siteSettings.classes_photo ? [{ url: siteSettings.classes_photo, alt: 'Training at TC Pro Dojo', title: siteSettings.classes_photo_caption || 'Training at TC Pro Dojo' }] : [])
+          ]}
+          currentIndex={0}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+        />
 
         {/* Edit Class Modal (Admin only) */}
         {showEditModal && editingClass && (

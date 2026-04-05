@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
-import { Dumbbell, Users, Trophy, Calendar } from 'lucide-react';
+import { Dumbbell, Users, Trophy, Calendar, ZoomIn } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ImageLightbox from '../components/ImageLightbox';
 
 const Home = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [siteSettings, setSiteSettings] = useState({});
   const [loading, setLoading] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -51,6 +54,24 @@ const Home = () => {
 
   // Use site settings if available, otherwise fallback to defaults
   const homepageLogo = siteSettings.homepage_logo || '/images/homepage-logo.jpg';
+
+  // Get testimonial images for lightbox
+  const testimonialImages = testimonials
+    .filter(t => t.photoUrl)
+    .map(t => ({ url: t.photoUrl, alt: t.name, title: `${t.name} - ${t.role}` }));
+
+  const openTestimonialLightbox = (photoUrl) => {
+    const index = testimonialImages.findIndex(img => img.url === photoUrl);
+    if (index >= 0) {
+      setLightboxIndex(index);
+      setLightboxOpen(true);
+    }
+  };
+
+  // Home bottom photo image array
+  const homeBottomImages = siteSettings.home_bottom_photo 
+    ? [{ url: siteSettings.home_bottom_photo, alt: 'TC Pro Dojo', title: 'TC Pro Dojo' }]
+    : [];
 
   return (
     <div data-testid="home-page">
@@ -156,12 +177,20 @@ const Home = () => {
                 >
                   {/* Square Photo */}
                   {testimonial.photoUrl && (
-                    <div className="w-80 h-80 mx-auto mt-6 flex items-center justify-center bg-gray-900/50 rounded-lg">
+                    <div 
+                      className="w-80 h-80 mx-auto mt-6 flex items-center justify-center bg-gray-900/50 rounded-lg relative cursor-pointer group"
+                      onClick={() => openTestimonialLightbox(testimonial.photoUrl)}
+                      data-testid={`testimonial-photo-${index}`}
+                    >
                       <img 
                         src={testimonial.photoUrl} 
                         alt={testimonial.name}
-                        className="max-w-full max-h-full object-contain rounded-lg"
+                        className="max-w-full max-h-full object-contain rounded-lg transition-all duration-300 group-hover:opacity-90"
                       />
+                      {/* Hover overlay with expand icon */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+                        <ZoomIn className="text-white" size={40} />
+                      </div>
                     </div>
                   )}
                   
@@ -198,15 +227,35 @@ const Home = () => {
 
         {/* Home Bottom Photo */}
         {siteSettings.home_bottom_photo && (
-          <div className="max-w-5xl mx-auto mt-12" data-testid="home-bottom-photo">
+          <div 
+            className="max-w-5xl mx-auto mt-12 relative cursor-pointer group" 
+            data-testid="home-bottom-photo"
+            onClick={() => {
+              setLightboxIndex(0);
+              setLightboxOpen(true);
+            }}
+          >
             <img
               src={siteSettings.home_bottom_photo}
               alt="TC Pro Dojo"
-              className="w-full rounded-lg shadow-2xl"
+              className="w-full rounded-lg shadow-2xl transition-all duration-300 group-hover:opacity-90"
             />
+            {/* Hover overlay with expand icon */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+              <ZoomIn className="text-white" size={48} />
+            </div>
           </div>
         )}
       </section>
+
+      {/* Lightbox for testimonial photos */}
+      <ImageLightbox
+        images={testimonialImages.length > 0 ? testimonialImages : homeBottomImages}
+        currentIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNavigate={setLightboxIndex}
+      />
     </div>
   );
 };

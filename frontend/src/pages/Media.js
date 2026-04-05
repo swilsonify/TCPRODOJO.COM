@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Image, Video, Mic, FileText, ExternalLink, Play } from 'lucide-react';
+import { Image, Video, Mic, FileText, ExternalLink, Play, ZoomIn } from 'lucide-react';
 import axios from 'axios';
+import ImageLightbox from '../components/ImageLightbox';
 
 const Media = () => {
   const [media, setMedia] = useState([]);
@@ -49,6 +50,23 @@ const Media = () => {
   const filteredMedia = activeFilter === 'all' 
     ? media 
     : media.filter(item => item.mediaType === activeFilter);
+
+  // State for lightbox
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Get all photo images for gallery navigation
+  const photoImages = filteredMedia
+    .filter(item => item.mediaType === 'photo' && item.mediaUrl)
+    .map(item => ({ url: item.mediaUrl, alt: item.title, title: item.title }));
+
+  const openLightbox = (photoUrl) => {
+    const index = photoImages.findIndex(img => img.url === photoUrl);
+    if (index >= 0) {
+      setLightboxIndex(index);
+      setLightboxOpen(true);
+    }
+  };
 
   const convertToEmbedUrl = (url) => {
     if (!url) return url;
@@ -139,11 +157,21 @@ const Media = () => {
                   <div className="relative aspect-square bg-gray-900 flex items-center justify-center overflow-hidden">
                     {/* Photo */}
                     {item.mediaType === 'photo' && item.mediaUrl ? (
-                      <img 
-                        src={item.mediaUrl} 
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                      <div 
+                        className="relative w-full h-full cursor-pointer"
+                        onClick={() => openLightbox(item.mediaUrl)}
+                        data-testid={`media-photo-${index}`}
+                      >
+                        <img 
+                          src={item.mediaUrl} 
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {/* Hover overlay with expand icon */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <ZoomIn className="text-white" size={40} />
+                        </div>
+                      </div>
                     ) : hasVideo && embedUrl.includes('youtube.com/embed') ? (
                       /* YouTube Video */
                       <iframe
@@ -217,6 +245,15 @@ const Media = () => {
             })}
           </div>
         )}
+
+        {/* Image Lightbox for photos */}
+        <ImageLightbox
+          images={photoImages}
+          currentIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={setLightboxIndex}
+        />
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Award, Users as UsersIcon, Trophy } from 'lucide-react';
+import { Award, Users as UsersIcon, Trophy, ZoomIn } from 'lucide-react';
+import ImageLightbox from '../components/ImageLightbox';
 
 const Pros = () => {
   const [successStories, setSuccessStories] = useState([]);
@@ -8,6 +9,9 @@ const Pros = () => {
   const [coaches, setCoaches] = useState([]);
   const [siteSettings, setSiteSettings] = useState({});
   const [loading, setLoading] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -55,6 +59,22 @@ const Pros = () => {
     }
   };
 
+  const openImageLightbox = (images, index = 0) => {
+    setLightboxImages(images);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  // Get all success story photos for gallery navigation
+  const successStoryImages = successStories
+    .filter(g => g.photo_url)
+    .map(g => ({ url: g.photo_url, alt: g.name, title: `${g.name} - ${g.promotion}` }));
+
+  // Get all coach photos for gallery navigation
+  const coachImages = coaches
+    .filter(c => c.photo_url)
+    .map(c => ({ url: c.photo_url, alt: c.name, title: `${c.name} - ${c.title}` }));
+
   if (loading) {
     return (
       <div className="pt-28 pb-20 px-4 min-h-screen flex items-center justify-center">
@@ -93,12 +113,23 @@ const Pros = () => {
               >
                 {/* Photo - Square aspect ratio */}
                 {graduate.photo_url && (
-                  <div className="aspect-square bg-gray-800 overflow-hidden">
+                  <div 
+                    className="aspect-square bg-gray-800 overflow-hidden relative cursor-pointer group"
+                    onClick={() => {
+                      const idx = successStoryImages.findIndex(img => img.url === graduate.photo_url);
+                      openImageLightbox(successStoryImages, idx >= 0 ? idx : 0);
+                    }}
+                    data-testid={`graduate-photo-${index}`}
+                  >
                     <img 
                       src={graduate.photo_url} 
                       alt={graduate.name}
-                      className="w-full h-full object-cover object-center"
+                      className="w-full h-full object-cover object-center transition-all duration-300 group-hover:opacity-90"
                     />
+                    {/* Hover overlay with expand icon */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <ZoomIn className="text-white" size={40} />
+                    </div>
                   </div>
                 )}
                 
@@ -181,13 +212,26 @@ const Pros = () => {
                 data-testid={`trainer-${index}`}
               >
                 {/* Coach Photo */}
-                <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
+                <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-900 to-black flex items-center justify-center relative">
                   {trainer.photo_url ? (
-                    <img 
-                      src={trainer.photo_url} 
-                      alt={trainer.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <div 
+                      className="w-full h-full cursor-pointer group"
+                      onClick={() => {
+                        const idx = coachImages.findIndex(img => img.url === trainer.photo_url);
+                        openImageLightbox(coachImages, idx >= 0 ? idx : 0);
+                      }}
+                      data-testid={`coach-photo-${index}`}
+                    >
+                      <img 
+                        src={trainer.photo_url} 
+                        alt={trainer.name}
+                        className="w-full h-full object-cover transition-all duration-300 group-hover:opacity-90"
+                      />
+                      {/* Hover overlay with expand icon */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <ZoomIn className="text-white" size={40} />
+                      </div>
+                    </div>
                   ) : (
                     <div className="text-center p-12">
                       <div className="w-32 h-32 mx-auto rounded-full bg-blue-500/20 border-4 border-blue-500 flex items-center justify-center mb-4">
@@ -240,12 +284,20 @@ const Pros = () => {
 
         {/* Coaches Page Photo */}
         {siteSettings.coaches_page_photo && (
-          <div className="max-w-5xl mx-auto mt-16" data-testid="coaches-page-photo">
+          <div 
+            className="max-w-5xl mx-auto mt-16 relative cursor-pointer group" 
+            data-testid="coaches-page-photo"
+            onClick={() => openImageLightbox([{ url: siteSettings.coaches_page_photo, alt: 'TC Pro Dojo Coaches', title: 'TC Pro Dojo Coaches' }])}
+          >
             <img
               src={siteSettings.coaches_page_photo}
               alt="TC Pro Dojo Coaches"
-              className="w-full rounded-lg shadow-2xl"
+              className="w-full rounded-lg shadow-2xl transition-all duration-300 group-hover:opacity-90"
             />
+            {/* Hover overlay with expand icon */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+              <ZoomIn className="text-white" size={48} />
+            </div>
           </div>
         )}
 
@@ -266,14 +318,31 @@ const Pros = () => {
 
         {/* Coaches Page Photo 2 */}
         {siteSettings.coaches_page_photo_2 && (
-          <div className="max-w-5xl mx-auto mt-12" data-testid="coaches-page-photo-2">
+          <div 
+            className="max-w-5xl mx-auto mt-12 relative cursor-pointer group" 
+            data-testid="coaches-page-photo-2"
+            onClick={() => openImageLightbox([{ url: siteSettings.coaches_page_photo_2, alt: 'TC Pro Dojo', title: 'TC Pro Dojo' }])}
+          >
             <img
               src={siteSettings.coaches_page_photo_2}
               alt="TC Pro Dojo"
-              className="w-full rounded-lg shadow-2xl"
+              className="w-full rounded-lg shadow-2xl transition-all duration-300 group-hover:opacity-90"
             />
+            {/* Hover overlay with expand icon */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+              <ZoomIn className="text-white" size={48} />
+            </div>
           </div>
         )}
+
+        {/* Image Lightbox */}
+        <ImageLightbox
+          images={lightboxImages}
+          currentIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={setLightboxIndex}
+        />
       </div>
     </div>
   );

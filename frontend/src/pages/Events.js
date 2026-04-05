@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Calendar, MapPin, Clock, Users } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, ZoomIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import ImageLightbox from '../components/ImageLightbox';
 
 const Events = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -10,6 +11,9 @@ const Events = () => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribeMessage, setSubscribeMessage] = useState('');
   const [siteSettings, setSiteSettings] = useState({});
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -68,6 +72,12 @@ const Events = () => {
     }
   };
 
+  const openImageLightbox = (images, index = 0) => {
+    setLightboxImages(images);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
   return (
     <div className="pt-28 pb-20 px-4" data-testid="events-page">
       <div className="container mx-auto">
@@ -109,12 +119,20 @@ const Events = () => {
                     <div className="space-y-4 p-6">
                       {/* Event Poster */}
                       {event.posterUrl && (
-                        <div className="rounded-lg overflow-hidden border-2 border-blue-500 bg-black">
+                        <div 
+                          className="rounded-lg overflow-hidden border-2 border-blue-500 bg-black relative cursor-pointer group"
+                          onClick={() => openImageLightbox([{ url: event.posterUrl, alt: event.title, title: event.title }])}
+                          data-testid={`event-poster-${event.id}`}
+                        >
                           <img 
                             src={event.posterUrl} 
                             alt={event.title}
-                            className="w-full h-auto object-contain"
+                            className="w-full h-auto object-contain transition-all duration-300 group-hover:opacity-90"
                           />
+                          {/* Hover overlay with expand icon */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <ZoomIn className="text-white" size={40} />
+                          </div>
                         </div>
                       )}
                       
@@ -235,12 +253,20 @@ const Events = () => {
                 >
                   {/* Thumbnail */}
                   {event.thumbnailUrl && (
-                    <div className="bg-black flex items-center justify-center border-4 border-blue-500">
+                    <div 
+                      className="bg-black flex items-center justify-center border-4 border-blue-500 relative cursor-pointer group"
+                      onClick={() => openImageLightbox([{ url: event.thumbnailUrl, alt: event.title, title: event.title }])}
+                      data-testid={`past-event-thumbnail-${index}`}
+                    >
                       <img
                         src={event.thumbnailUrl}
                         alt={event.title}
-                        className="w-full h-auto object-contain"
+                        className="w-full h-auto object-contain transition-all duration-300 group-hover:opacity-90"
                       />
+                      {/* Hover overlay with expand icon */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <ZoomIn className="text-white" size={40} />
+                      </div>
                     </div>
                   )}
 
@@ -317,26 +343,47 @@ const Events = () => {
             .map(i => siteSettings[`events_photo_${i}`])
             .filter(Boolean);
           if (eventPhotos.length === 0) return null;
+          
+          const eventPhotoImages = eventPhotos.map((url, idx) => ({
+            url, 
+            alt: `Events photo ${idx + 1}`, 
+            title: `Events photo ${idx + 1}`
+          }));
+          
           return (
             <div className="max-w-5xl mx-auto mt-12" data-testid="events-photo-row">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {eventPhotos.map((url, index) => (
                   <div
                     key={index}
-                    className="aspect-square overflow-hidden rounded-lg border border-blue-500/20 group"
+                    className="aspect-square overflow-hidden rounded-lg border border-blue-500/20 group relative cursor-pointer"
                     data-testid={`events-photo-${index + 1}`}
+                    onClick={() => openImageLightbox(eventPhotoImages, index)}
                   >
                     <img
                       src={url}
                       alt={`Events photo ${index + 1}`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
+                    {/* Hover overlay with expand icon */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <ZoomIn className="text-white" size={32} />
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           );
         })()}
+
+        {/* Image Lightbox */}
+        <ImageLightbox
+          images={lightboxImages}
+          currentIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={setLightboxIndex}
+        />
       </div>
     </div>
   );

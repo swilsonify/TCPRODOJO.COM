@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ZoomIn } from 'lucide-react';
 import axios from 'axios';
+import ImageLightbox from '../components/ImageLightbox';
 
 const Training = () => {
   const [tips, setTips] = useState([]);
   const [siteSettings, setSiteSettings] = useState({});
   const [loading, setLoading] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
   
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -38,6 +43,19 @@ const Training = () => {
     if (url) gridPhotos.push({ url, index: i });
   }
 
+  // Create lightbox images array from grid photos
+  const gridPhotoImages = gridPhotos.map(photo => ({
+    url: photo.url,
+    alt: `Training photo ${photo.index}`,
+    title: `Training photo ${photo.index}`
+  }));
+
+  const openImageLightbox = (images, index = 0) => {
+    setLightboxImages(images);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
   return (
     <div className="pt-28 pb-20 px-4" data-testid="training-page">
       <div className="container mx-auto max-w-5xl">
@@ -53,12 +71,23 @@ const Training = () => {
         </div>
 
         {/* Featured Photo */}
-        <div className="mb-16">
+        <div 
+          className="mb-16 relative cursor-pointer group"
+          onClick={() => openImageLightbox([{ 
+            url: siteSettings.training_featured_photo || "https://res.cloudinary.com/dpx8a9k7c/image/upload/v1763246788/WhatsApp_Image_2025-11-15_at_17.43.18_3_djziql.jpg",
+            alt: 'TC Pro Dojo Training',
+            title: 'TC Pro Dojo Training'
+          }])}
+        >
           <img 
             src={siteSettings.training_featured_photo || "https://res.cloudinary.com/dpx8a9k7c/image/upload/v1763246788/WhatsApp_Image_2025-11-15_at_17.43.18_3_djziql.jpg"}
             alt="TC Pro Dojo Training" 
-            className="w-full rounded-lg shadow-2xl"
+            className="w-full rounded-lg shadow-2xl transition-all duration-300 group-hover:opacity-90"
           />
+          {/* Hover overlay with expand icon */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+            <ZoomIn className="text-white" size={48} />
+          </div>
         </div>
 
         {/* Curriculum Section */}
@@ -87,17 +116,22 @@ const Training = () => {
         {gridPhotos.length > 0 && (
           <div className="mb-16" data-testid="training-photo-grid">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {gridPhotos.map((photo) => (
+              {gridPhotos.map((photo, idx) => (
                 <div
                   key={photo.index}
-                  className="aspect-square overflow-hidden rounded-lg border border-blue-500/20 group"
+                  className="aspect-square overflow-hidden rounded-lg border border-blue-500/20 group relative cursor-pointer"
                   data-testid={`training-grid-photo-${photo.index}`}
+                  onClick={() => openImageLightbox(gridPhotoImages, idx)}
                 >
                   <img
                     src={photo.url}
                     alt={`Training photo ${photo.index}`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
+                  {/* Hover overlay with expand icon */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <ZoomIn className="text-white" size={32} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -172,6 +206,15 @@ const Training = () => {
             </div>
           )}
         </div>
+
+        {/* Image Lightbox */}
+        <ImageLightbox
+          images={lightboxImages}
+          currentIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={setLightboxIndex}
+        />
       </div>
     </div>
   );
