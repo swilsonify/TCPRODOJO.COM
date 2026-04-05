@@ -1,97 +1,77 @@
-# TC Pro Dojo - Product Requirements Document
+# TC Pro Dojo Website - PRD
 
 ## Original Problem Statement
-Build and manage a full-stack website for "Torture Chamber Pro Wrestling Dojo" - a martial arts/pro wrestling training school. The site requires public-facing pages, an admin dashboard for content management, and integrations with Cloudinary (media), Resend (email), Stripe (payments), and MongoDB (data).
+Make all the photos in the galleries on the site clickable so that they can be expanded.
+
+## Project Overview
+Torture Chamber Pro Wrestling Dojo - Official Website
+A full-stack web application with admin panel for managing events, trainers, testimonials, and contact messages.
 
 ## Tech Stack
-- **Frontend:** React.js, Tailwind CSS
-- **Backend:** FastAPI (Python)
-- **Database:** MongoDB
-- **Integrations:** Cloudinary, Resend, Stripe, Google Maps
-- **Deployment:** Render (user's production host)
+- **Frontend**: React 18 + Tailwind CSS
+- **Backend**: FastAPI (Python)
+- **Database**: MongoDB
+- **Authentication**: JWT Bearer Tokens
 
-## Core Architecture
-```
-/app/backend/server.py          - All API endpoints (~1870 lines)
-/app/frontend/src/App.js        - Route definitions
-/app/frontend/src/pages/        - Public pages (Home, Training, Classes, Events, Pros, Media, Shop, Contact)
-/app/frontend/src/pages/admin/  - Admin pages (Dashboard, ClassSchedule, Media, Products, SiteSettings, etc.)
-/app/frontend/src/components/   - Shared components (AdminNav, CloudinaryUploader, Footer)
-```
+## User Personas
+1. **Visitors**: People interested in pro wrestling training, viewing events, and learning about the dojo
+2. **Students**: Current/prospective students checking class schedules and training info
+3. **Admin**: Staff managing content (events, trainers, testimonials, media)
 
-## Admin Credentials
-- Username: `admin` / Password: `tcprodojo2025`
+## Core Requirements
+- Public pages: Home, Training, Classes, Events, Pros (Success), Media, Shop, Contact
+- Admin panel for content management
+- Responsive design with blue/black wrestling-themed aesthetic
 
 ## What's Been Implemented
 
-### Public Pages
-- Home (dynamic logos, testimonials, video)
-- Training (curriculum, tips, photo grid from media gallery)
-- Classes (weekly schedule with multi-day/multi-time recurring + one-time classes)
-- Events (past events with YouTube embeds, photo rows)
-- Success/Coaches (success stories, endorsements, coaches, configurable photos)
-- Media (gallery of podcasts, videos, photos, articles)
-- Shop (product grid, cart, checkout with Stripe, shipping zones)
-- Contact (FAQs, contact form with Resend notifications)
+### January 2026 - Image Lightbox Feature
+**Date**: January 5, 2026
 
-### Admin Dashboard Features
-- Coaches, Events, Pros/Success Stories, Endorsements, Testimonials, Tips management
-- Class Schedule (recurring multi-day/multi-time + one-time special classes)
-- Class cancellation/reschedule with student email notifications
-- Media management (CRUD with Cloudinary uploads, category system)
-- Site Settings (logos, branding, dozens of page photo spots)
-- Student database with email list export
-- Newsletter subscribers + compose/send newsletters via Resend
-- Contact form submissions viewer
-- Product management (CRUD for shop inventory)
-- Order viewing
+Added clickable/expandable photo galleries across all site pages:
 
-### Key Features
-- Multi-day/multi-time class scheduling (e.g., Mon @ 6PM, Wed @ 7:30PM)
-- Stripe Checkout integration for shop payments
-- Flat-rate shipping: QC $10, Canada $15, International $25
-- Order confirmation emails (admin + customer)
-- Cache-busting: No-cache middleware + axios interceptor with timestamp
-- Paragraph rendering (whitespace-pre-line) across all text
-- YouTube URL auto-conversion to embed format
+1. **Created ImageLightbox Component** (`/app/frontend/src/components/ImageLightbox.js`)
+   - Full-screen lightbox overlay with dark background
+   - Close button (X) and Escape key support
+   - Zoom in/out capability with click toggle
+   - Navigation arrows for multiple images (left/right)
+   - Keyboard navigation (Arrow keys)
+   - Image counter showing position (1/5, etc.)
+   - Hover effect showing ZoomIn icon on images
 
-## Completed Tasks
+2. **Pages Updated**:
+   - **Media.js**: Photos in media gallery clickable with gallery navigation
+   - **Home.js**: Testimonial photos and home bottom photo clickable
+   - **Events.js**: Event posters, past event thumbnails, events photo row all clickable
+   - **Pros.js**: Success story photos, coach photos, page photos clickable
+   - **Training.js**: Featured photo and grid photos clickable with gallery navigation
+   - **Classes.js**: Header and schedule photos clickable
 
-### Feb 2026
-- Media page (public + admin), Site Settings admin panel, Cloudinary integration
-- Student database, address update with Google Maps, Resend email integration
-- Newsletter compose/send, one-time class scheduling, FAQ updates
-- Training page photo grid, classes/coaches page photo spots
-- Media category system ("general" vs "grid")
+3. **UX Features**:
+   - Hover overlay with ZoomIn icon for all clickable images
+   - Smooth transitions and animations
+   - Proper test IDs for automation (`data-testid`)
+   - Gallery navigation maintains context within photo groups
 
-### Mar 2026
-- Multi-day/multi-time class scheduling (schedule: [{day, time}])
-- Classes page redesign: day-card layout, only active days shown
-- Same-time classes displayed side-by-side
-- Email notifications: enrolled students notified on cancel/reschedule
-- Admin email preview (cancellation + reschedule)
-- Global no-cache middleware + axios interceptor for cache-busting
-- Shop page with Stripe Checkout, cart drawer, shipping zones
-- Admin Products CRUD, Admin Orders viewer
-- Order confirmation emails (admin notification + customer receipt)
-- Fixed requirements.txt with --extra-index-url for production deployment
+## P0/P1/P2 Features Remaining
 
-## DB Schema (Key Collections)
-- `class_schedules`: {id, title, instructor, level, spots, type, description, is_one_time, one_time_date, day, days, time, schedule: [{day, time}]}
-- `products`: {id, name, description, price, imageUrl, sizes, category, active, displayOrder}
-- `orders`: {id, customer_name, customer_email, items, shipping_address, shipping_zone, shipping_cost, subtotal, total, stripe_session_id, payment_status}
-- `media`: {id, title, description, mediaType, mediaUrl, thumbnailUrl, externalLink, category, displayOrder}
-- `site_settings`: {id, settingKey, settingValue, settingType, description}
+### P0 (Critical)
+- None currently identified
 
-## Upcoming/Future Tasks
-- (P1) Wire up media categories to respective pages (Events, Coaches, Classes, Home photo galleries) — currently no media uploaded
-- (P2) Refactor server.py into modular route files (currently ~1870 lines)
-- (P2) Create useSiteSettings() custom hook to reduce code duplication
-- (P2) Group AdminSiteSettings.js predefined settings by page
+### P1 (Important)
+- Image optimization for faster loading
+- Lazy loading for gallery images
 
-## Known Issues
-- Git history divergence when using "Save to Github" — advise user to create new branch if conflicts arise
-- User routinely tests on production domain instead of preview URL — always remind them to "Save to Github" and redeploy
+### P2 (Nice to Have)
+- Swipe gestures for mobile lightbox navigation
+- Image download option in lightbox
+- Slideshow/auto-play mode
 
-## Testing Status
-- iteration_5.json: 100% backend (21/21), 100% frontend — Multi-day scheduling, Shop, Products all verified
+## Next Tasks
+1. Test lightbox functionality with actual uploaded images via admin panel
+2. Consider adding image captions to lightbox view
+3. Optimize image loading performance
+
+## Admin Credentials
+- Default: `admin` / `tcprodojo2025`
+- Secondary: `rodney` / `tcprodojo2025`
