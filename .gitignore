@@ -83,4 +83,5 @@ android-sdk/
 *.env
 *.env.*
 
-# Emergent integration (auto-generated, should not
+# Emergent integration (auto-generated, should not be tracked)
+.emergent/
