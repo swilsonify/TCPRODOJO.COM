@@ -14,7 +14,14 @@ const SHIPPING_COSTS = { quebec: 10.00, canada: 15.00, international: 25.00 };
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tcprodojo_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
@@ -27,10 +34,26 @@ const Shop = () => {
     notes: ''
   });
 
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('tcprodojo_cart', JSON.stringify(cart));
+      // Dispatch event so Navigation can update its count
+      window.dispatchEvent(new Event('cart-updated'));
+    } catch {}
+  }, [cart]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     loadProducts();
     checkReturnFromStripe();
+
+    // Auto-open cart if navigated here with ?cart=open
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('cart') === 'open') {
+      setShowCart(true);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, []);
 
   const loadProducts = async () => {
@@ -64,7 +87,6 @@ const Shop = () => {
         setOrderSuccess(true);
         setPollingStatus('paid');
         setCart([]);
-        // Clean URL
         window.history.replaceState({}, '', window.location.pathname);
         return;
       } else if (res.data.status === 'expired') {
@@ -160,7 +182,6 @@ const Shop = () => {
     }
   };
 
-  // Order success screen
   if (orderSuccess) {
     return (
       <div className="pt-28 pb-20 px-4" data-testid="order-success">
@@ -186,7 +207,6 @@ const Shop = () => {
     );
   }
 
-  // Payment polling screen
   if (pollingStatus === 'checking') {
     return (
       <div className="pt-28 pb-20 px-4">
@@ -204,7 +224,6 @@ const Shop = () => {
   return (
     <div className="pt-28 pb-20 px-4" data-testid="shop-page">
       <div className="container mx-auto max-w-6xl">
-        {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white torture-text mb-4">SHOP</h1>
           <div className="gradient-border mx-auto w-24 mb-4"></div>
@@ -232,7 +251,6 @@ const Shop = () => {
             <button onClick={() => setShowCheckout(false)} className="text-blue-400 hover:text-blue-300 mb-6 text-sm font-semibold">&larr; Back to Shop</button>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-              {/* Checkout Form */}
               <div className="lg:col-span-3">
                 <div className="bg-black border border-blue-500/20 rounded-lg p-6">
                   <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -324,7 +342,6 @@ const Shop = () => {
                 </div>
               </div>
 
-              {/* Order Summary */}
               <div className="lg:col-span-2">
                 <div className="bg-black border border-blue-500/20 rounded-lg p-6 sticky top-28">
                   <h3 className="text-lg font-bold text-white mb-4">Order Summary</h3>
@@ -352,7 +369,6 @@ const Shop = () => {
           </div>
         ) : (
           <>
-            {/* Product Grid */}
             {loading ? (
               <div className="text-center text-gray-400 py-16">Loading products...</div>
             ) : products.length === 0 ? (
@@ -368,7 +384,6 @@ const Shop = () => {
               </div>
             )}
 
-            {/* Shipping Info */}
             <div className="max-w-3xl mx-auto mt-12 bg-black border border-blue-500/20 rounded-lg p-6">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Truck size={20} className="text-blue-400" /> Shipping Information
