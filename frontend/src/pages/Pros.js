@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Award, Users as UsersIcon, Trophy, ZoomIn } from 'lucide-react';
 import ImageLightbox from '../components/ImageLightbox';
+import { useTranslation } from 'react-i18next';
 
 const Pros = () => {
   const [successStories, setSuccessStories] = useState([]);
@@ -12,25 +13,15 @@ const Pros = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lightboxImages, setLightboxImages] = useState([]);
+  const { t } = useTranslation();
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
-  // Helper function to convert YouTube URL to embed format
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return '';
-    
-    // Already in embed format
-    if (url.includes('youtube.com/embed/')) {
-      return url;
-    }
-    
-    // Convert watch format to embed format
+    if (url.includes('youtube.com/embed/')) return url;
     const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    if (videoIdMatch && videoIdMatch[1]) {
-      return `https://www.youtube.com/embed/${videoIdMatch[1]}`;
-    }
-    
-    // Return original URL if no match
+    if (videoIdMatch && videoIdMatch[1]) return `https://www.youtube.com/embed/${videoIdMatch[1]}`;
     return url;
   };
 
@@ -47,7 +38,6 @@ const Pros = () => {
         axios.get(`${API}/api/coaches`),
         axios.get(`${API}/api/site-settings`)
       ]);
-      
       setSuccessStories(storiesRes.data);
       setEndorsements(endorsementsRes.data);
       setCoaches(coachesRes.data);
@@ -65,12 +55,10 @@ const Pros = () => {
     setLightboxOpen(true);
   };
 
-  // Get all success story photos for gallery navigation
   const successStoryImages = successStories
     .filter(g => g.photo_url)
     .map(g => ({ url: g.photo_url, alt: g.name, title: `${g.name} - ${g.promotion}` }));
 
-  // Get all coach photos for gallery navigation
   const coachImages = coaches
     .filter(c => c.photo_url)
     .map(c => ({ url: c.photo_url, alt: c.name, title: `${c.name} - ${c.title}` }));
@@ -78,7 +66,7 @@ const Pros = () => {
   if (loading) {
     return (
       <div className="pt-28 pb-20 px-4 min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-white text-xl">{t('success.loading')}</div>
       </div>
     );
   }
@@ -88,20 +76,17 @@ const Pros = () => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">SUCCESS</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">{t('success.title')}</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-            Meet the champions we've built and the world-class coaches who train them.
+            {t('success.empty')}
           </p>
         </div>
 
         {/* SUCCESS STORIES SECTION */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">SUCCESS STORIES</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Our students compete on the biggest stages around the world.
-            </p>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">{t('success.stories_title')}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -111,9 +96,8 @@ const Pros = () => {
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`graduate-${index}`}
               >
-                {/* Photo - Square aspect ratio */}
                 {graduate.photo_url && (
-                  <div 
+                  <div
                     className="aspect-square bg-gray-800 overflow-hidden relative cursor-pointer group"
                     onClick={() => {
                       const idx = successStoryImages.findIndex(img => img.url === graduate.photo_url);
@@ -121,28 +105,26 @@ const Pros = () => {
                     }}
                     data-testid={`graduate-photo-${index}`}
                   >
-                    <img 
-                      src={graduate.photo_url} 
+                    <img
+                      src={graduate.photo_url}
                       alt={graduate.name}
                       className="w-full h-full object-cover object-center transition-all duration-300 group-hover:opacity-90"
                     />
-                    {/* Hover overlay with expand icon */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <ZoomIn className="text-white" size={40} />
                     </div>
                   </div>
                 )}
-                
+
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <Trophy className="text-blue-500" size={32} />
                     <span className="text-xs text-gray-500">Class of {graduate.yearGraduated}</span>
                   </div>
-                  
+
                   <h3 className="text-xl font-bold text-white mb-2">{graduate.name}</h3>
                   <div className="text-blue-400 text-sm font-semibold mb-1">{graduate.promotion}</div>
                   <div className="text-gray-400 text-sm mb-3">{graduate.achievement}</div>
-                  
                   <p className="text-gray-300 text-sm whitespace-pre-line">{graduate.bio}</p>
                 </div>
               </div>
@@ -153,10 +135,7 @@ const Pros = () => {
         {/* TC ENDORSEMENTS SECTION */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">TC ENDORSEMENTS</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Hear from industry professionals about Torture Chamber Pro Wrestling Dojo.
-            </p>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">{t('success.coaches_title')}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
@@ -166,7 +145,6 @@ const Pros = () => {
                 className="bg-black border border-blue-500/20 rounded-lg overflow-hidden hover-lift"
                 data-testid={`endorsement-${index}`}
               >
-                {/* Video - Square Frame */}
                 <div className="aspect-square bg-gradient-to-br from-blue-900 to-black flex items-center justify-center">
                   {endorsement.videoUrl ? (
                     <iframe
@@ -182,11 +160,11 @@ const Pros = () => {
                       <svg className="w-16 h-16 mx-auto mb-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
                       </svg>
-                      <span className="text-gray-500 text-sm">Video Coming Soon</span>
+                      <span className="text-gray-500 text-sm">{t('success.loading')}</span>
                     </div>
                   )}
                 </div>
-                
+
                 <div className="p-6">
                   <h3 className="text-lg font-bold text-white mb-2">{endorsement.title}</h3>
                 </div>
@@ -198,10 +176,7 @@ const Pros = () => {
         {/* COACHES SECTION */}
         <div>
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-blue-400 mb-4">OUR COACHES</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Learn from experienced professionals who have competed at the highest levels and are dedicated to developing the next generation.
-            </p>
+            <h2 className="text-4xl font-bold text-blue-400 mb-4">{t('success.coaches_title')}</h2>
           </div>
 
           <div className="max-w-6xl mx-auto space-y-12">
@@ -211,10 +186,9 @@ const Pros = () => {
                 className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift flex flex-col md:flex-row"
                 data-testid={`trainer-${index}`}
               >
-                {/* Coach Photo */}
                 <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-900 to-black flex items-center justify-center relative">
                   {trainer.photo_url ? (
-                    <div 
+                    <div
                       className="w-full h-full cursor-pointer group"
                       onClick={() => {
                         const idx = coachImages.findIndex(img => img.url === trainer.photo_url);
@@ -222,12 +196,11 @@ const Pros = () => {
                       }}
                       data-testid={`coach-photo-${index}`}
                     >
-                      <img 
-                        src={trainer.photo_url} 
+                      <img
+                        src={trainer.photo_url}
                         alt={trainer.name}
                         className="w-full h-full object-cover transition-all duration-300 group-hover:opacity-90"
                       />
-                      {/* Hover overlay with expand icon */}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <ZoomIn className="text-white" size={40} />
                       </div>
@@ -238,12 +211,11 @@ const Pros = () => {
                         <UsersIcon size={64} className="text-blue-500" />
                       </div>
                       <div className="text-blue-400 font-semibold">{trainer.experience}</div>
-                      <div className="text-gray-400 text-sm">Experience</div>
+                      <div className="text-gray-400 text-sm">{t('success.experience')}</div>
                     </div>
                   )}
                 </div>
 
-                {/* Content */}
                 <div className="w-full md:w-2/3 p-8">
                   <div className="mb-4">
                     <h2 className="text-3xl font-bold text-white mb-2">{trainer.name}</h2>
@@ -252,7 +224,7 @@ const Pros = () => {
                     )}
                     <div className="text-blue-400 font-semibold mb-1">{trainer.title}</div>
                     <div className="text-gray-400 text-sm">
-                      <span className="font-semibold">Specialty:</span> {trainer.specialty}
+                      <span className="font-semibold">{t('success.specialty')}</span> {trainer.specialty}
                     </div>
                   </div>
 
@@ -262,7 +234,7 @@ const Pros = () => {
                     <div>
                       <div className="flex items-center space-x-2 text-blue-400 font-semibold mb-3">
                         <Award size={20} />
-                        <span>Key Achievements</span>
+                        <span>{t('success.achievements')}</span>
                       </div>
                       <ul className="space-y-2">
                         {trainer.achievements
@@ -284,8 +256,8 @@ const Pros = () => {
 
         {/* Coaches Page Photo */}
         {siteSettings.coaches_page_photo && (
-          <div 
-            className="max-w-5xl mx-auto mt-16 relative cursor-pointer group" 
+          <div
+            className="max-w-5xl mx-auto mt-16 relative cursor-pointer group"
             data-testid="coaches-page-photo"
             onClick={() => openImageLightbox([{ url: siteSettings.coaches_page_photo, alt: 'TC Pro Dojo Coaches', title: 'TC Pro Dojo Coaches' }])}
           >
@@ -294,7 +266,6 @@ const Pros = () => {
               alt="TC Pro Dojo Coaches"
               className="w-full rounded-lg shadow-2xl transition-all duration-300 group-hover:opacity-90"
             />
-            {/* Hover overlay with expand icon */}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
               <ZoomIn className="text-white" size={48} />
             </div>
@@ -303,7 +274,7 @@ const Pros = () => {
 
         {/* CTA Section */}
         <div className="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Join Them?</h2>
+          <h2 className="text-3xl font-bold text-white mb-4">{t('success.cta_title')}</h2>
           <p className="text-blue-100 mb-6">
             Train with the best coaches and join our legacy of professional wrestlers. Your journey starts here.
           </p>
@@ -312,14 +283,14 @@ const Pros = () => {
             className="inline-block px-8 py-3 bg-white text-blue-600 font-bold rounded hover:bg-gray-100 transition-colors"
             data-testid="cta-training-button"
           >
-            START TRAINING TODAY
+            {t('success.cta_button')}
           </a>
         </div>
 
         {/* Coaches Page Photo 2 */}
         {siteSettings.coaches_page_photo_2 && (
-          <div 
-            className="max-w-5xl mx-auto mt-12 relative cursor-pointer group" 
+          <div
+            className="max-w-5xl mx-auto mt-12 relative cursor-pointer group"
             data-testid="coaches-page-photo-2"
             onClick={() => openImageLightbox([{ url: siteSettings.coaches_page_photo_2, alt: 'TC Pro Dojo', title: 'TC Pro Dojo' }])}
           >
@@ -328,14 +299,12 @@ const Pros = () => {
               alt="TC Pro Dojo"
               className="w-full rounded-lg shadow-2xl transition-all duration-300 group-hover:opacity-90"
             />
-            {/* Hover overlay with expand icon */}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
               <ZoomIn className="text-white" size={48} />
             </div>
           </div>
         )}
 
-        {/* Image Lightbox */}
         <ImageLightbox
           images={lightboxImages}
           currentIndex={lightboxIndex}
