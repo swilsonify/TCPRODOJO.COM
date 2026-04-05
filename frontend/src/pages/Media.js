@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react';
 import { Image, Video, Mic, FileText, ExternalLink, Play, ZoomIn } from 'lucide-react';
 import axios from 'axios';
 import ImageLightbox from '../components/ImageLightbox';
+import { useTranslation } from 'react-i18next';
 
 const Media = () => {
   const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const { t } = useTranslation();
 
   const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -26,7 +30,6 @@ const Media = () => {
   const loadMedia = async () => {
     try {
       const response = await axios.get(`${API}/api/media`);
-      // Hide grid category items from the public media page
       const publicMedia = (response.data || []).filter(m => m.category !== 'grid');
       setMedia(publicMedia);
     } catch (error) {
@@ -44,18 +47,13 @@ const Media = () => {
 
   const getMediaTypeLabel = (type) => {
     const found = mediaTypes.find(t => t.value === type);
-    return found ? found.label.slice(0, -1) : 'Photo'; // Remove 's' from plural
+    return found ? found.label.slice(0, -1) : 'Photo';
   };
 
-  const filteredMedia = activeFilter === 'all' 
-    ? media 
+  const filteredMedia = activeFilter === 'all'
+    ? media
     : media.filter(item => item.mediaType === activeFilter);
 
-  // State for lightbox
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-
-  // Get all photo images for gallery navigation
   const photoImages = filteredMedia
     .filter(item => item.mediaType === 'photo' && item.mediaUrl)
     .map(item => ({ url: item.mediaUrl, alt: item.title, title: item.title }));
@@ -70,7 +68,6 @@ const Media = () => {
 
   const convertToEmbedUrl = (url) => {
     if (!url) return url;
-    // Convert YouTube watch URLs to embed URLs
     if (url.includes('youtube.com/watch?v=')) {
       const videoId = url.split('watch?v=')[1].split('&')[0];
       return `https://www.youtube.com/embed/${videoId}`;
@@ -87,7 +84,7 @@ const Media = () => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">MEDIA</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-white torture-text mb-4">{t('media.title')}</h1>
           <div className="gradient-border mx-auto w-24 mb-6"></div>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Explore photos, videos, podcasts, and articles from Torture Chamber Pro Wrestling Dojo.
@@ -98,10 +95,10 @@ const Media = () => {
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {mediaTypes.map(type => {
             const Icon = type.icon;
-            const count = type.value === 'all' 
-              ? media.length 
+            const count = type.value === 'all'
+              ? media.length
               : media.filter(m => m.mediaType === type.value).length;
-            
+
             return (
               <button
                 key={type.value}
@@ -127,18 +124,18 @@ const Media = () => {
 
         {/* Media Grid */}
         {loading ? (
-          <div className="text-center text-gray-400 py-12">Loading media...</div>
+          <div className="text-center text-gray-400 py-12">{t('media.loading')}</div>
         ) : filteredMedia.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-600 mb-4">
               <Image size={64} className="mx-auto" />
             </div>
             <p className="text-gray-400 text-lg">
-              {activeFilter === 'all' 
-                ? 'No media content available yet.' 
+              {activeFilter === 'all'
+                ? 'No media content available yet.'
                 : `No ${activeFilter}s available yet.`}
             </p>
-            <p className="text-gray-500 text-sm mt-2">Check back soon for updates!</p>
+            <p className="text-gray-500 text-sm mt-2">{t('success.empty')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -146,34 +143,30 @@ const Media = () => {
               const Icon = getMediaTypeIcon(item.mediaType);
               const hasVideo = item.mediaType === 'video' && item.mediaUrl;
               const embedUrl = convertToEmbedUrl(item.mediaUrl);
-              
+
               return (
                 <div
                   key={item.id || index}
                   className="bg-gradient-to-br from-black to-gray-900 border border-blue-500/20 rounded-lg overflow-hidden hover-lift group"
                   data-testid={`media-item-${index}`}
                 >
-                  {/* Media Preview */}
                   <div className="relative aspect-square bg-gray-900 flex items-center justify-center overflow-hidden">
-                    {/* Photo */}
                     {item.mediaType === 'photo' && item.mediaUrl ? (
-                      <div 
+                      <div
                         className="relative w-full h-full cursor-pointer"
                         onClick={() => openLightbox(item.mediaUrl)}
                         data-testid={`media-photo-${index}`}
                       >
-                        <img 
-                          src={item.mediaUrl} 
+                        <img
+                          src={item.mediaUrl}
                           alt={item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        {/* Hover overlay with expand icon */}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                           <ZoomIn className="text-white" size={40} />
                         </div>
                       </div>
                     ) : hasVideo && embedUrl.includes('youtube.com/embed') ? (
-                      /* YouTube Video */
                       <iframe
                         className="w-full h-full"
                         src={embedUrl}
@@ -183,10 +176,9 @@ const Media = () => {
                         allowFullScreen
                       ></iframe>
                     ) : item.thumbnailUrl ? (
-                      /* Thumbnail with play overlay */
                       <div className="relative w-full h-full">
-                        <img 
-                          src={item.thumbnailUrl} 
+                        <img
+                          src={item.thumbnailUrl}
                           alt={item.title}
                           className="w-full h-full object-cover"
                         />
@@ -199,21 +191,18 @@ const Media = () => {
                         )}
                       </div>
                     ) : (
-                      /* Placeholder */
                       <div className="text-center p-8">
                         <Icon size={64} className="text-blue-500/50 mx-auto mb-3" />
                         <span className="text-gray-500">{getMediaTypeLabel(item.mediaType)}</span>
                       </div>
                     )}
 
-                    {/* Type Badge */}
                     <div className="absolute top-3 left-3 bg-blue-600/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center space-x-1.5">
                       <Icon size={14} />
                       <span>{getMediaTypeLabel(item.mediaType)}</span>
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-white mb-2 line-clamp-2 group-hover:text-blue-400 transition-colors">
                       {item.title}
@@ -221,12 +210,11 @@ const Media = () => {
                     {item.description && (
                       <p className="text-gray-400 text-sm mb-4 line-clamp-3 whitespace-pre-line">{item.description}</p>
                     )}
-                    
-                    {/* External Link Button */}
+
                     {item.externalLink && (
-                      <a 
-                        href={item.externalLink} 
-                        target="_blank" 
+                      <a
+                        href={item.externalLink}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
                         data-testid={`view-link-${index}`}
@@ -246,7 +234,6 @@ const Media = () => {
           </div>
         )}
 
-        {/* Image Lightbox for photos */}
         <ImageLightbox
           images={photoImages}
           currentIndex={lightboxIndex}
