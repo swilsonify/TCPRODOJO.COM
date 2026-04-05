@@ -48,3 +48,23 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/events" element={<AdminEvents />} />
+        <Route path="/admin/past-events" element={<AdminPastEvents />} />
+        <Route path="/admin/testimonials" element={<AdminTestimonials />} />
+        <Route path="/admin/contacts" element={<AdminContacts />} />
+        <Route path="/admin/coaches" element={<AdminCoaches />} />
+        <Route path="/admin/success-stories" element={<AdminSuccessStories />} />
+        <Route path="/admin/endorsements" element={<AdminEndorsements />} />
+        <Route path="/admin/tips" element={<AdminTips />} />
+        <Route path="/admin/classes" element={<AdminClassSchedule />} />
+        <Route path="/admin/newsletter" element={<AdminNewsletterSubscriptions />} />
+        <Route path="/admin/media" element={<AdminMedia />} />
+        <Route path="/admin/site-settings" element={<AdminSiteSettings />} />
+        <Route path="/admin/students" element={<AdminStudents />} />
+        <Route path="/admin/products" element={<AdminProducts />} />
+        <Route path="/admin/faq" element={<AdminFAQ />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
