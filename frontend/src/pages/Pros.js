@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Award, Users as UsersIcon, Trophy, ZoomIn } from 'lucide-react';
+import { Award, Users as UsersIcon, ZoomIn } from 'lucide-react';
 import ImageLightbox from '../components/ImageLightbox';
 import { useTranslation } from 'react-i18next';
 
@@ -117,14 +117,7 @@ const Pros = () => {
                 )}
 
                 <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <Trophy className="text-blue-500" size={32} />
-                    <span className="text-xs text-gray-500">Class of {graduate.yearGraduated}</span>
-                  </div>
-
                   <h3 className="text-xl font-bold text-white mb-2">{graduate.name}</h3>
-                  <div className="text-blue-400 text-sm font-semibold mb-1">{graduate.promotion}</div>
-                  <div className="text-gray-400 text-sm mb-3">{graduate.achievement}</div>
                   <p className="text-gray-300 text-sm whitespace-pre-line">{graduate.bio}</p>
                 </div>
               </div>
